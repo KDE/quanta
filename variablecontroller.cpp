@@ -48,6 +48,65 @@ DebugSession *VariableController::debugSession() const
 
 void VariableController::update()
 {
+    //if (autoUpdate() & UpdateWatches) {
+        variableCollection()->watches()->reinstall();
+    //}
+//    if (autoUpdate() & UpdateLocals) {
+        updateLocals();
+//    }
+}
+
+
+void VariableController::handleFrame(const QVariantMap& data)
+{
+    Q_ASSERT(data["command"] == "scope");
+    Q_ASSERT(data.contains("body"));
+    Q_ASSERT(data["body"].canConvert(QVariant::Map));
+    Q_ASSERT(data["body"].toMap().contains("object"));
+    Q_ASSERT(data["body"].toMap()["object"].canConvert(QVariant::Map));
+    Q_ASSERT(data["body"].toMap()["object"].toMap().contains("value"));
+    Q_ASSERT(data["body"].toMap()["object"].toMap()["value"].canConvert(QVariant::Map));
+    kDebug() << data;
+
+    QStringList names;
+    QMapIterator<QString, QVariant> i(data["body"].toMap()["object"].toMap()["value"].toMap());
+    while (i.hasNext()) {
+        i.next();
+        kDebug() << i.key();
+        if (i.key() != "parent") {
+            names << i.key();
+        }
+    }
+    kDebug() << names;
+    {
+        KDevelop::Locals* locals = KDevelop::ICore::self()->debugController()->variableCollection()->locals();
+
+        QList<KDevelop::Variable*> vars = locals->updateLocals(names);
+
+        i.toFront();
+        while (i.hasNext()) {
+            i.next();
+            QString name = i.key();
+            if (name == "parent") continue;
+            foreach (KDevelop::Variable *v, vars) {
+                Q_ASSERT(dynamic_cast<Variable*>(v));
+                if (v->expression() == name) {
+                    static_cast<Variable*>(v)->setValue(i.value().toMap()["value"].toString());
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+void VariableController::updateLocals()
+{
+    Callback<VariableController>* cb = new Callback<VariableController>(this, &VariableController::handleFrame);
+    QVariantMap args;
+    args["scopeNo"] = 0;
+    args["frameNumber"] = debugSession()->frameStackModel()->currentFrame();
+    debugSession()->sendCommand("scope", args, cb);
 }
 
 QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor)

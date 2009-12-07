@@ -34,6 +34,9 @@
 #include <debugger/breakpoint/breakpointmodel.h>
 #include <tests/autotestshell.h>
 #include <tests/testcore.h>
+#include <debugger/interfaces/iframestackmodel.h>
+#include <debugger/interfaces/ivariablecontroller.h>
+#include <debugger/variable/variablecollection.h>
 
 #include "connection.h"
 #include "debugsession.h"
@@ -118,6 +121,17 @@ private:
     int m_line;
 
 };
+
+#define COMPARE_DATA(index, expected) \
+    compareData((index), (expected), __FILE__, __LINE__)
+void compareData(QModelIndex index, QString expected, const char *file, int line)
+{
+    QString s = index.model()->data(index, Qt::DisplayRole).toString();
+    if (s != expected) {
+        kFatal() << QString("'%0' didn't match expected '%1' in %2:%3").arg(s).arg(expected).arg(file).arg(line);
+    }
+}
+
 
 void SessionTest::init()
 {
@@ -232,7 +246,7 @@ void SessionTest::testRemoveBreakpoint()
             << "  asdf();"                           // 8
             << "  asdf();"                           // 9
             << "  asdf();"                           //10
-            << "}, 2000);"
+            << "}, 4000);"
             << "</script>"
             << "</body>"
             << "</html>";
@@ -253,7 +267,7 @@ void SessionTest::testRemoveBreakpoint()
     job.start();
 
     QVERIFY(session.waitForHandshake());
-    QTest::qWait(3000);
+    QTest::qWait(6000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 5);
     QCOMPARE(session.url(), url);
@@ -266,6 +280,128 @@ void SessionTest::testRemoveBreakpoint()
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 10);
     QCOMPARE(session.url(), url);
+}
+
+void SessionTest::testFrameStack()
+{
+    QStringList contents;
+    contents << "<html>"                             // 0
+            << "<body>"                              // 1
+            << "foo"                                 // 2
+            << "<script type=\"text/javascript\">"   // 3
+            << "function asdf() {"                   // 4
+            << "  var i=0;"                          // 5
+            << "}"                                   // 6
+            << "setTimeout(function() {"             // 7
+            << "  asdf();"                           // 8
+            << "  asdf();"                           // 9
+            << "  asdf();"                           //10
+            << "}, 2000);"
+            << "</script>"
+            << "</body>"
+            << "</html>";
+
+    QTemporaryFile file("crossfiretest");
+    file.open();
+    KUrl url(buildBaseUrl + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+    file.setPermissions(QFile::ReadOther | file.permissions());
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 5);
+
+    TestDebugSession session;
+
+    TestLaunchConfiguration cfg(url);
+    TestDebugJob job(&session, &cfg);
+    job.start();
+
+    QVERIFY(session.waitForHandshake());
+    QTest::qWait(3000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 5);
+    QTest::qWait(10000);
+
+    KDevelop::IFrameStackModel* stackModel = session.frameStackModel();
+
+    QCOMPARE(stackModel->rowCount(QModelIndex()), 1); //one fake thread
+
+    QModelIndex tIdx = stackModel->index(0,0);
+    /*
+    QCOMPARE(stackModel->rowCount(tIdx), 2);
+    QCOMPARE(stackModel->columnCount(tIdx), 3);
+    COMPARE_DATA(tIdx.child(0, 0), "0");
+    COMPARE_DATA(tIdx.child(0, 1), "x");
+    COMPARE_DATA(tIdx.child(0, 2), url.toLocalFile()+":4");
+    COMPARE_DATA(tIdx.child(1, 0), "1");
+    COMPARE_DATA(tIdx.child(1, 1), "{main}");
+    COMPARE_DATA(tIdx.child(1, 2), url.toLocalFile()+":6");
+    */
+}
+
+KDevelop::VariableCollection *variableCollection()
+{
+    return KDevelop::ICore::self()->debugController()->variableCollection();
+}
+
+void SessionTest::testVariablesLocals()
+{
+        QStringList contents;
+    contents << "<html>"                             // 0
+            << "<body>"                              // 1
+            << "foo"                                 // 2
+            << "<script type=\"text/javascript\">"   // 3
+            << "function asdf(x) {"                  // 4
+            << "  var o = { foo: 'foo', bar: 1 };"   // 5
+            << "  var i=0;"                          // 6
+            << "  i++;"                              // 7
+            << "}"                                   // 8
+            << "setTimeout(function() {"             // 9
+            << "  asdf(10);"                         // 10
+            << "}, 2000);"
+            << "</script>"
+            << "</body>"
+            << "</html>";
+    QTemporaryFile file("crossfiretest");
+    file.open();
+    KUrl url(buildBaseUrl + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+    file.setPermissions(QFile::ReadOther | file.permissions());
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 7);
+
+    TestDebugSession session;
+    session.variableController()->setAutoUpdate(KDevelop::IVariableController::UpdateLocals);
+
+    TestLaunchConfiguration cfg(url);
+    TestDebugJob job(&session, &cfg);
+    job.start();
+
+    QVERIFY(session.waitForHandshake());
+    QTest::qWait(4000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 7);
+    QTest::qWait(1000);
+
+    QVERIFY(variableCollection()->rowCount() == 2);
+    QModelIndex i = variableCollection()->index(1, 0);
+    COMPARE_DATA(i, "Locals");
+    QCOMPARE(variableCollection()->rowCount(i), 3);
+    COMPARE_DATA(variableCollection()->index(0, 0, i), "i");
+    COMPARE_DATA(variableCollection()->index(0, 1, i), "0");
+    COMPARE_DATA(variableCollection()->index(1, 0, i), "o");
+    COMPARE_DATA(variableCollection()->index(1, 1, i), "");
+    COMPARE_DATA(variableCollection()->index(2, 0, i), "x");
+    COMPARE_DATA(variableCollection()->index(2, 1, i), "10");
+    /*
+    i = variableCollection()->index(1, 0, i);
+    QCOMPARE(variableCollection()->rowCount(i), 2);
+    COMPARE_DATA(variableCollection()->index(0, 0, i), "foo");
+    COMPARE_DATA(variableCollection()->index(0, 1, i), "foo");
+    COMPARE_DATA(variableCollection()->index(2, 0, i), "bar");
+    COMPARE_DATA(variableCollection()->index(2, 1, i), "1");
+    */
 }
 
 

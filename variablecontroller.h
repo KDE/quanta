@@ -51,6 +51,9 @@ public:
 
 private:
     DebugSession* debugSession() const;
+
+    void handleFrame(const QVariantMap &data);
+    void updateLocals();
 };
 
 }

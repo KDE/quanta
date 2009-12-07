@@ -90,6 +90,7 @@ void DebugSession::eventReceived(const QVariantMap &event)
     }
     if (event["context_id"] == m_currentContext) {
         if (event["event"] == "onBreak") {
+            raiseEvent(program_state_changed);
             setState(KDevelop::IDebugSession::PausedState);
             KUrl url(event["data"].toMap()["url"].toString());
             emit showStepInSource(url, event["data"].toMap()["line"].toInt()-1);

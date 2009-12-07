@@ -23,14 +23,53 @@
 
 #include <KDebug>
 
+#include "connection.h"
+
 namespace Crossfire {
 
 void FrameStackModel::fetchThreads()
 {
+    //no multithreading, create just one
+    QList<KDevelop::FrameStackModel::ThreadItem> threadsList;
+    KDevelop::FrameStackModel::ThreadItem i;
+    i.nr = 0;
+    i.name = "main thread";
+    threadsList << i;
+    setThreads(threadsList);
+    setCurrentThread(0);
+}
+
+void FrameStackModel::handleFrames(const QVariantMap &data)
+{
+    kDebug() << data;
+    /*
+    Q_ASSERT(xml.documentElement().attribute("command") == "stack_get");
+
+    QList<KDevelop::FrameStackModel::FrameItem> frames;
+    QDomElement el = xml.documentElement().firstChildElement("stack");
+    while (!el.isNull()) {
+        KDevelop::FrameStackModel::FrameItem f;
+        f.nr = el.attribute("level").toInt();
+        f.name = el.attribute("where");
+        f.file = el.attribute("filename");
+        f.line = el.attribute("lineno").toInt() - 1;
+        frames << f;
+        el = el.nextSiblingElement("stack");
+    }
+    setFrames(0, frames);
+    setHasMoreFrames(0, false);
+    */
 }
 
 void FrameStackModel::fetchFrames(int threadNumber, int from, int to)
 {
+    if (threadNumber == 0) { //we support only one thread
+        Callback<FrameStackModel>* cb = new Callback<FrameStackModel>(this, &FrameStackModel::handleFrames);
+        QVariantMap args;
+        args["fromFrame"] = from;
+        args["toFrame"] = to;
+//         session()->sendCommand("backtrace", args, cb);
+    }
 }
 
 }

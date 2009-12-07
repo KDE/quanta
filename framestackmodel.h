@@ -39,6 +39,8 @@ public:
 protected: // KDevelop::FrameStackModel overrides
     virtual void fetchThreads();
     virtual void fetchFrames(int threadNumber, int from, int to);
+private:
+    void handleFrames(const QVariantMap &data);
 };
 
 }
