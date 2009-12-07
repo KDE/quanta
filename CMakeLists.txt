@@ -25,6 +25,7 @@ set(kdevcrossfirecore_PART_SRCS
     framestackmodel.cpp
     variablecontroller.cpp
     variable.cpp
+    stringhelpers.cpp
 )
 
 ########### next target ###############

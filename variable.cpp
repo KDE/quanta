@@ -62,7 +62,7 @@ Variable::~Variable()
 }
 
 
-void Variable::setValue(const QVariantMap& val)
+void Variable::setCrossfireValue(const QVariantMap& val)
 {
     kDebug() << val;
     if (val["type"] == "ref") {
@@ -70,13 +70,14 @@ void Variable::setValue(const QVariantMap& val)
         Q_ASSERT(m_ref > 0);
         setHasMore(true);
     } else {
-        KDevelop::Variable::setValue(val["value"].toString());
+        setValue(val["value"].toString());
     }
 }
 
-void Variable::handleLookup(const QVariantMap& data)
+void Variable::setChildValues(const QVariantMap& data)
 {
-    QMapIterator<QString, QVariant> i(data["body"].toMap()["value"].toMap()["value"].toMap());
+    deleteChildren();
+    QMapIterator<QString, QVariant> i(data);
     while (i.hasNext()) {
         i.next();
         kDebug() << i.key() << i.value();
@@ -86,8 +87,17 @@ void Variable::handleLookup(const QVariantMap& data)
         Variable* var = static_cast<Variable*>(xvar);
         var->setTopLevel(false);
         appendChild(var);
-        var->setValue(i.value().toMap());
+        if (i.value().canConvert(QVariant::Map)) {
+            var->setCrossfireValue(i.value().toMap());
+        } else {
+            var->setValue(i.value().toString());
+        }
     }
+}
+
+void Variable::handleLookup(const QVariantMap& data)
+{
+    setChildValues(data["body"].toMap()["value"].toMap()["value"].toMap());
 }
 
 void Variable::fetchMoreChildren()
@@ -102,8 +112,45 @@ void Variable::fetchMoreChildren()
     }
 }
 
+class EvaluateCallback : public CallbackBase
+{
+public:
+    EvaluateCallback(Variable *variable, QObject *callback, const char *callbackMethod)
+    : m_variable(variable), m_callback(callback), m_callbackMethod(callbackMethod)
+    {}
+
+    virtual void execute(const QVariantMap &data)
+    {
+        if (!m_variable) return;
+
+        bool hasValue;
+        QVariant result = data["body"].toMap()["result"];
+        if (result.canConvert(QVariant::Map)) {
+            m_variable->setChildValues(result.toMap());
+            hasValue = !result.toMap().isEmpty();
+        } else {
+            m_variable->setValue(result.toString());
+            hasValue = !result.toString().isEmpty();
+        }
+        if (m_callback && m_callbackMethod) {
+            QMetaObject::invokeMethod(m_callback, m_callbackMethod, Q_ARG(bool, hasValue));
+        }
+    }
+private:
+    QPointer<Variable> m_variable;
+    QObject *m_callback;
+    const char *m_callbackMethod;
+};
+
 void Variable::attachMaybe(QObject *callback, const char *callbackMethod)
 {
+    DebugSession* session = currentSession();
+    if (session) {
+        QVariantMap args;
+        args["frame"] = session->frameStackModel()->currentFrame();
+        args["expression"] = expression();
+        session->sendCommand("evaluate", args, new EvaluateCallback(this, callback, callbackMethod));
+    }
 }
 
 

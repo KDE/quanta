@@ -32,6 +32,7 @@
 #include "connection.h"
 #include "debugsession.h"
 #include "variable.h"
+#include "stringhelpers.h"
 
 namespace Crossfire {
 
@@ -90,7 +91,7 @@ void VariableController::handleFrame(const QVariantMap& data)
             foreach (KDevelop::Variable *v, vars) {
                 Q_ASSERT(dynamic_cast<Variable*>(v));
                 if (v->expression() == name) {
-                    static_cast<Variable*>(v)->setValue(i.value().toMap());
+                    static_cast<Variable*>(v)->setCrossfireValue(i.value().toMap());
                     break;
                 }
             }
@@ -110,6 +111,25 @@ void VariableController::updateLocals()
 
 QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor)
 {
+    QString line = doc->line(cursor.line());
+    int index = cursor.column();
+    QChar c = line[index];
+    if (!c.isLetterOrNumber() && c != '_' && c != '$')
+        return QString();
+
+    int start = expressionAt(line, index);
+    int end = index;
+    for (; end < line.size(); ++end) {
+        QChar c = line[end];
+        if (!(c.isLetterOrNumber() || c == '_' || c == '$'))
+            break;
+    }
+    if (!(start < end))
+        return QString();
+
+    QString expression(line.mid(start, end-start));
+    expression = expression.trimmed();
+    return expression;
 }
 
 void VariableController::addWatch(KDevelop::Variable* variable)
