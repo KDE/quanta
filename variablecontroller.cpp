@@ -114,14 +114,14 @@ QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, co
     QString line = doc->line(cursor.line());
     int index = cursor.column();
     QChar c = line[index];
-    if (!c.isLetterOrNumber() && c != '_' && c != '$')
+    if (!c.isLetterOrNumber() && c != '_')
         return QString();
 
     int start = expressionAt(line, index);
     int end = index;
     for (; end < line.size(); ++end) {
         QChar c = line[end];
-        if (!(c.isLetterOrNumber() || c == '_' || c == '$'))
+        if (!(c.isLetterOrNumber() || c == '_'))
             break;
     }
     if (!(start < end))
