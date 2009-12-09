@@ -40,6 +40,7 @@ private slots:
     void testRemoveBreakpoint();
     void testFrameStack();
     void testVariablesLocals();
+    void testVariablesWatch();
 
 private:
     KDevelop::TestCore* m_core;

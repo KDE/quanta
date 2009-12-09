@@ -353,7 +353,7 @@ KDevelop::VariableCollection *variableCollection()
 
 void SessionTest::testVariablesLocals()
 {
-        QStringList contents;
+    QStringList contents;
     contents << "<html>"                             // 0
             << "<body>"                              // 1
             << "foo"                                 // 2
@@ -409,6 +409,56 @@ void SessionTest::testVariablesLocals()
     COMPARE_DATA(variableCollection()->index(0, 1, i), "1");
     COMPARE_DATA(variableCollection()->index(1, 0, i), "foo");
     COMPARE_DATA(variableCollection()->index(1, 1, i), "foo");
+}
+
+
+void SessionTest::testVariablesWatch()
+{
+    QStringList contents;
+    contents << "<html>"                             // 0
+            << "<body>"                              // 1
+            << "foo"                                 // 2
+            << "<script type=\"text/javascript\">"   // 3
+            << "function asdf(x) {"                  // 4
+            << "  var o = { foo: 'foo', bar: 1 };"   // 5
+            << "  var i=0;"                          // 6
+            << "  i++;"                              // 7
+            << "}"                                   // 8
+            << "setTimeout(function() {"             // 9
+            << "  asdf(10);"                         // 10
+            << "}, 2000);"
+            << "</script>"
+            << "</body>"
+            << "</html>";
+    QTemporaryFile file("crossfiretest");
+    file.open();
+    KUrl url(buildBaseUrl + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+    file.setPermissions(QFile::ReadOther | file.permissions());
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 7);
+
+    TestDebugSession session;
+    session.variableController()->setAutoUpdate(KDevelop::IVariableController::UpdateWatches);
+    KDevelop::ICore::self()->debugController()->variableCollection()->watches()->add("i");
+
+    TestLaunchConfiguration cfg(url);
+    TestDebugJob job(&session, &cfg);
+    job.start();
+
+    QVERIFY(session.waitForHandshake());
+    QTest::qWait(4000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 7);
+    QTest::qWait(1000);
+
+    QVERIFY(variableCollection()->rowCount() == 2);
+    QModelIndex i = variableCollection()->index(0, 0);
+    COMPARE_DATA(i, "Auto");
+    QCOMPARE(variableCollection()->rowCount(i), 1);
+    COMPARE_DATA(variableCollection()->index(0, 0, i), "i");
+    COMPARE_DATA(variableCollection()->index(0, 1, i), "0");
 }
 
 
