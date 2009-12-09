@@ -41,34 +41,38 @@ void FrameStackModel::fetchThreads()
 
 void FrameStackModel::handleFrames(const QVariantMap &data)
 {
-    kDebug() << data;
-    /*
-    Q_ASSERT(xml.documentElement().attribute("command") == "stack_get");
-
     QList<KDevelop::FrameStackModel::FrameItem> frames;
-    QDomElement el = xml.documentElement().firstChildElement("stack");
-    while (!el.isNull()) {
+    QListIterator<QVariant> i(data["body"].toMap()["frames"].toList());
+//     i.toBack();
+//     while (i.hasPrevious()) {
+//         QVariantMap map(i.previous().toMap());
+//     i.toBack();
+    int nr = data["body"].toMap()["fromFrame"].toInt();
+    while (i.hasNext()) {
+        QVariantMap map(i.next().toMap());
+        //kDebug() << map;
         KDevelop::FrameStackModel::FrameItem f;
-        f.nr = el.attribute("level").toInt();
-        f.name = el.attribute("where");
-        f.file = el.attribute("filename");
-        f.line = el.attribute("lineno").toInt() - 1;
+        f.nr = nr;
+        f.name = map["func"].toString();
+        kDebug() << f.nr << f.name;
+        f.file = "xxx";
+        f.line = map["line"].toInt()-1;
         frames << f;
-        el = el.nextSiblingElement("stack");
+        ++nr;
     }
     setFrames(0, frames);
-    setHasMoreFrames(0, false);
-    */
+    setHasMoreFrames(0, data["body"].toMap()["totalFrames"].toInt() > nr);
 }
 
 void FrameStackModel::fetchFrames(int threadNumber, int from, int to)
 {
+    kDebug() << threadNumber << from << to;
     if (threadNumber == 0) { //we support only one thread
         Callback<FrameStackModel>* cb = new Callback<FrameStackModel>(this, &FrameStackModel::handleFrames);
         QVariantMap args;
         args["fromFrame"] = from;
         args["toFrame"] = to;
-//         session()->sendCommand("backtrace", args, cb);
+        session()->sendCommand("backtrace", args, cb);
     }
 }
 

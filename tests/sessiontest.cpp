@@ -292,10 +292,17 @@ void SessionTest::testFrameStack()
             << "function asdf() {"                   // 4
             << "  var i=0;"                          // 5
             << "}"                                   // 6
-            << "setTimeout(function() {"             // 7
+            << "function bsdf() {"                   // 7
             << "  asdf();"                           // 8
-            << "  asdf();"                           // 9
-            << "  asdf();"                           //10
+            << "}"                                   // 9
+            << "function csdf() {"                   // 10
+            << "  bsdf();"                           // 11
+            << "}"                                   // 12
+            << "function dsdf() {"                   // 10
+            << "  csdf();"                           // 11
+            << "}"                                   // 12
+            << "setTimeout(function() {"             // 13
+            << "  dsdf();"                           // 14
             << "}, 2000);"
             << "</script>"
             << "</body>"
@@ -317,26 +324,26 @@ void SessionTest::testFrameStack()
     job.start();
 
     QVERIFY(session.waitForHandshake());
-    QTest::qWait(3000);
+    QTest::qWait(5000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 5);
-    QTest::qWait(10000);
 
     KDevelop::IFrameStackModel* stackModel = session.frameStackModel();
 
     QCOMPARE(stackModel->rowCount(QModelIndex()), 1); //one fake thread
 
     QModelIndex tIdx = stackModel->index(0,0);
-    /*
-    QCOMPARE(stackModel->rowCount(tIdx), 2);
+    QCOMPARE(stackModel->rowCount(tIdx), 4);
     QCOMPARE(stackModel->columnCount(tIdx), 3);
     COMPARE_DATA(tIdx.child(0, 0), "0");
-    COMPARE_DATA(tIdx.child(0, 1), "x");
-    COMPARE_DATA(tIdx.child(0, 2), url.toLocalFile()+":4");
+    COMPARE_DATA(tIdx.child(0, 1), "asdf");
+    COMPARE_DATA(tIdx.child(0, 2), "/xxx:6");
     COMPARE_DATA(tIdx.child(1, 0), "1");
-    COMPARE_DATA(tIdx.child(1, 1), "{main}");
-    COMPARE_DATA(tIdx.child(1, 2), url.toLocalFile()+":6");
-    */
+    COMPARE_DATA(tIdx.child(1, 1), "bsdf");
+    COMPARE_DATA(tIdx.child(1, 2), "/xxx:9");
+    COMPARE_DATA(tIdx.child(2, 1), "csdf");
+    COMPARE_DATA(tIdx.child(3, 1), "dsdf");
+    
 }
 
 KDevelop::VariableCollection *variableCollection()

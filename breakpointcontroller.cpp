@@ -95,6 +95,7 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
 
 void BreakpointController::handleSetBreakpoint(KDevelop::Breakpoint* breakpoint, const QVariantMap& data)
 {
+    kDebug() << data;
     Q_ASSERT(data["command"] == "setbreakpoint");
     Q_ASSERT(data["success"].toBool());
     Q_ASSERT(breakpoint);
