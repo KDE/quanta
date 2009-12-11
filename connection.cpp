@@ -92,7 +92,7 @@ void Connection::readyRead()
             if (!data.isEmpty() && !m_socket->waitForReadyRead()) {
                 return;
             }
-            data += m_socket->read(data.length() - length+1);
+            data += m_socket->read(length - data.length() + 1);
         }
         kDebug() << data;
 
