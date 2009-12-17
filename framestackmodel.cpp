@@ -55,7 +55,7 @@ void FrameStackModel::handleFrames(const QVariantMap &data)
         f.nr = nr;
         f.name = map["func"].toString();
         kDebug() << f.nr << f.name;
-        f.file = "xxx";
+        f.file = map["script"].toString();
         f.line = map["line"].toInt()-1;
         frames << f;
         ++nr;

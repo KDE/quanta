@@ -337,13 +337,12 @@ void SessionTest::testFrameStack()
     QCOMPARE(stackModel->columnCount(tIdx), 3);
     COMPARE_DATA(tIdx.child(0, 0), "0");
     COMPARE_DATA(tIdx.child(0, 1), "asdf");
-    COMPARE_DATA(tIdx.child(0, 2), "/xxx:6");
+    COMPARE_DATA(tIdx.child(0, 2), url.url()+":6");
     COMPARE_DATA(tIdx.child(1, 0), "1");
     COMPARE_DATA(tIdx.child(1, 1), "bsdf");
-    COMPARE_DATA(tIdx.child(1, 2), "/xxx:9");
+    COMPARE_DATA(tIdx.child(1, 2), url.url()+":9");
     COMPARE_DATA(tIdx.child(2, 1), "csdf");
     COMPARE_DATA(tIdx.child(3, 1), "dsdf");
-    
 }
 
 KDevelop::VariableCollection *variableCollection()
@@ -361,7 +360,7 @@ void SessionTest::testVariablesLocals()
             << "function asdf(x) {"                  // 4
             << "  var o = { foo: 'foo', bar: 1 };"   // 5
             << "  var i=0;"                          // 6
-            << "  i++;"                              // 7
+            << "  i++;"                              // 7 **
             << "}"                                   // 8
             << "setTimeout(function() {"             // 9
             << "  asdf(10);"                         // 10
