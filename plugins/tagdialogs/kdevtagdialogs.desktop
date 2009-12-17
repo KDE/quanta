@@ -41,6 +41,6 @@ X-KDevelop-Args=
 X-KDevelop-Category=Global
 X-KDE-Library=libkdevtagdialogs
 X-KDE-PluginInfo-Name=KDevTagDialogs
-X-KDevelop-Version=7
+X-KDevelop-Version=8
 X-KDevelop-Properties=Quanta,Quanta-TagDialogs
 X-KDevelop-IRequired=org.kdevelop.QuantaCoreIf
