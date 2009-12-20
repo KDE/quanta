@@ -440,14 +440,14 @@ void SessionTest::testVariablesWatch()
 
     TestDebugSession session;
     session.variableController()->setAutoUpdate(KDevelop::IVariableController::UpdateWatches);
-    KDevelop::ICore::self()->debugController()->variableCollection()->watches()->add("i");
 
     TestLaunchConfiguration cfg(url);
     TestDebugJob job(&session, &cfg);
     job.start();
 
     QVERIFY(session.waitForHandshake());
-    QTest::qWait(4000);
+    QTest::qWait(6000);
+    QVERIFY(KDevelop::ICore::self()->debugController()->variableCollection()->watches()->add("i"));
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 7);
     QTest::qWait(1000);
