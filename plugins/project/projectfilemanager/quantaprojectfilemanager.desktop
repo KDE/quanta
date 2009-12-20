@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Quanta Project Importer
+Name[de]=Quanta-Projekt-Import
 Name[en_GB]=Quanta Project Importer
 Name[es]=Importador de proyectos de Quanta
 Name[pt]=Importação de Projectos do Quanta
@@ -10,6 +11,7 @@ Name[uk]=Імпорт проектів Quanta
 Name[x-test]=xxQuanta Project Importerxx
 Name[zh_TW]=Quanta 專案匯入器
 Comment=Allow KDevelop to manage Quanta projects
+Comment[de]=Quanta-Projekte in KDevelop verwalten
 Comment[en_GB]=Allow KDevelop to manage Quanta projects
 Comment[es]=Permitir que KDevelop gestione los proyectos
 Comment[pt]=Permite ao KDevelop gerir os projectos do Quanta
