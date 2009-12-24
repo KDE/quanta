@@ -1,6 +1,7 @@
 # KDE Config File
 [General]
 Name=Quanta Project Template
+Name[ca]=Plantilla de projecte de Quanta
 Name[en_GB]=Quanta Project Template
 Name[es]=Plantilla de proyecto de Quanta
 Name[pt]=Modelo de Projecto do Quanta
@@ -11,6 +12,7 @@ Name[x-test]=xxQuanta Project Templatexx
 Name[zh_TW]=Quanta 專案樣本
 Category=Quanta
 Comment=This generates a Quanta project
+Comment[ca]=Això genera un projecte de Quanta
 Comment[en_GB]=This generates a Quanta project
 Comment[es]=Esto genera un proyecto de Quanta
 Comment[pt]=Isto gera um projecto do Quanta
@@ -32,6 +34,7 @@ Dest=%{dest}/%{APPNAMELC}.kdevelop
 [MSG]
 Type=message
 Comment=A simple Quanta project was created in %{dest}
+Comment[ca]=S'ha creat un projecte senzill de Quanta en %{dest}
 Comment[en_GB]=A simple Quanta project was created in %{dest}
 Comment[es]=Se ha creado un proyecto sencillo de Quanta en %{dest}
 Comment[pt]=Foi criado um projecto simples do Quanta em %{dest}

@@ -11,6 +11,7 @@ X-KDE-ParentComponents=kdevplatform
 X-KDE-CfgDlgHierarchy=USERINTERFACE
 
 Name=User Toolbars setting
+Name[ca]=Arranjament de barres d'eines d'usuari
 Name[de]=Einstellungen für Benutzerwerkzeugleisten
 Name[en_GB]=User Toolbars setting
 Name[es]=Preferencias de la barra de herramientas del usuario
@@ -21,6 +22,7 @@ Name[uk]=Налаштування панелей користувача
 Name[x-test]=xxUser Toolbars settingxx
 Name[zh_TW]=使用者工具列設定
 Comment=Configure User Toolbars
+Comment[ca]=Configura les barres d'eines d'usuari
 Comment[de]=Benutzerwerkzeugleisten einrichten
 Comment[en_GB]=Configure User Toolbars
 Comment[es]=Configurar las barras de herramientas del usuario
