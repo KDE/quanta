@@ -68,12 +68,12 @@
 #include <kparts/mainwindow.h>
 
 //kdevelop includes
-#include <core.h>
-#include <idocumentcontroller.h>
-#include <iplugincontroller.h>
-#include <iproject.h>
-#include <iprojectcontroller.h>
-#include <iuicontroller.h>
+#include <shell/core.h>
+#include <interfaces/idocumentcontroller.h>
+#include <interfaces/iplugincontroller.h>
+#include <interfaces/iproject.h>
+#include <interfaces/iprojectcontroller.h>
+#include <interfaces/iuicontroller.h>
 
 #include <iostream>
 

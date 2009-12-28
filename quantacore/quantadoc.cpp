@@ -43,7 +43,7 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 
-#include <idocument.h>
+#include <interfaces/idocument.h>
 
 
 

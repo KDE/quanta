@@ -19,7 +19,7 @@
 #include "helper.h"
 
 //kdevelop includes
-#include <iplugin.h>
+#include <interfaces/iplugin.h>
 
 //qt includes
 #include <QHash>

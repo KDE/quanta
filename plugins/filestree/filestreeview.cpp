@@ -19,7 +19,7 @@
 #include "settings.h"
 
 //kdevelop includes
-#include <core.h>
+#include <shell/core.h>
 
 // KDE includes
 #include <kdebug.h>

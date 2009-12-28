@@ -34,11 +34,11 @@
 #include <kparts/mainwindow.h>
 
 //kdevelop includes
-#include <core.h>
-#include <iprojectcontroller.h>
-#include <iplugincontroller.h>
-#include <iuicontroller.h>
-#include <iproject.h>
+#include <shell/core.h>
+#include <interfaces/iprojectcontroller.h>
+#include <interfaces/iplugincontroller.h>
+#include <interfaces/iuicontroller.h>
+#include <interfaces/iproject.h>
 
 #define GLOBALDOC_OPTIONS 1
 #define PROJECTDOC_OPTIONS 2

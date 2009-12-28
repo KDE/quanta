@@ -21,7 +21,7 @@
 #include <QList>
 
 //kdevelop includes
-#include <iplugin.h>
+#include <interfaces/iplugin.h>
 
 class KMenu;
 class KAction;

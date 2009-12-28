@@ -16,7 +16,7 @@
 
 #include <kdebug.h>
 
-#include <idocument.h>
+#include <interfaces/idocument.h>
 
 EditorSource::EditorSource(KDevelop::IDocument *document, QObject *parent)
   : QObject(parent)

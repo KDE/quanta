@@ -28,10 +28,10 @@
 #include "settings.h"
 
 //kdevelop includes
-#include <core.h>
-#include <iplugin.h>
-#include <iproject.h>
-#include <iprojectcontroller.h>
+#include <shell/core.h>
+#include <interfaces/iplugin.h>
+#include <interfaces/iproject.h>
+#include <interfaces/iprojectcontroller.h>
 
 #include <unistd.h>
 #include <grp.h>

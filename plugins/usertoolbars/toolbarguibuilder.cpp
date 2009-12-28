@@ -26,8 +26,8 @@
 #include <kglobalsettings.h>
 #include <ktoolbar.h>
 
-#include <core.h>
-#include <iuicontroller.h>
+#include <shell/core.h>
+#include <interfaces/iuicontroller.h>
 
 #if 0
 //code to create a toolview for each toolbar

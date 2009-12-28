@@ -11,7 +11,7 @@
 #ifndef KDEVQUANTAEXTENSION_H
 #define KDEVQUANTAEXTENSION_H
 
-#include <shellextension.h>
+#include <shell/shellextension.h>
 
 #include <QStringList>
 

@@ -17,7 +17,7 @@
 #include "quantaexport.h"
 
 //kdevelop includes
-#include <iextension.h>
+#include <interfaces/iextension.h>
 
 //kde includes
 

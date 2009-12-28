@@ -18,11 +18,11 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <core.h>
-#include <iproject.h>
-#include <iprojectcontroller.h>
-#include <idocumentcontroller.h>
-#include <iuicontroller.h>
+#include <shell/core.h>
+#include <interfaces/iproject.h>
+#include <interfaces/iprojectcontroller.h>
+#include <interfaces/idocumentcontroller.h>
+#include <interfaces/iuicontroller.h>
 #include "kdevkxsldbgplugin.h"
 #include "kdevkxsldbgview.h"
 #include <klibloader.h>
@@ -94,8 +94,8 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/markinterface.h>
 
-#include <ioutputview.h>
-#include <iplugincontroller.h>
+#include <outputview/ioutputview.h>
+#include <interfaces/iplugincontroller.h>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QItemDelegate>

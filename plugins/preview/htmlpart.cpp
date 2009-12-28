@@ -19,8 +19,8 @@
 #include <khtmlview.h>
 
 //kdevelop includes
-#include <core.h>
-#include <idocumentcontroller.h>
+#include <shell/core.h>
+#include <interfaces/idocumentcontroller.h>
 
 
 HTMLPart::HTMLPart(HTMLPreviewPart *part)

@@ -54,9 +54,9 @@
 #include <kparts/mainwindow.h>
 
 //kdevelop includes
-#include <core.h>
-#include <iplugin.h>
-#include <iuicontroller.h>
+#include <shell/core.h>
+#include <interfaces/iplugin.h>
+#include <interfaces/iuicontroller.h>
 
 ActionConfigDialog::ActionConfigDialog(const QHash<QString, ToolbarEntry*> &toolbarList, KDevelop::IPlugin* parent, bool modal, Qt::WFlags fl, const QString& defaultAction )
   :QDialog( KDevelop::Core::self()->uiController()->activeMainWindow(), fl )

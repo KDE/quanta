@@ -22,12 +22,12 @@
 #include <QFileInfo>
 
 //kdevelop includes
-#include <core.h>
-#include <idocumentcontroller.h>
-#include <iplugin.h>
-#include <iplugincontroller.h>
-#include <iprojectcontroller.h>
-#include <plugincontroller.h>
+#include <shell/core.h>
+#include <interfaces/idocumentcontroller.h>
+#include <interfaces/iplugin.h>
+#include <interfaces/iplugincontroller.h>
+#include <interfaces/iprojectcontroller.h>
+#include <shell/plugincontroller.h>
 
 #include "kdevquantaextension.h"
 

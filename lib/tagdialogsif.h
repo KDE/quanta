@@ -19,7 +19,7 @@
 #include <kurl.h>
 
 //kdevelop includes
-#include <iextension.h>
+#include <interfaces/iextension.h>
 
 
 class QTag;

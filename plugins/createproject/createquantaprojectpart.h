@@ -18,7 +18,7 @@
 #include <kurl.h>
 
 //kdevelop includes
-#include <iplugin.h>
+#include <interfaces/iplugin.h>
 
 
 /**

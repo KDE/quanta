@@ -32,11 +32,11 @@
 #include <kparts/mainwindow.h>
 
 //kdevelop includes
-#include <core.h>
-#include <iplugin.h>
-#include <iproject.h>
-#include <iprojectcontroller.h>
-#include <iuicontroller.h>
+#include <shell/core.h>
+#include <interfaces/iplugin.h>
+#include <interfaces/iproject.h>
+#include <interfaces/iprojectcontroller.h>
+#include <interfaces/iuicontroller.h>
 
 bool QuantaNetAccess::upload(const QString& src, const KUrl& target, KDevelop::IPlugin* plugin, bool confirm)
 {

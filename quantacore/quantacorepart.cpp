@@ -52,11 +52,11 @@
 #include <kparts/mainwindow.h>
 
 //kdevelop includes
-#include <core.h>
-#include <idocument.h>
-#include <idocumentcontroller.h>
-#include <iplugincontroller.h>
-#include <iuicontroller.h>
+#include <shell/core.h>
+#include <interfaces/idocument.h>
+#include <interfaces/idocumentcontroller.h>
+#include <interfaces/iplugincontroller.h>
+#include <interfaces/iuicontroller.h>
 
 #include <ktexteditor/document.h>
 #include <ktexteditor/range.h>

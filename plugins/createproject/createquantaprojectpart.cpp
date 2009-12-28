@@ -52,10 +52,10 @@
 
 //kdevelop includes
 
-#include <core.h>
-#include <iplugincontroller.h>
-#include <iprojectcontroller.h>
-#include <iuicontroller.h>
+#include <shell/core.h>
+#include <interfaces/iplugincontroller.h>
+#include <interfaces/iprojectcontroller.h>
+#include <interfaces/iuicontroller.h>
 
 K_PLUGIN_FACTORY(CreateQuantaProjectFactory, registerPlugin<CreateQuantaProjectPart>();)
 K_EXPORT_PLUGIN(CreateQuantaProjectFactory("kdevcreatequantaproject"))

@@ -44,14 +44,14 @@
 #include <kparts/mainwindow.h>
 
 //kdevelop includes
-#include <idocument.h>
-#include <idocumentcontroller.h>
-#include <iplugin.h>
-#include <iproject.h>
-#include <iplugincontroller.h>
-#include <iprojectcontroller.h>
-#include <iuicontroller.h>
-#include <core.h>
+#include <interfaces/idocument.h>
+#include <interfaces/idocumentcontroller.h>
+#include <interfaces/iplugin.h>
+#include <interfaces/iproject.h>
+#include <interfaces/iplugincontroller.h>
+#include <interfaces/iprojectcontroller.h>
+#include <interfaces/iuicontroller.h>
+#include <shell/core.h>
 
 
 UserAction::UserAction( QDomElement *element, KDevelop::IPlugin *plugin, bool toggle)

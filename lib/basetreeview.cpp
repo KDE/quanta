@@ -21,10 +21,10 @@
 #include "helper.h"
 
 //kdevelop includes
-#include <core.h>
-#include <idocument.h>
-#include <idocumentcontroller.h>
-#include <iuicontroller.h>
+#include <shell/core.h>
+#include <interfaces/idocument.h>
+#include <interfaces/idocumentcontroller.h>
+#include <interfaces/iuicontroller.h>
 
 // QT includes
 #include <QDropEvent>

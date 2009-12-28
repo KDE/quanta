@@ -20,7 +20,7 @@
 
 #ifndef KDEVKXSLDBGPLUGIN_H
 #define KDEVKXSLDBGPLUGIN_H
-#include <iplugin.h>
+#include <interfaces/iplugin.h>
 #include <QVariant>
 #include <QMainWindow>
 #include <QActionGroup>

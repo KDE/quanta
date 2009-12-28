@@ -15,7 +15,7 @@
 #include <QPointer>
 #include <QVariant>
 //kdevelop includes
-#include <iplugin.h>
+#include <interfaces/iplugin.h>
 
 class QMenu;
 class KAction;

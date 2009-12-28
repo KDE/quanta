@@ -35,11 +35,11 @@
 #include <kpluginloader.h>
 
 //kdevelop includes
-#include <core.h>
-#include <idocumentcontroller.h>
-#include <idocument.h>
-#include <iprojectcontroller.h>
-#include <iuicontroller.h>
+#include <shell/core.h>
+#include <interfaces/idocumentcontroller.h>
+#include <interfaces/idocument.h>
+#include <interfaces/iprojectcontroller.h>
+#include <interfaces/iuicontroller.h>
 
 K_PLUGIN_FACTORY(HTMLPreviewFactory, registerPlugin<HTMLPreviewPart>();)
 K_EXPORT_PLUGIN(HTMLPreviewFactory("kdevhtmlpreview"))
