@@ -3,7 +3,7 @@
 #
 # Example usage of this module:
 # find_package(KDevPlatform 1.0.0 REQUIRED)
-#
+# 
 # The version number and REQUIRED flag are optional. You can set CMAKE_PREFIX_PATH
 # variable to help it find the required files and directories
 
@@ -21,11 +21,10 @@
 # KDEVPLATFORM_SUBLIME_LIBRARIES         - sublime module library
 # KDEVPLATFORM_SHELL_LIBRARIES           - shell module library
 # KDEVPLATFORM_TESTS_LIBRARIES           - library to write tests for plugins,
-#                                        contains some useful tools and a way to replace parts of Core
+#                                        contains some useful tools and a way to replace parts of Core 
 #                                        classes with custom implementations
 # KDEVPLATFORM_UTIL_LIBRARIES            - util module library
 # KDEVPLATFORM_VCS_LIBRARIES             - vcs module library
-# KDEVPLATFORM_SOURCEFORMATTER_LIBRARIES - source formatter library
 # KDEVPLATFORM_DEBUGGER_LIBRARIES        - debugger module library
 #
 # The following macros are added (from KDevPlatformMacros.cmake):
