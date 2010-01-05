@@ -276,10 +276,10 @@ void ConnectionTest::testStackModel()
     QCOMPARE(stackModel->columnCount(tIdx), 3);
     COMPARE_DATA(tIdx.child(0, 0), "0");
     COMPARE_DATA(tIdx.child(0, 1), "x");
-    COMPARE_DATA(tIdx.child(0, 2), url.toLocalFile()+":4");
+    COMPARE_DATA(tIdx.child(0, 2), url.toLocalFile()+":3");
     COMPARE_DATA(tIdx.child(1, 0), "1");
     COMPARE_DATA(tIdx.child(1, 1), "{main}");
-    COMPARE_DATA(tIdx.child(1, 2), url.toLocalFile()+":6");
+    COMPARE_DATA(tIdx.child(1, 2), url.toLocalFile()+":5");
 
     session.stepInto();
     session.waitForState(DebugSession::PausedState);
