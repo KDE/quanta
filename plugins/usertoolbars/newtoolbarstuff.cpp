@@ -51,4 +51,3 @@ void NewToolbarStuff::installResource()
             KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded toolbar tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("Toolbar Installation Error"));
      }
 }*/
-#include "newtoolbarstuff.moc"
