@@ -5,6 +5,7 @@ Icon=konqueror
 X-DocPath=konqueror/index.html
 Name=Configure KHTML Browser Part
 Name[ca]=Configura la part KHTML del navegador
+Name[ca@valencia]=Configura la part KHTML del navegador
 Name[de]=Einrichten der KHTML-Browserkomponente
 Name[en_GB]=Configure KHTML Browser Part
 Name[es]=Configure la parte del navegador KHTML
