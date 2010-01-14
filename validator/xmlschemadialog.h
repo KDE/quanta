@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDE/KDialog>
 
-class QComboBox;
+class KUrlRequester;
 
 class XmlSchemaDialog : public KDialog {
 public:
@@ -38,7 +38,7 @@ public:
     QString getItem();
 
 protected:
-    QComboBox *m_comboBox;
+    KUrlRequester *m_comboBox;
 };
 
 #endif // XMLSCHEMAWIDGET_H

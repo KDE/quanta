@@ -1,16 +1,21 @@
 
-set(kdevxmlvalidator_PART_SRCS
+set(kdevxmlvalidator_SRCS
   xmlvalidator.cpp
   xmlvalidatorplugin.cpp
   xmlschemadialog.cpp
+  xmlvalidatorjob.cpp
 )
 
-kde4_add_plugin(kdevxmlvalidator ${kdevxmlvalidator_PART_SRCS})
+include_directories(${xml_SOURCE_DIR}/catalog)
+
+kde4_add_plugin(kdevxmlvalidator ${kdevxmlvalidator_SRCS})
 
 target_link_libraries(kdevxmlvalidator
   ${KDE4_KDEUI_LIBS}
   ${KDEVPLATFORM_INTERFACES_LIBRARIES}
+  kdevxmlcatalog
   xml2
+  ${KDE4_THREADWEAVER_LIBRARIES}
 )
 
 install(TARGETS kdevxmlvalidator DESTINATION ${PLUGIN_INSTALL_DIR})

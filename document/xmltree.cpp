@@ -41,6 +41,9 @@ XmlTree::~XmlTree() {
     m_treeModel = 0;
 }
 
+ /* TODO This looses the current expanded tree's.
+  * Needs to update the model rahter than replace it.
+  */
 void XmlTree::update ( const KMimeType::Ptr mime,  const QDomDocument& doc ) {
     setModel ( 0 );
     if ( m_treeModel )

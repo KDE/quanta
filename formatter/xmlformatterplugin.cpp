@@ -48,28 +48,34 @@ K_EXPORT_PLUGIN ( KdevPlugFactory ( KAboutData ( "kdevxmlformatter", "kdevxmlfor
 
 XmlFormatterPlugin::XmlFormatterPlugin ( QObject *parent, const QVariantList& )
         : IPlugin ( KdevPlugFactory::componentData(), parent ) {
-    KDEV_USE_EXTENSION_INTERFACE ( ISourceFormatter )
+    KDEV_USE_EXTENSION_INTERFACE ( ISourceFormatter );
 
     m_formatter = new XmlFormatter();
+    
+    SourceFormatterStyle defaultStyle("XML");
+    defaultStyle.setContent("INDENT=2");
+    defaultStyle.setCaption("XML");
+    m_style = defaultStyle;
+    m_styles.append(m_style);
 
     m_compactAction = actionCollection()->addAction ( "xmlcompact_xmllanguagesupport" );
     m_compactAction->setText ( i18n ( "Compact XML" ) );
     m_compactAction->setToolTip ( i18n ( "Compact the XML by removing all white-space characters" ) );
-    m_compactAction->setWhatsThis ( i18n ( "<b>Compact XML</b><p> Compact the XML by removing all white-space characters" ) );
+    m_compactAction->setWhatsThis ( i18n ( "<b>Compact XML</b><p> Compact the XML by removing all white-space characters</p>" ) );
     m_compactAction->setEnabled ( false );
     connect ( m_compactAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotCompactXml() ) );
 
     m_escapeAction = actionCollection()->addAction ( "xmlescape_xmllanguagesupport" );
     m_escapeAction->setText ( i18n ( "Escape XML" ) );
     m_escapeAction->setToolTip ( i18n ( "Encode the XML by escaping all unsafe characters" ) );
-    m_escapeAction->setWhatsThis ( i18n ( "<b>Encode XML</b><p> Encode the XML by escaping all unsafe characters" ) );
+    m_escapeAction->setWhatsThis ( i18n ( "<b>Encode XML</b><p> Encode the XML by escaping all unsafe characters</p>" ) );
     m_escapeAction->setEnabled ( false );
     connect ( m_escapeAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotEncodeXml() ) );
 
     m_unescapeAction = actionCollection()->addAction ( "xmlunescape_xmllanguagesupport" );
     m_unescapeAction->setText ( i18n ( "Un-escape XML" ) );
     m_unescapeAction->setToolTip ( i18n ( "Un-escape the XML by removing all escaped strings" ) );
-    m_unescapeAction->setWhatsThis ( i18n ( "<b>Un-escape XML</b><p> Un-escape the XML by removing all escaped strings" ) );
+    m_unescapeAction->setWhatsThis ( i18n ( "<b>Un-escape XML</b><p> Un-escape the XML by removing all escaped strings</p>" ) );
     m_unescapeAction->setEnabled ( false );
     connect ( m_unescapeAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotDecodeXml() ) );
 }
@@ -95,13 +101,10 @@ ContextMenuExtension XmlFormatterPlugin::contextMenuExtension ( Context* context
         return ext;
 
     KMimeType::Ptr mime = doc->mimeType();
-    if ( mime->is ( "text/xml" ) ||
-            mime->is ( "application/xml" ) ||
-            mime->is ( "application/xslt+xml" ) ||
-            mime->is ( "application/xsd" ) ||
-            mime->is ( "application/xsd+xml" ) ||
-            mime->is ( "application/x-wsdl" ) ||
-            mime->is ( "application/wsdl+xml" )) {
+    if ( mime->is("application/xml") ||
+        mime->is("application/xsd") ||
+        mime->is("application/xslt+xml") ||
+        mime->is("application/wsdl+xml")) {
         m_compactAction->setEnabled ( true );
         m_unescapeAction->setEnabled ( true );
         m_escapeAction->setEnabled ( true );
@@ -135,15 +138,36 @@ QString XmlFormatterPlugin::formatSource ( const QString& text, const KMimeType:
     return m_formatter->formatSource ( text, leftContext, rightContext );
 }
 
+/*
 QMap<QString, QString> XmlFormatterPlugin::predefinedStyles ( const KMimeType::Ptr & ) {
     QMap<QString, QString> styles;
     styles.insert ( "XML", "XML" );
     return styles;
 }
+*/
 
+/*
 void XmlFormatterPlugin::setStyle ( const QString &name, const QString &content ) {
     m_formatter->loadStyle ( content );
     m_formatter->loadPredefStyle ( name );
+}
+*/
+
+QList< SourceFormatterStyle > XmlFormatterPlugin::predefinedStyles()
+{
+  return m_styles;
+}
+
+void XmlFormatterPlugin::setStyle(const KDevelop::SourceFormatterStyle& style)
+{
+    kDebug() << style.name() << style.content();
+  m_style = style;
+  m_formatter->loadStyle(style.content());
+}
+
+SourceFormatterStyle XmlFormatterPlugin::style() const
+{
+  return m_style;
 }
 
 KDevelop::SettingsWidget* XmlFormatterPlugin::editStyleWidget ( const KMimeType::Ptr &mime ) {

@@ -20,11 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 
-#include <interfaces/iplugin.h>
-#include <interfaces/contextmenuextension.h>
 #include <KDE/KAction>
 #include <KDE/KUrl>
 
+#include <interfaces/iplugin.h>
+#include <interfaces/contextmenuextension.h>
+
+class KJob;
 class XmlFormatter;
 class XmlFormatterPreferences;
 
@@ -35,17 +37,13 @@ public:
     XmlValidatorPlugin ( QObject *parent, const QVariantList & = QVariantList() );
     ~XmlValidatorPlugin();
     virtual KDevelop::ContextMenuExtension contextMenuExtension ( KDevelop::Context* context );
-
+public slots:
+    void showDialog();
 protected slots:
-    void slotValidateXml();
     void slotValidate();
+    void slotValidated(KJob *);
 protected:
     KAction *m_validateAction;
-    /** Returns a local file for the schema.
-     * If an local file does not exist, it will be downloaded and saved in
-     * tmp
-     */
-    QString getLocalURLForSchema ( const KUrl &file, const KUrl &schemaUrl );
 };
 
 #endif //KDEVXMLFORMATTERPLUGIN_H_

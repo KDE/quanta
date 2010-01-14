@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <language/duchain/classdeclaration.h>
 #include <language/duchain/classmemberdeclaration.h>
 
-#include <shell/sourceformattercontroller.h>
+#include <interfaces/isourceformattercontroller.h>
 
 using namespace KDevelop;
 
@@ -58,11 +58,8 @@ XmlDocumentPlugin::XmlDocumentPlugin ( QObject* parent, const QVariantList& )
     m_docFactory = new XMLDocumentFactory();
     if ( m_docFactory ) {
         KDevelop::IDocumentController* idc = ICore::self()->documentController();
-        idc->registerDocumentForMimetype ( "text/xml", m_docFactory );
         idc->registerDocumentForMimetype ( "application/xml", m_docFactory );
         idc->registerDocumentForMimetype ( "application/xsd", m_docFactory );
-        idc->registerDocumentForMimetype ( "application/xsd+xml", m_docFactory );
-        idc->registerDocumentForMimetype ( "application/x-wsdl", m_docFactory );
         idc->registerDocumentForMimetype ( "application/wsdl+xml", m_docFactory );
         idc->registerDocumentForMimetype ( "application/xslt+xml", m_docFactory );
     }

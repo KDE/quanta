@@ -18,18 +18,66 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "xmlvalidator.h"
 
-#include "libxml2/libxml/xmlschemas.h"
+#include <libxml2/libxml/xmlschemas.h>
+#include <libxml2/libxml/catalog.h>
+#include <libxml2/libxml/parserInternals.h>
 #include <stdio.h>
 #include <stdarg.h>
 
 #include <QtCore/QDebug>
 
 #include <KDE/KUrl>
-#include <KDE/KMessageBox>
-#include <KDE/KLocalizedString>
+
+#include <xmlcatalog/icatalogmanager.h>
+#include <xmlcatalog/idocumentcachemanager.h>
+
+int XmlValidator::m_refCount = 0;
 
 
-void XmlValidator::error ( void* ctx, const char* msg, ... ) {
+xmlExternalEntityLoader defaultLoader = NULL;
+
+xmlParserInputPtr catalogManagerEntityLoader(const char *URL, const char *ID, xmlParserCtxtPtr ctxt) {
+    xmlParserInputPtr ret;
+    QString resolved = ICatalogManager::self()->resolve(ID, URL);
+    if(resolved.isEmpty())
+        resolved = ICatalogManager::self()->resolveUri(URL);
+    if(resolved.isEmpty())
+        resolved = URL;
+    //TODO This can lock down the ui as it is not run in a seperate process.
+    resolved = IDocumentCacheManager::self()->cachedUrl(resolved);
+    if(resolved.isEmpty())
+        return NULL;
+    ret = xmlNewInputFromFile(ctxt, resolved.toAscii().constData());
+    if (ret != NULL)
+        return(ret);
+    if (defaultLoader != NULL)
+        ret = defaultLoader(URL, ID, ctxt);
+    return(ret);
+}
+
+
+XmlValidator::XmlValidator()
+{
+    if(m_refCount == 0) {
+        if(!defaultLoader)
+            defaultLoader = xmlGetExternalEntityLoader();
+        xmlSetExternalEntityLoader(catalogManagerEntityLoader);
+        //QStringList catalogs = ICatalogManager::self()->catalogFileList();
+        //if(catalogs.length() > 0)
+        //    xmlLoadCatalogs(catalogs.join(";").toLatin1().constData());
+    }
+    m_refCount++;
+}
+
+XmlValidator::~XmlValidator()
+{
+    m_refCount--;
+    if(m_refCount == 0) {
+        //xmlCatalogCleanup();
+    }
+}
+
+void XmlValidator::errorMessage ( void* ctx, const char* msg, ... ) {
     if ( ctx == NULL || msg == NULL || strlen ( msg ) < 1 )
         return;
     XmlValidator *v = static_cast<XmlValidator *> ( ctx );
@@ -41,7 +89,7 @@ void XmlValidator::error ( void* ctx, const char* msg, ... ) {
     va_end ( vl );
 }
 
-void XmlValidator::warn ( void* ctx, const char* msg, ... ) {
+void XmlValidator::warnMessage ( void* ctx, const char* msg, ... ) {
     if ( ctx == NULL || msg == NULL )
         return;
     XmlValidator *v = static_cast<XmlValidator *> ( ctx );
@@ -53,9 +101,12 @@ void XmlValidator::warn ( void* ctx, const char* msg, ... ) {
     va_end ( vl );
 }
 
-bool XmlValidator::validateSchema ( const QString &documentUrl, const QString &schemaUrl ) {
+//TODO substitute the external entity resolver with a custom one.
+//TODO substitute io with custom one.
+//As the validator can not validate other imported namespaces
+XmlValidator::ValidationResult XmlValidator::validateSchema ( const QString &documentUrl, const QString &schemaUrl ) {
     if ( documentUrl.isEmpty() || schemaUrl.isEmpty() )
-        return false;
+        return InternalError;
     m_errors.clear();
     m_warnings.clear();
 
@@ -64,49 +115,48 @@ bool XmlValidator::validateSchema ( const QString &documentUrl, const QString &s
     xmlSchemaParserCtxtPtr parserCtxPtr = xmlSchemaNewParserCtxt ( KUrl ( schemaUrl ).toEncoded().constData() );
     if ( !parserCtxPtr ) {
         qDebug() << "Unable to create xmlSchemaParserCtxtPtr";
-        return false;
+        return InternalError;
     }
-    xmlSchemaValidityErrorFunc errorFunc = &XmlValidator::error;
-    xmlSchemaValidityWarningFunc warnFunc = &XmlValidator::warn;
+    xmlSchemaValidityErrorFunc errorFunc = &XmlValidator::errorMessage;
+    xmlSchemaValidityWarningFunc warnFunc = &XmlValidator::warnMessage;
 
     xmlSchemaSetParserErrors ( parserCtxPtr, errorFunc, warnFunc, this );
 
     xmlSchemaPtr schemaPtr = xmlSchemaParse ( parserCtxPtr );
     if ( !schemaPtr ) {
-        KMessageBox::information ( 0, QString ( "%1\n%2" ).arg ( i18n ( "Failed: Errors" ) ).arg ( m_errors.join ( "\n" ) ) );
         xmlSchemaFreeParserCtxt ( parserCtxPtr );
-        return false;
+        return InternalError;
     }
 
     xmlSchemaValidCtxtPtr validContextPtr = xmlSchemaNewValidCtxt ( schemaPtr );
     if ( !validContextPtr || xmlSchemaIsValid ( validContextPtr ) != 1 ) {
-        KMessageBox::information ( 0, QString ( "%1\n%2" ).arg ( i18n ( "Failed: Errors" ) ).arg ( m_errors.join ( "\n" ) ) );
         xmlSchemaFree ( schemaPtr );
         xmlSchemaFreeParserCtxt ( parserCtxPtr );
-        return false;
+        return InternalError;
     }
 
     xmlSchemaSetValidErrors ( validContextPtr, errorFunc, warnFunc, this );
 
     result = xmlSchemaValidateFile ( validContextPtr, KUrl ( documentUrl ).toEncoded().constData(), 0 );
 
-    if ( result == -1 )
-        KMessageBox::error ( 0, QString ( "%1\n%2" ).arg ( i18n ( "Failed: Errors:" ) ).arg ( m_errors.join ( "\n" ) ) );
-    else if ( result )
-        KMessageBox::error ( 0, QString ( "%1\n%2" ).arg ( i18n ( "Failed: XML is invalid" ) ).arg ( m_errors.join ( "\n" ) ) );
-    else
-        KMessageBox::information ( 0, i18n ( "Success: XML is valid" ) );
-
     xmlSchemaFree ( schemaPtr );
     xmlSchemaFreeParserCtxt ( parserCtxPtr );
     xmlSchemaFreeValidCtxt ( validContextPtr );
+    
+    if ( result == -1 )
+        return InternalError;
+    else if ( result )
+        return Failed;
 
-    return true;
+    return Success;
 }
 
-bool XmlValidator::validateDTD ( const QString& documentUrl, const QString& dtdUrl ) {
+//TODO substitute the external entity resolver with a custom one.
+//TODO substitute io with custom one.
+//As the validator can not validate other imported namespaces
+XmlValidator::ValidationResult XmlValidator::validateDTD ( const QString& documentUrl, const QString& dtdUrl ) {
     if ( documentUrl.isEmpty() )
-        return false;
+        return InternalError;
     m_errors.clear();
     m_warnings.clear();
 
@@ -116,11 +166,11 @@ bool XmlValidator::validateDTD ( const QString& documentUrl, const QString& dtdU
     if ( !dtdUrl.isEmpty() ) {
         docPtr = xmlParseFile ( documentUrl.toLatin1().constData() );
         if ( !docPtr ) {
-            return false;
+            return InternalError;
         }
 
-        xmlValidityErrorFunc errorFunc = &XmlValidator::error;
-        xmlValidityWarningFunc warnFunc = &XmlValidator::warn;
+        xmlValidityErrorFunc errorFunc = &XmlValidator::errorMessage;
+        xmlValidityWarningFunc warnFunc = &XmlValidator::warnMessage;
 
         xmlValidCtxt cvp;
         cvp.error = errorFunc;
@@ -138,21 +188,20 @@ bool XmlValidator::validateDTD ( const QString& documentUrl, const QString& dtdU
         xmlDocPtr docPtr;
         ctxt = xmlNewParserCtxt();
         if ( !ctxt )
-            return false;
+            return InternalError;
         docPtr = xmlCtxtReadFile ( ctxt, documentUrl.toLatin1().constData(), NULL, XML_PARSE_DTDVALID );
         result = ctxt->valid;
         m_errors.append ( QString ( "%1:%2 %3" ).arg ( ctxt->lastError.line ).arg ( ctxt->lastError.int2 ).arg ( ctxt->lastError.message ) );
         xmlFreeParserCtxt ( ctxt );
     }
 
-    if ( result == -1 )
-        KMessageBox::error ( 0, QString ( "%1\n%2" ).arg ( i18n ( "Failed: Errors" ) ).arg ( m_errors.join ( "\n" ) ) );
-    else if ( !result )
-        KMessageBox::error ( 0, QString ( "%1\n%2" ).arg ( i18n ( "Failed: XML is invalid" ) ).arg ( m_errors.join ( "\n" ) ) );
-    else
-        KMessageBox::information ( 0, i18n ( "Success: XML is valid" ) );
     if ( docPtr )
         xmlFreeDoc ( docPtr );
-    return true;
+
+    if ( result == -1 )
+        return InternalError;
+    else if ( !result )
+        return Failed;
+    return Success;
 }
 

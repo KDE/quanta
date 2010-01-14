@@ -24,7 +24,7 @@ const QIcon & AbstractXmlModel::getIcon ( const QString &fileNamePart ) const
   static QHash <QString, QIcon> icons;
   if ( icons.contains ( fileNamePart ) )
     return icons[fileNamePart];
-  QIcon i ( QString ( ":/%1.png" ).arg ( fileNamePart ) );
+  QIcon i ( QString ( ":/xml/%1.png" ).arg ( fileNamePart ) );
   icons.insert ( fileNamePart,i );
   return icons[fileNamePart];
 }

@@ -30,8 +30,8 @@ public:
     XmlFormatterPreferences ( QWidget* parent = 0, Qt::WindowFlags f = 0 );
     virtual ~XmlFormatterPreferences();
     virtual QMap<QString, QVariant> getOptions();
-    virtual void load ( const QString& name, const QString& content );
     virtual QString save();
+    virtual void load(const KDevelop::SourceFormatterStyle& );
 protected slots:
     void updateText ( int );
 protected:

@@ -52,11 +52,11 @@ public:
 
     /** \return A map of predefined styles (a key and a caption for each type)
     */
-    virtual QMap<QString, QString> predefinedStyles ( const KMimeType::Ptr &mime );
+    //virtual QMap<QString, QString> predefinedStyles ( const KMimeType::Ptr &mime );
     /** Load the predefined type of name \arg name, or if the first arg is empty, the style
     *   defined by the options string \arg content.
     */
-    virtual void setStyle ( const QString &name, const QString &content = QString() );
+    //virtual void setStyle ( const QString &name, const QString &content = QString() );
 
     /** \return The widget to edit a style.
     */
@@ -74,6 +74,10 @@ public:
     * or the number of spaces per tab if IndentWithTabs is selected.
     */
     virtual int indentationLength();
+    
+    virtual QList< KDevelop::SourceFormatterStyle > predefinedStyles();
+    virtual void setStyle(const KDevelop::SourceFormatterStyle& );
+    virtual KDevelop::SourceFormatterStyle style() const;
 
 protected slots:
     void slotCompactXml();
@@ -85,6 +89,8 @@ protected:
     KAction *m_compactAction;
     KAction *m_escapeAction;
     KAction *m_unescapeAction;
+    KDevelop::SourceFormatterStyle m_style;
+    QList<KDevelop::SourceFormatterStyle> m_styles;
 };
 
 #endif //KDEVXMLFORMATTERPLUGIN_H_

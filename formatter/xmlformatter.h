@@ -46,16 +46,13 @@ public:
      */
     QChar charForEscapeSequence ( const QString & s ) const;
 
+    /** Returns a string like &(amp); for '&'
+     */
     QString escapeSequenceForChar ( const QChar & c ) const;
 
     /** Loads a formatting style.
      */
     void loadStyle ( const QString &content );
-
-    /** Loads a predefined style.
-    * At the moment there is only 'XML'
-    */
-    void loadPredefStyle ( const QString &name );
 
     const QMap<QString, QVariant> & options() const {
         return m_options;

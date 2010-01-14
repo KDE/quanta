@@ -1,0 +1,3 @@
+1) The model - tree view is broken, there is some orphan pointer lying around sometimes that break things.
+2) The model also updates every single time and looses the users expanded levels.
+3) Possibly add more complete support for editing catalogs.

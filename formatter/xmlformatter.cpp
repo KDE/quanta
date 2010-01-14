@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "xmlformatter.h"
 
 #include <interfaces/isourceformatter.h>
-#include <KMessageBox>
 
 XmlFormatter::XmlFormatter() {
     m_options.insert ( "INDENT", QVariant ( 2 ) );
@@ -28,13 +27,6 @@ void XmlFormatter::loadStyle ( const QString& content ) {
     if ( content.isNull() )
         return;
     m_options = KDevelop::ISourceFormatter::stringToOptionMap ( content );
-}
-
-void XmlFormatter::loadPredefStyle ( const QString& name ) {
-    if ( name.isNull() )
-        return;
-    if ( name == "XML" )
-        m_options.insert ( "INDENT", QVariant ( 2 ) );
 }
 
 QString XmlFormatter::saveStyle() {
@@ -72,6 +64,8 @@ QString XmlFormatter::formatSource ( const QString& text, const QString& leftCon
     bool inElement = false;
     int depth = 0;
     QString endLine = "\n";
+    //This is for a newline quirk
+    int formatCount = 0;
 
     if ( leftContext.size()  > 0 ) {
         QString leftStr = leftContext;
@@ -112,6 +106,7 @@ QString XmlFormatter::formatSource ( const QString& text, const QString& leftCon
         case  Processing:
             result << content << token;
             content = "";
+            formatCount++;
             break;
         case  ClosedElement: {
             //NOTE Duplication of below
@@ -125,7 +120,7 @@ QString XmlFormatter::formatSource ( const QString& text, const QString& leftCon
                     result << list.last() << endLine;
                 if ( list.size() > 0 )
                     align = list.last().size();
-            } else
+            } else if(formatCount)
                 result << endLine;
             content = "";
             list = token.split ( endLine );
@@ -133,6 +128,7 @@ QString XmlFormatter::formatSource ( const QString& text, const QString& leftCon
             for ( int i = 1; i < list.size(); i++ )
                 result << endLine << indentString ( depth, indent ).remove ( 0, align ) << list[i];
 
+            formatCount++;
             inElement = false;
         }
         break;
@@ -148,7 +144,7 @@ QString XmlFormatter::formatSource ( const QString& text, const QString& leftCon
                     result << list.last() << endLine;
                 if ( list.size() > 0 )
                     align = list.last().size();
-            } else
+            } else if(formatCount)
                 result << endLine;
             content = "";
             list = token.split ( endLine );
@@ -157,6 +153,7 @@ QString XmlFormatter::formatSource ( const QString& text, const QString& leftCon
                 result << endLine << indentString ( depth, indent ).remove ( 0, align ) << list[i];
 
             depth++;
+            formatCount++;
             inElement = true;
         }
         break;
@@ -178,21 +175,26 @@ QString XmlFormatter::formatSource ( const QString& text, const QString& leftCon
             inElement = false;
             depth--;
             content = "";
+            formatCount++;
             break;
         case  CDATA:
             result << content << token;
             content = "";
+            formatCount++;
             break;
         case  DTD:
             result << content << token;
             content = "";
+            formatCount++;
             break;
         case  Comment:
             result << content << token;
             content = "";
+            formatCount++;
             break;
         case  Text:
             content = token;
+            formatCount++;
             break;
         default:
             return text;
@@ -472,13 +474,18 @@ QString XmlFormatter::readUntill ( QTextStream & stream, const QString& conditio
 }
 
 QString XmlFormatter::readAndValidateUntill ( QTextStream& stream, const QString& condition, int *error ) const {
-    //Not allowed to contain '<' or "'<'" or "'>'" or "'&'" or '&'
+    //TODO Not allowed to contain '<' or "'<'" or "'>'" or "'&'" or '&'
     QString ret = "";
     QChar c;
     *error = None;
+    char escape = 0;
     while ( !stream.atEnd() ) {
         stream >> c;
-        if ( c == '<' )
+        if(c == escape)
+            escape = 0;
+        else if(!escape && (c == '"' || c == '\''))
+            escape = c.toAscii();
+        if ( c == '<' && !escape)
             *error = '<';
         if ( *error )
             return QString();

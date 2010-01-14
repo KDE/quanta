@@ -25,24 +25,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 class XmlValidator {
 public:
-    XmlValidator() {}
-    ~XmlValidator() {}
+
+    enum ValidationResult {Success, Failed, InternalError};
+    
+    XmlValidator();
+    ~XmlValidator();
 
     /** Validates a XML document against a schema.
-     * @return Returns true if successful
+     * @return Returns Success if successful.
      */
-    bool validateSchema ( const QString &documentUrl, const QString &schemaUrl );
+    ValidationResult validateSchema ( const QString &documentUrl, const QString &schemaUrl );
 
     /** Validates a XML document against a DTD.
      * @param dtdUrl If left empty then the document will be validated as is.
-     * @return Returns true if successful
+     * @return Returns Success if successful.
      */
-    bool validateDTD ( const QString &documentUrl, const QString &dtdUrl = QString() );
+    ValidationResult validateDTD ( const QString &documentUrl, const QString &dtdUrl = QString() );
+
+    const QStringList & errors() const {return m_errors; }
+    const QStringList & warnings() const {return m_warnings; }
+    
 protected:
-    static void error ( void * ctx, const char * msg, ... );
-    static void warn ( void * ctx, const char * msg, ... );
+    static void errorMessage ( void * ctx, const char * msg, ... );
+    static void warnMessage ( void * ctx, const char * msg, ... );
     QStringList m_errors;
     QStringList m_warnings;
+    //The catalogs should only be loaded once
+    static int m_refCount;
 };
 
 #endif // XMLVALIDATOR_H

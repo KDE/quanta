@@ -1,0 +1,9 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource prefix="/xml">
+    <file>catalog.png</file>
+    <file>publicId.png</file>
+    <file>systemId.png</file>
+    <file>uri.png</file>
+  </qresource>
+</RCC>

@@ -18,11 +18,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "xmlvalidatorplugin.h"
 #include "xmlschemadialog.h"
 #include "xmlvalidator.h"
+#include "xmlvalidatorjob.h"
 
 #include <QtCore/QPair>
 #include <QtCore/QList>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
+#include <QtGui/QApplication>
 
 #include <KDE/KPluginFactory>
 #include <KDE/KPluginLoader>
@@ -44,6 +46,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <interfaces/icore.h>
 #include <interfaces/iplugin.h>
 #include <interfaces/isourceformatter.h>
+#include <interfaces/iruncontroller.h>
+
+#include <xmlcatalog/icatalogmanager.h>
+#include <xmlcatalog/idocumentcachemanager.h>
+
 
 using namespace KDevelop;
 
@@ -59,7 +66,7 @@ XmlValidatorPlugin::XmlValidatorPlugin ( QObject *parent, const QVariantList& )
     m_validateAction->setToolTip ( i18n ( "Validate the XML" ) );
     m_validateAction->setWhatsThis ( i18n ( "<b>Validate XML</b><p> Validate the XML" ) );
     m_validateAction->setEnabled ( false );
-    connect ( m_validateAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotValidateXml() ) );
+    connect ( m_validateAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( showDialog() ) );
 }
 
 XmlValidatorPlugin::~XmlValidatorPlugin() {
@@ -67,7 +74,7 @@ XmlValidatorPlugin::~XmlValidatorPlugin() {
 
 ContextMenuExtension XmlValidatorPlugin::contextMenuExtension ( Context* context ) {
     Q_UNUSED(context)
-  
+
     ContextMenuExtension ext;
     m_validateAction->setEnabled ( false );
     IDocument* doc = ICore::self()->documentController()->activeDocument();
@@ -77,13 +84,10 @@ ContextMenuExtension XmlValidatorPlugin::contextMenuExtension ( Context* context
     if ( !tdoc )
         return ext;
     KMimeType::Ptr mime = doc->mimeType();
-    if ( mime->is ( "text/xml" ) ||
-            mime->is ( "application/xml" ) ||
-            mime->is ( "application/xslt+xml" ) ||
-            mime->is ( "application/xsd" ) ||
-            mime->is ( "application/xsd+xml" ) ||
-            mime->is ( "text/xsd" ) ) {
-
+    if ( mime->is ( "application/xml" ) ||
+         mime->is ( "application/xslt+xml" ) ||
+         mime->is ( "application/xsd" ) ||
+         mime->is ( "application/wsdl+xml" )) {
         m_validateAction->setEnabled ( true );
         ext.addAction ( ContextMenuExtension::EditGroup, m_validateAction );
     }
@@ -91,7 +95,7 @@ ContextMenuExtension XmlValidatorPlugin::contextMenuExtension ( Context* context
     return ext ;
 }
 
-void XmlValidatorPlugin::slotValidateXml() {
+void XmlValidatorPlugin::showDialog() {
     IDocument* doc = ICore::self()->documentController()->activeDocument();
     if ( !doc )
         return;
@@ -103,21 +107,27 @@ void XmlValidatorPlugin::slotValidateXml() {
     QString strError;
     int line = -1;
     int col = -1;
-
-    QStringList schemas;
-
     QDomDocument xdoc;
     if ( !xdoc.setContent ( tdoc->text(), true, &strError, &line, &col ) ) {
-        KMessageBox::error ( 0, QString ( "%1:\n%2:%3 %4" ).arg ( i18n ( "Error in document format" ) ).arg ( line ).arg ( col ).arg ( strError ) );
+        KMessageBox::error ( ICore::self()->uiController()->activeMainWindow(),
+                             QString ( "%1:\n%2:%3 %4" ).arg ( i18n ( "Error in document format" ) ).arg ( line ).arg ( col ).arg ( strError ) );
         return;
     }
+
+    QStringList schemas;
 
     QDomDocumentType doctype = xdoc.doctype();
     if ( !doctype.isNull() ) {
         QString systemId = doctype.systemId();
-        if ( !systemId.isEmpty() )
-            schemas.append ( systemId );
-        if ( !doctype.name().isEmpty() )
+        QString publicId = doctype.publicId();
+        QString resolved;
+        if ((!systemId.isEmpty()) || !publicId.isEmpty())
+            resolved = ICatalogManager::self()->resolve(publicId, systemId);
+        if ((!systemId.isEmpty()) && resolved.isEmpty())
+            resolved = ICatalogManager::self()->resolveUri(systemId);
+        if ((!systemId.isEmpty()) && resolved.isEmpty())
+            schemas.append(systemId);
+        else if ( !doctype.name().isEmpty() )
             schemas.append ( QString ( "DOCTYPE %1" ).arg ( doctype.name() ) );
     }
 
@@ -125,7 +135,10 @@ void XmlValidatorPlugin::slotValidateXml() {
     for ( int i = 0; i < nodeList.size(); i++ ) {
         QDomNode node = nodeList.at ( i );
 
-        QString nameSpace = node.namespaceURI();
+        QString resolved = ICatalogManager::self()->resolveUri(node.namespaceURI());
+        if (!resolved.isEmpty())
+            schemas.append(resolved);
+
         if ( node.hasAttributes() ) {
             QDomNamedNodeMap m = node.attributes();
             for ( int j = 0; j < m.count(); j++ ) {
@@ -133,18 +146,30 @@ void XmlValidatorPlugin::slotValidateXml() {
                 if ( attribute.namespaceURI() == "http://www.w3.org/2001/XMLSchema" || attribute.namespaceURI() == "http://www.w3.org/2001/XMLSchema-instance" ) {
                     if ( attribute.localName() == "schemaLocation" ) {
                         QStringList sl = attribute.nodeValue().split ( QRegExp ( "\\s*" ) );
-                        for ( int k = 0; k < sl.size(); k += 2 )
-                            schemas.append ( sl[k+1] );
+                        for ( int k = 0; k < sl.size() && sl.size()%2 == 0; k += 2 ) {
+                            QString resolved = ICatalogManager::self()->resolveSystemId(sl[k+1]);
+                            if (resolved.isEmpty())
+                                resolved = ICatalogManager::self()->resolveUri(sl[k+1]);
+                            if (!resolved.isEmpty())
+                                schemas.append(resolved);
+                            else
+                                schemas.append ( sl[k+1] );
+                        }
                     }
                     if ( attribute.localName() == "noNamespaceSchemaLocation" ) {
-                        schemas.append ( attribute.nodeValue() );
+                        QString resolved = ICatalogManager::self()->resolveSystemId(attribute.nodeValue());
+                        if (resolved.isEmpty())
+                            resolved = ICatalogManager::self()->resolveUri(attribute.nodeValue());
+                        if (!resolved.isEmpty())
+                            schemas.append(resolved);
+                        else
+                            schemas.append ( attribute.nodeValue() );
                     }
                 }
             }
         }
     }
 
-    QString schema;
     static XmlSchemaDialog *w = ( {
         XmlSchemaDialog *w = new XmlSchemaDialog ( ICore::self()->uiController()->activeMainWindow()->widget() );
         connect ( w, SIGNAL ( okClicked() ), this, SLOT ( slotValidate() ) );
@@ -167,53 +192,50 @@ void XmlValidatorPlugin::slotValidate() {
 
     QString schema = w->getItem();
     if ( !schema.isEmpty() ) {
-        XmlValidator v;
-        if ( schema.startsWith ( "DOCTYPE" ) ) {
-            v.validateDTD ( doc->url().toLocalFile() );
-        } else {
-            QString localSchema = getLocalURLForSchema ( doc->url(), KUrl ( schema ) );
-            if ( localSchema.isEmpty() || !QFile::exists ( localSchema ) ) {
-                KMessageBox::error ( 0, QString ( "%1: %2" ).arg ( i18n ( "Unable to locate" ) ).arg ( schema ) );
-                return;
-            }
 
-            KMimeType::Ptr mime = KMimeType::findByUrl ( KUrl ( localSchema ) );
-            if ( mime->is ( "application/xsd" ) || mime->is ( "application/xsd+xml" ))
-                v.validateSchema ( doc->url().toLocalFile(), localSchema );
-            else
-                v.validateDTD ( doc->url().toLocalFile(), localSchema );
+        KJob *job = 0;
+
+        if ( schema.startsWith ( "DOCTYPE" ) ) {
+            job = XmlValidatorJob::dtdValidationJob ( doc->url().toLocalFile() );
+        } else {
+            //If the url is remote we cant realy get the mime so we add a small hack
+            //TODO A better solution is welcome
+            KMimeType::Ptr mime = KMimeType::findByUrl ( KUrl ( schema ) );
+            KMimeType::Ptr localMime = KMimeType::findByUrl ( KUrl ( IDocumentCacheManager::self()->getLocalUrl(schema)) );
+            if ( mime->is ( "application/xsd" ) ||
+                mime->is ( "application/xsd+xml" ) ||
+                localMime->is( "application/xsd" ) ||
+                localMime->is( "application/xsd+xml" ))
+                job = XmlValidatorJob::schemaValidationJob( doc->url().toLocalFile(), schema );
+            else if (mime->is ( "application/xml-dtd" ) ||
+                    localMime->is( "application/xml-dtd" )) {
+                job = XmlValidatorJob::dtdValidationJob ( doc->url().toLocalFile(), schema );
+            } else {
+                KMessageBox::error(ICore::self()->uiController()->activeMainWindow(),
+                                   i18n("Unable to determine mime type for: ") + schema);
+            }
+        }
+        
+        if (job) {
+            connect(job, SIGNAL(result(KJob *)), this, SLOT(slotValidated(KJob *)));
+            ICore::self()->runController()->registerJob(job);
         }
     }
 }
 
-QString XmlValidatorPlugin::getLocalURLForSchema ( const KUrl& file, const KUrl& schemaUrl ) {
-    if ( file.isEmpty() || schemaUrl.isEmpty() )
-        return QString();
-
-    if ( schemaUrl.isRelative() ) {
-        QString schemaDir = schemaUrl.directory ( KUrl::IgnoreTrailingSlash );
-        if ( !schemaDir.isEmpty() )
-            return QString ( "%1/%2/%3" ).arg ( file.directory ( KUrl::IgnoreTrailingSlash ), schemaDir, schemaUrl.fileName() );
-        else
-            return QString ( "%1/%2" ).arg ( file.directory ( KUrl::IgnoreTrailingSlash ), schemaUrl.fileName() );
+void XmlValidatorPlugin::slotValidated(KJob* job)
+{
+    XmlValidatorJob * validateJob = static_cast<XmlValidatorJob *>(job);
+    if (!validateJob)
+        return;
+    if (validateJob->error() == XmlValidator::InternalError) {
+        KMessageBox::error(0, i18n("Failed: Internal Error:\n") + validateJob->errorString());
+    } else if (validateJob->error() == XmlValidator::Failed) {
+        KMessageBox::error(0, i18n("Failed: Error:\n") + validateJob->errorString());
+    } else if (validateJob->error() == XmlValidator::Success) {
+        KMessageBox::information(0, i18n("Success: The XML is valid."));
     }
-
-    if ( schemaUrl.isLocalFile() )
-        return schemaUrl.toLocalFile();
-
-    if ( !schemaUrl.isLocalFile() ) {
-        QString localFileName = QString ( schemaUrl.toEncoded().constData() ).replace ( QRegExp ( "[/]|[:]" ), "_" );
-        KUrl localUrl ( QString ( "/tmp/%1" ).arg ( localFileName ) );
-        if ( QFile::exists ( localUrl.toLocalFile() ) )
-            return localUrl.toLocalFile();
-        KJob *job = KIO::copy ( schemaUrl, localUrl );
-        if ( job->exec() )
-            return localUrl.toLocalFile();
-        else
-            KMessageBox::error ( 0, i18n ( "Unable to download the schema" ) );
-    }
-
-    return QString();
 }
+
 
 #include "xmlvalidatorplugin.moc"

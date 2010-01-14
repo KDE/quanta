@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "xmlformatterpreferences.h"
 #include "xmlformatter.h"
 
+#include <KDE/KDebug>
+
 
 XmlFormatterPreferences::XmlFormatterPreferences ( QWidget* parent, Qt::WindowFlags f )
         : KDevelop::SettingsWidget ( parent ) {
@@ -32,9 +34,10 @@ XmlFormatterPreferences::~XmlFormatterPreferences() {
         delete m_formatter;
 }
 
-void XmlFormatterPreferences::load ( const QString& name, const QString& content ) {
-    Q_UNUSED ( name );
-    m_formatter->loadStyle ( content );
+void XmlFormatterPreferences::load(const KDevelop::SourceFormatterStyle& style)
+{
+    kDebug() << style.name() << style.content();
+    m_formatter->loadStyle ( style.content() );
     int indent = getOptions()["INDENT"].toInt();
     if ( indent < 0 || indent > 99 )
       indent = 2;

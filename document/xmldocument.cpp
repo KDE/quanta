@@ -273,7 +273,6 @@ bool XmlDocument::save ( KDevelop::IDocument::DocumentSaveMode mode ) {
             return true;
 
         case IDocument::Modified:
-            break;
             if ( ! ( mode & Silent ) ) {
                 int code = KMessageBox::warningYesNoCancel (
                                ICore::self()->uiController()->activeMainWindow(),
@@ -470,7 +469,8 @@ void XmlDocument::parse() {
   if(!d->document)
     return;
   d->domDocument.clear();
-  d->domDocument.setContent(d->document->text(), true);
+  if(!d->domDocument.setContent(d->document->text(), true))
+      kDebug() << "Unable to parse document";
   foreach(XmlDocumentView *v, d->views)
     v->update();
 }
