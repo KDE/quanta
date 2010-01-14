@@ -1,5 +1,0 @@
-1) A catalog manager that manages/stores XML schema's and DTD's.
-   These should be indexed by publicID/namespace systemID/schemaLocation.
-   This then can be used in language support and validation.
-   Perhaps a window so that the user can add his favorite DTD's and XSD's
-   ie: XSD documents only include the namespace http://www.w3.org/2001/XMLSchema but with no location.
