@@ -71,7 +71,8 @@
 #include "launchconfig.h"
 
 K_PLUGIN_FACTORY(KDevXDebugDebuggerFactory, registerPlugin<XDebug::XDebugPlugin>(); )
-K_EXPORT_PLUGIN(KDevXDebugDebuggerFactory("kdevxdebug"))
+K_EXPORT_PLUGIN(KDevXDebugDebuggerFactory(KAboutData("kdevxdebug", "kdevxdebug", ki18n("XDebug Support"), "0.1", ki18n("Support for debugging Php scripts in XDebug"), KAboutData::License_GPL)))
+
 
 namespace XDebug
 {
