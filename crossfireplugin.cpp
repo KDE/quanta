@@ -38,7 +38,8 @@
 namespace Crossfire {
 
 K_PLUGIN_FACTORY(KDevCrossfireDebuggerFactory, registerPlugin<Crossfire::CrossfirePlugin>(); )
-K_EXPORT_PLUGIN(KDevCrossfireDebuggerFactory("kdevcrossfire"))
+K_EXPORT_PLUGIN(KDevCrossfireDebuggerFactory(KAboutData("kdevcrossfire", "kdevcrossfire", ki18n("Crossfire Support"), "0.1", ki18n("Support for debugging scripts in Firefox using the Crossfire extension"), KAboutData::License_GPL)))
+
 
 CrossfirePlugin::CrossfirePlugin( QObject *parent, const QVariantList & ) :
     KDevelop::IPlugin( KDevCrossfireDebuggerFactory::componentData(), parent )
