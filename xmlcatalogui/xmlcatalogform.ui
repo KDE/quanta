@@ -44,7 +44,7 @@
         <string>Add a catalog to the list.</string>
        </property>
        <property name="text">
-        <string>Add &amp;catalog ...</string>
+        <string>Add &amp;catalog...</string>
        </property>
       </widget>
      </item>
@@ -54,14 +54,14 @@
         <string>Add a Schema or DTD to the selected catalog.</string>
        </property>
        <property name="text">
-        <string>&amp;Add DTD or Schema ...</string>
+        <string>&amp;Add DTD or Schema...</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="updateBtn">
        <property name="toolTip">
-        <string>Download all the Schema and DTD files of the slected item.</string>
+        <string>Download all the Schema and DTD files of the selected item.</string>
        </property>
        <property name="text">
         <string>&amp;Update</string>
@@ -71,7 +71,7 @@
      <item>
       <widget class="QPushButton" name="removeBtn">
        <property name="toolTip">
-        <string>Remove the slected entry from the list.</string>
+        <string>Remove the selected entry from the list.</string>
        </property>
        <property name="text">
         <string>&amp;Remove</string>
