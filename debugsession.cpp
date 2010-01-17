@@ -56,6 +56,7 @@ bool DebugSession::listenForConnection()
 {
     Q_ASSERT(!m_server);
     m_server = new QTcpServer(this);
+    kDebug();
     if(m_server->listen(QHostAddress::Any, 9000)) {
         connect(m_server, SIGNAL(newConnection()), this, SLOT(incomingConnection()));
     } else {
@@ -70,6 +71,7 @@ bool DebugSession::listenForConnection()
 
 void DebugSession::incomingConnection()
 {
+    kDebug();
     QTcpSocket* client = m_server->nextPendingConnection();
 
     m_connection = new Connection(client, this);
