@@ -40,12 +40,12 @@ XmlDocumentView::XmlDocumentView(XmlDocument *doc, QWidget* parent): QTabWidget(
     addTab ( cont, "Source" );
     setTabEnabled ( 0, true );
 
-    m_view = doc->textDocument()->createView ( 0 );
+    m_view = doc->textDocument()->createView ( cont );
     cont->layout()->addWidget ( m_view );
     m_view->setContextMenu( m_view->defaultContextMenu() );
     connect(m_view, SIGNAL(contextMenuAboutToShow(KTextEditor::View*,QMenu*)), this, SLOT(populateContextMenu(KTextEditor::View*,QMenu*)));
 
-    m_tree = new XmlTree ();
+    m_tree = new XmlTree ( cont );
     addTab ( m_tree, "Tree" );
     setTabEnabled ( 1, true );
     connect(m_tree, SIGNAL(itemSelected(KTextEditor::Cursor)), this, SLOT(setCursorPosition(KTextEditor::Cursor)));
