@@ -48,16 +48,17 @@ XmlSchemaDialog::XmlSchemaDialog ( QWidget* parent, Qt::WindowFlags f ) : KDialo
 
 XmlSchemaDialog::~XmlSchemaDialog() {}
 
-void XmlSchemaDialog::setItems ( QStringList items ) {
+void XmlSchemaDialog::setItems ( const QHash<QString, QString> &items ) {
+    m_items = items;
     m_comboBox->clear();
     m_comboBox->comboBox()->clear();
-    foreach ( QString s, items ) {
+    foreach ( QString s, items.keys() ) {
         m_comboBox->comboBox()->addUrl( s );
     }
 }
 
-QString XmlSchemaDialog::getItem() {
-    return m_comboBox->text();
+QPair<QString, QString> XmlSchemaDialog::getItem() const {
+    return QPair<QString, QString>(m_comboBox->text(), m_items[m_comboBox->text()]);
 }
 
 

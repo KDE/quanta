@@ -58,6 +58,18 @@ public:
 
     QString info() const {
         if (!m_entry) return QString::null;
+        QString name = m_entry->publicId();
+        if (!name.isNull() && m_entry->catalog()) {
+            return m_entry->catalog()->resolvePublicId(name);
+        }
+        name = m_entry->systemId();
+        if (!name.isNull() && m_entry->catalog()) {
+            return m_entry->catalog()->resolveSystemId(name);
+        }
+        name = m_entry->URI();
+        if (!name.isNull() && m_entry->catalog()) {
+            return m_entry->catalog()->resolveUri(name);
+        }
         return m_entry->URL();
     }
 

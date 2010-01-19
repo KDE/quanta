@@ -349,8 +349,16 @@ void XmlCatalogDialog::slotOpenDocument()
     ICatalog *catalog;
     ICatalogEntry *entry;
     getSelection(catalog, entry);
-    if (entry)
-        file = entry->URL();
+    if (entry) {
+        if(!entry->publicId().isEmpty() && entry->catalog()) 
+            file = entry->catalog()->resolvePublicId(entry->publicId());
+        else if(!entry->systemId().isEmpty() && entry->catalog()) 
+            file = entry->catalog()->resolveSystemId(entry->systemId());
+        else if(!entry->URI().isEmpty() && entry->catalog()) 
+            file = entry->catalog()->resolveUri(entry->URI());
+        else 
+            file = entry->URL();
+    }
     if (catalog)
         file = catalog->parameter(ICatalogManager::ParameterFile).toString();
 

@@ -29,7 +29,7 @@ public:
     /** Adds whites to make the xml more readable
     */
     QString formatSource ( const QString& text, const QString& leftContext = QString(), const QString& rightContext = QString() ) const;
-
+    
     /** Removes all whites
      */
     QString compactSource ( const QString& text ) const;

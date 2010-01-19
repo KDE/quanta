@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define SCC static const char *
 #define SCCI const char * OASISCatalogReaderWriter::
+#include <KMessageBox>
 
 
 struct OASISCatalogReaderWriter::e {
@@ -82,7 +83,7 @@ SCCI a::Prefer = "prefer";
 SCCI a::PublicId = "publicId";
 SCCI a::SystemId = "systemId";
 SCCI a::Uri = "uri";
-SCCI a::Base = "xml:base";
+SCCI a::Base = "base";
 SCCI a::Catalog = "catalog";
 SCCI a::UriStartString = "uriStartString";
 SCCI a::RewritePrefix = "rewritePrefix";
@@ -135,8 +136,18 @@ ICatalog* OASISCatalogReaderWriter::readCatalog ( const QString& file ) const {
         return 0;
     }
     QDomDocument d;
-    if(d.setContent(&f,true))
-        return readCatalog(d);
+    if(d.setContent(&f,true)) {
+        ICatalog* c = readCatalog(d);
+        if(c) {
+            //Add the directory as the base path.
+            //This should not be saved, so that the catalog may be moved and still work.
+            OASISCatalog *catalog = (OASISCatalog *)c;
+            if(catalog->m_base.isEmpty()) {
+                catalog->m_base = KUrl(file).directory(KUrl::AppendTrailingSlash);
+            }
+            return c;
+        }
+    }
     return 0;
 }
 

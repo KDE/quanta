@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 #include "oasiscatalog.h"
 #include "publicid.h"
 
@@ -250,6 +251,9 @@ OASISCatalogContainer::~OASISCatalogContainer() {
     foreach ( OASISCatalogGroup *g, m_groups ) {
         if ( g ) delete g;
     }
+//    foreach ( OASISCatalogContainer *c, m_catalogs ) {
+//        if ( c ) delete c;
+//    }
     m_parent = 0;
 }
 
@@ -269,10 +273,11 @@ const QString& OASISCatalogContainer::prefer() const {
 
 QString OASISCatalogContainer::resolve ( const QString& publicId, const QString& systemId ) const {
     QString res;
-    //TODO all of it
     if (prefer() == PreferPublic && !publicId.isEmpty()) {
         res = resolvePublicId(publicId);
-        if (res.isEmpty() && !systemId.isEmpty())
+        if(!res.isEmpty())
+            return res;
+        else if (!systemId.isEmpty())
             return resolveSystemId(systemId);
     }
     else if (!systemId.isEmpty())
@@ -303,6 +308,7 @@ QString OASISCatalogContainer::resolvePublicId ( const QString& publicId ) const
             return res; //Already rewritten
     }
     //TODO implement delegate
+    
     return QString::null;
 }
 
@@ -329,6 +335,8 @@ QString OASISCatalogContainer::resolveSystemId ( const QString& systemId ) const
         if (!res.isEmpty())
             return res; //Already rewritten
     }
+    //TODO implement delegate
+    
     return QString::null;
 }
 

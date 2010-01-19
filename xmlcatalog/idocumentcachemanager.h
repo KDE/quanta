@@ -36,13 +36,16 @@ public:
     virtual QString getCacheDirectory() const;
 
     /** Returns a local url for the remote url.
-     *  If the url is already local it will return it as is. */
+     *  If the url is already local it will return it as is.
+     *  This method do not make a local copy.
+     *  @see cachedUrl
+     */
     virtual QString getLocalUrl(const QString &url) = 0;
 
     /** Returns a local URL for the remote url.
     *  If the URL is already local it will return it as is.
-    *  If it does not exist locally it will make a local copy
-    *  synchronously.
+    *  If it does not exist locally it <b>will make a local copy
+    *  synchronously</b>.
     *  @return QString:null if failed.
     */
     virtual QString cachedUrl(const QString &url, KIO::JobFlags flags = KIO::HideProgressInfo) = 0;

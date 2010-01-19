@@ -36,8 +36,8 @@ class OASISCatalog;
 
 
 /** Used when reading writing the catalog.
- * The catalog should always start with a existing document and
- * the reader writer should set the element.
+ * The catalog should always start with an existing document and
+ * the reader writer should set the elements.
  * If a new entry is added to the catalog a new dom-element should be added to the parent dom-node.
  * also when properties are set the relevant attributes or values should be set.
  * This is so that the xml format and elements stay the same as the user would expect it.
@@ -306,6 +306,8 @@ public:
     QList<OASISDelegate> m_delegateUri;
 
     OASISCatalogContainer * m_parent;
+    //These are the nextCatalog entries;
+    OASISCatalogContainer * m_catalogs;
 
     explicit OASISCatalogContainer();
     virtual ~OASISCatalogContainer();

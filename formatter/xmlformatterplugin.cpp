@@ -104,7 +104,8 @@ ContextMenuExtension XmlFormatterPlugin::contextMenuExtension ( Context* context
     if ( mime->is("application/xml") ||
         mime->is("application/xsd") ||
         mime->is("application/xslt+xml") ||
-        mime->is("application/wsdl+xml")) {
+        mime->is("application/wsdl+xml") ||
+        mime->is("application/x-wsdl")) {
         m_compactAction->setEnabled ( true );
         m_unescapeAction->setEnabled ( true );
         m_escapeAction->setEnabled ( true );

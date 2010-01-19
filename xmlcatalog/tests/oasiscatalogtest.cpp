@@ -1,4 +1,19 @@
+/*
+Copyright (C) 2009  Ruan Strydom <ruan@jcell.co.za>
 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <QtTest>
 #include <QtCore>
@@ -16,6 +31,7 @@ private slots:
     void testReader();
     void testAddEntry();
     void testURN();
+    void testResolve();
     void testResolvePublic();
     void testResolveSystem();
     void testRewriteSystem();
@@ -30,6 +46,7 @@ private slots:
 
 ICatalog* testOASISCatalog::read() {
     QString catalog = "<catalog prefer=\"public\">\
+    <public publicId=\"-//OASIS//DTD XML Exchange Table Model 19990315//EN\" uri=\"soextblx.dtd\" />\
     <public publicId=\"-//OASIS//DTD DocBook MathML Module V1.0//EN\" uri=\"http://www.oasis-open.org/docbook/xml/mathml/1.0/dbmathml.dtd\"/>\
     <system systemId=\"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd\" uri=\"docbookx.dtd\"/>\
     <rewriteSystem systemIdStartString=\"http://www.oasis-open.org/committees/\" rewritePrefix=\"file:///projects/oasis/\"/>\
@@ -41,7 +58,7 @@ ICatalog* testOASISCatalog::read() {
     <uri name=\"http://www.oasis-open.org/committees/docbook/\" uri=\"file:///projects/oasis/docbook/website/\"/>\
     </catalog>";
     QDomDocument d;
-    d.setContent(catalog);
+    d.setContent(catalog,true);
     OASISCatalogReaderWriter rw;
     return rw.readCatalog(d);
 }
@@ -66,7 +83,7 @@ void testOASISCatalog::testAddEntry()
     QString catalog = "<catalog prefer=\"public\">\
     </catalog>";
     QDomDocument d;
-    d.setContent(catalog);
+    d.setContent(catalog, true);
     OASISCatalogReaderWriter rw;
     ICatalog *c = rw.readCatalog(d);
     c->setParameter("xml:base", "file:///tmp/");
@@ -84,6 +101,18 @@ void testOASISCatalog::testReader() {
     if(!c)
         QFAIL("FAILED READING - RETURNED NULL");
 }
+
+void testOASISCatalog::testResolve()
+{
+    ICatalog * c = read();
+    if(!c)
+        QFAIL("FAILED READING - RETURNED NULL");
+    QString m = "soextblx.dtd";
+    QString s = c->resolve("-//OASIS//DTD XML Exchange Table Model 19990315//EN", "soextblx.dtd");
+    if( s != m)
+        QFAIL(QString("EXPECTED %1 GOT %2").arg(m,s).toAscii().constData());
+}
+
 
 void testOASISCatalog::testResolvePublic() {
     ICatalog * c = read();

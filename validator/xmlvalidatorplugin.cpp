@@ -87,7 +87,8 @@ ContextMenuExtension XmlValidatorPlugin::contextMenuExtension ( Context* context
     if ( mime->is ( "application/xml" ) ||
          mime->is ( "application/xslt+xml" ) ||
          mime->is ( "application/xsd" ) ||
-         mime->is ( "application/wsdl+xml" )) {
+         mime->is ( "application/wsdl+xml" ) ||
+         mime->is ( "application/x-wsdl" )) {
         m_validateAction->setEnabled ( true );
         ext.addAction ( ContextMenuExtension::EditGroup, m_validateAction );
     }
@@ -114,21 +115,25 @@ void XmlValidatorPlugin::showDialog() {
         return;
     }
 
-    QStringList schemas;
+    QHash<QString, QString> schemas;
 
     QDomDocumentType doctype = xdoc.doctype();
     if ( !doctype.isNull() ) {
         QString systemId = doctype.systemId();
         QString publicId = doctype.publicId();
         QString resolved;
-        if ((!systemId.isEmpty()) || !publicId.isEmpty())
+        if (!systemId.isEmpty() || !publicId.isEmpty())
             resolved = ICatalogManager::self()->resolve(publicId, systemId);
-        if ((!systemId.isEmpty()) && resolved.isEmpty())
+        if(!resolved.isEmpty())
+            schemas.insert(resolved, "dtd");
+        if (!systemId.isEmpty() && resolved.isEmpty())
             resolved = ICatalogManager::self()->resolveUri(systemId);
-        if ((!systemId.isEmpty()) && resolved.isEmpty())
-            schemas.append(systemId);
-        else if ( !doctype.name().isEmpty() )
-            schemas.append ( QString ( "DOCTYPE %1" ).arg ( doctype.name() ) );
+        if(!resolved.isEmpty())
+            schemas.insert(resolved, "dtd");
+        if (!systemId.isEmpty() && resolved.isEmpty())
+            schemas.insert(systemId, "dtd");
+        if ( !doctype.name().isEmpty() && resolved.isEmpty())
+            schemas.insert ( QString ( "DOCTYPE %1" ).arg ( doctype.name() ), "dtd" );
     }
 
     QDomNodeList nodeList = xdoc.childNodes();
@@ -137,7 +142,7 @@ void XmlValidatorPlugin::showDialog() {
 
         QString resolved = ICatalogManager::self()->resolveUri(node.namespaceURI());
         if (!resolved.isEmpty())
-            schemas.append(resolved);
+            schemas.insert(resolved, "xsd");
 
         if ( node.hasAttributes() ) {
             QDomNamedNodeMap m = node.attributes();
@@ -151,9 +156,9 @@ void XmlValidatorPlugin::showDialog() {
                             if (resolved.isEmpty())
                                 resolved = ICatalogManager::self()->resolveUri(sl[k+1]);
                             if (!resolved.isEmpty())
-                                schemas.append(resolved);
+                                schemas.insert(resolved, "xsd");
                             else
-                                schemas.append ( sl[k+1] );
+                                schemas.insert ( sl[k+1], "xsd" );
                         }
                     }
                     if ( attribute.localName() == "noNamespaceSchemaLocation" ) {
@@ -161,9 +166,9 @@ void XmlValidatorPlugin::showDialog() {
                         if (resolved.isEmpty())
                             resolved = ICatalogManager::self()->resolveUri(attribute.nodeValue());
                         if (!resolved.isEmpty())
-                            schemas.append(resolved);
+                            schemas.insert(resolved, "xsd");
                         else
-                            schemas.append ( attribute.nodeValue() );
+                            schemas.insert ( attribute.nodeValue(), "xsd" );
                     }
                 }
             }
@@ -190,32 +195,33 @@ void XmlValidatorPlugin::slotValidate() {
     if ( !doc )
         return;
 
-    QString schema = w->getItem();
-    if ( !schema.isEmpty() ) {
+    QPair<QString, QString> schema = w->getItem();
+    if ( !schema.first.isEmpty() ) {
 
         KJob *job = 0;
-
-        if ( schema.startsWith ( "DOCTYPE" ) ) {
+        if ( schema.first.startsWith ( "DOCTYPE" ) ) {
+            //NOTE This is the fallback if we could not locate a dtd document,
+            //or when the DTD was specified inline.
             job = XmlValidatorJob::dtdValidationJob ( doc->url().toLocalFile() );
         } else {
-            //If the url is remote we cant realy get the mime so we add a small hack
-            //TODO A better solution is welcome
-            KMimeType::Ptr mime = KMimeType::findByUrl ( KUrl ( schema ) );
-            KMimeType::Ptr localMime = KMimeType::findByUrl ( KUrl ( IDocumentCacheManager::self()->getLocalUrl(schema)) );
-            if ( mime->is ( "application/xsd" ) ||
-                mime->is ( "application/xsd+xml" ) ||
-                localMime->is( "application/xsd" ) ||
-                localMime->is( "application/xsd+xml" ))
-                job = XmlValidatorJob::schemaValidationJob( doc->url().toLocalFile(), schema );
-            else if (mime->is ( "application/xml-dtd" ) ||
-                    localMime->is( "application/xml-dtd" )) {
-                job = XmlValidatorJob::dtdValidationJob ( doc->url().toLocalFile(), schema );
+            //TODO A mess: if its a remote URL or if it does not have an extention we get application/octetstream
+            //This was done so that the user dont have to choose; automaticaly detected?
+            //The other option is to download the file if it is remote and then to parse its contents,
+            //which will be slow.
+            KMimeType::Ptr localMime = KMimeType::findByUrl ( KUrl ( IDocumentCacheManager::self()->getLocalUrl(schema.first)) );
+            if ( localMime->is( "application/xsd" ) || localMime->is( "application/xsd+xml" )) {
+                job = XmlValidatorJob::schemaValidationJob( doc->url().toLocalFile(), schema.first );
+            } else if (localMime->is( "application/xml-dtd" )) {
+                job = XmlValidatorJob::dtdValidationJob ( doc->url().toLocalFile(), schema.first );
+            } else if(schema.second == "xsd") {
+                job = XmlValidatorJob::schemaValidationJob( doc->url().toLocalFile(), schema.first );
+            } else if (schema.second == "dtd") {
+                job = XmlValidatorJob::dtdValidationJob ( doc->url().toLocalFile(), schema.first );
             } else {
                 KMessageBox::error(ICore::self()->uiController()->activeMainWindow(),
-                                   i18n("Unable to determine mime type for: ") + schema);
+                                   i18n("Unable to determine mime type for: ") + schema.first);
             }
         }
-        
         if (job) {
             connect(job, SIGNAL(result(KJob *)), this, SLOT(slotValidated(KJob *)));
             ICore::self()->runController()->registerJob(job);
@@ -225,6 +231,7 @@ void XmlValidatorPlugin::slotValidate() {
 
 void XmlValidatorPlugin::slotValidated(KJob* job)
 {
+    //TODO idealy we want to print the messages in one of the tabs below like build.
     XmlValidatorJob * validateJob = static_cast<XmlValidatorJob *>(job);
     if (!validateJob)
         return;

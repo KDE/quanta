@@ -29,16 +29,16 @@ public:
     XmlSchemaDialog ( QWidget* parent = 0, Qt::WindowFlags f = 0 );
     virtual ~XmlSchemaDialog();
 
-    /** Set a list of available items.
-     */
-    void setItems ( QStringList items );
+    /** Set a list of available items. */
+    void setItems ( const QHash<QString, QString> &items );
 
     /** Returns the selected item.
      */
-    QString getItem();
+    QPair<QString, QString> getItem() const;
 
 protected:
     KUrlRequester *m_comboBox;
+    QHash<QString, QString> m_items;
 };
 
 #endif // XMLSCHEMAWIDGET_H

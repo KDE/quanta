@@ -38,5 +38,5 @@ X-KDE-PluginInfo-Author=Ruan Strydom
 X-KDE-PluginInfo-License=LGPL
 X-KDevelop-Category=Global
 X-KDevelop-Interfaces=org.kdevelop.ISourceFormatter
-X-KDevelop-SupportedMimeTypes=application/xml,application/xsd,application/xslt+xml,application/wsdl+xml
+X-KDevelop-SupportedMimeTypes=application/xml,application/xsd,application/xslt+xml,application/wsdl+xml,application/x-wsdl
 X-KDevelop-Mode=NoGUI

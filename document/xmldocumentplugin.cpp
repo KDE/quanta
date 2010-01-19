@@ -61,6 +61,7 @@ XmlDocumentPlugin::XmlDocumentPlugin ( QObject* parent, const QVariantList& )
         idc->registerDocumentForMimetype ( "application/xml", m_docFactory );
         idc->registerDocumentForMimetype ( "application/xsd", m_docFactory );
         idc->registerDocumentForMimetype ( "application/wsdl+xml", m_docFactory );
+        idc->registerDocumentForMimetype ( "application/x-wsdl", m_docFactory );
         idc->registerDocumentForMimetype ( "application/xslt+xml", m_docFactory );
     }
 }

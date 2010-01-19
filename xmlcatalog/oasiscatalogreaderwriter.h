@@ -33,7 +33,10 @@ public:
     virtual bool accepts ( const ICatalog * catalog ) const;
     
     virtual ICatalog* readCatalog ( const QString& file ) const;
-    virtual ICatalog* readCatalog ( const QDomDocument& doc ) const;
+    /** Parses the dom document.
+     *  @note The there will be no base path set.
+     */
+    virtual ICatalog* readCatalog ( const QDomDocument& doc) const;
 
     virtual bool writeCatalog(const ICatalog* catalog, const QString& file) const;
     

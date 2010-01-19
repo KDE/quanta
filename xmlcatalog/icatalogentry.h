@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class ICatalogGroup;
 class ICatalog;
 
-/** An entry itnto the catalog.
+/** An entry in to the catalog.
  *  ICatalogEntry only contains Public ID, System ID and URI's. Different catalog types may have several other
  *  entries, but these are the common ones.
  */

@@ -101,9 +101,7 @@ void XmlValidator::warnMessage ( void* ctx, const char* msg, ... ) {
     va_end ( vl );
 }
 
-//TODO substitute the external entity resolver with a custom one.
-//TODO substitute io with custom one.
-//As the validator can not validate other imported namespaces
+
 XmlValidator::ValidationResult XmlValidator::validateSchema ( const QString &documentUrl, const QString &schemaUrl ) {
     if ( documentUrl.isEmpty() || schemaUrl.isEmpty() )
         return InternalError;
@@ -151,9 +149,7 @@ XmlValidator::ValidationResult XmlValidator::validateSchema ( const QString &doc
     return Success;
 }
 
-//TODO substitute the external entity resolver with a custom one.
-//TODO substitute io with custom one.
-//As the validator can not validate other imported namespaces
+
 XmlValidator::ValidationResult XmlValidator::validateDTD ( const QString& documentUrl, const QString& dtdUrl ) {
     if ( documentUrl.isEmpty() )
         return InternalError;
@@ -164,6 +160,7 @@ XmlValidator::ValidationResult XmlValidator::validateDTD ( const QString& docume
     xmlDocPtr docPtr = 0;
 
     if ( !dtdUrl.isEmpty() ) {
+        //TODO Add a handler for the parser errors.
         docPtr = xmlParseFile ( documentUrl.toLatin1().constData() );
         if ( !docPtr ) {
             return InternalError;
@@ -177,6 +174,7 @@ XmlValidator::ValidationResult XmlValidator::validateDTD ( const QString& docume
         cvp.warning  = warnFunc;
         cvp.userData = ( void * ) this;
 
+        //TODO Add a handler for the parser errors.
         xmlDtdPtr dtdPtr = 0;
         dtdPtr = xmlParseDTD ( NULL, ( xmlChar * ) dtdUrl.toLatin1().constData() );
         if ( dtdPtr ) {

@@ -37,6 +37,11 @@ protected:
     KJob * m_currentJob;
 };
 
+/**
+ * Stores/Caches documents.
+ * The purpose of this is so that documents do not need to download again.
+ * @note This can not run in a different thread than the GUI.
+ */
 class DocumentCacheManager : public IDocumentCacheManager
 {
     Q_OBJECT
