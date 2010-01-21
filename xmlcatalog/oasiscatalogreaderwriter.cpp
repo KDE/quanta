@@ -164,6 +164,8 @@ ICatalog* OASISCatalogReaderWriter::readCatalog ( const QDomDocument& doc ) cons
             c->m_base = el.attribute(a::Base);
             c->m_id = el.attribute(a::Id);
             c->m_prefer = el.attribute(a::Prefer);
+            if(c->m_prefer.isEmpty())
+                c->m_prefer = OASISCatalog::PreferPublic;
             c->m_doc = doc;
             c->setElement(el);
             readNode(nl.at(ni), c);

@@ -121,7 +121,10 @@ void OASISCatalogContainer::setParameter(const QString& key, const QVariant& val
 }
 
 
-ICatalogEntry* OASISCatalogContainer::addPublicEntry(const QString& publicId, const QString& url, const QHash< QString, QVariant >& parameters)
+ICatalogEntry* OASISCatalogContainer::addPublicEntry(const QString& publicId,
+                                                     const QString& url,
+                                                     const QHash< QString,
+                                                     QVariant >& parameters)
 {
     OASISCatalogEntry *entry = new OASISCatalogEntry();
     entry->m_parent = this;
@@ -147,7 +150,10 @@ ICatalogEntry* OASISCatalogContainer::addPublicEntry(const QString& publicId, co
     return entry;
 }
 
-ICatalogEntry* OASISCatalogContainer::addSystemEntry(const QString& systemId, const QString& url, const QHash< QString, QVariant >& parameters)
+ICatalogEntry* OASISCatalogContainer::addSystemEntry(const QString& systemId,
+                                                     const QString& url,
+                                                     const QHash< QString,
+                                                     QVariant >& parameters)
 {
     OASISCatalogEntry *entry = new OASISCatalogEntry();
     entry->m_parent = this;
@@ -173,7 +179,10 @@ ICatalogEntry* OASISCatalogContainer::addSystemEntry(const QString& systemId, co
     return entry;
 }
 
-ICatalogEntry* OASISCatalogContainer::addUriEntry(const QString& uri, const QString& url, const QHash< QString, QVariant >& parameters)
+ICatalogEntry* OASISCatalogContainer::addUriEntry(const QString& uri,
+                                                  const QString& url,
+                                                  const QHash< QString,
+                                                  QVariant >& parameters)
 {
     OASISCatalogEntry *entry = new OASISCatalogEntry();
     entry->m_parent = this;
@@ -242,6 +251,7 @@ QList< ICatalogGroup* > OASISCatalogContainer::groups() const {
 
 OASISCatalogContainer::OASISCatalogContainer() {
     m_parent = 0;
+    m_prefer = PreferPublic;
 }
 
 OASISCatalogContainer::~OASISCatalogContainer() {
