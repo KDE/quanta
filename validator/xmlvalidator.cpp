@@ -18,9 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "xmlvalidator.h"
 
-#include <libxml2/libxml/xmlschemas.h>
-#include <libxml2/libxml/catalog.h>
-#include <libxml2/libxml/parserInternals.h>
+#include <libxml/xmlschemas.h>
+#include <libxml/catalog.h>
+#include <libxml/parserInternals.h>
 #include <stdio.h>
 #include <stdarg.h>
 
