@@ -150,7 +150,7 @@ void XmlValidatorPlugin::showDialog() {
                 QDomNode attribute = m.item ( j );
                 if ( attribute.namespaceURI() == "http://www.w3.org/2001/XMLSchema" || attribute.namespaceURI() == "http://www.w3.org/2001/XMLSchema-instance" ) {
                     if ( attribute.localName() == "schemaLocation" ) {
-                        QStringList sl = attribute.nodeValue().split ( QRegExp ( "\\s*" ) );
+                        QStringList sl = attribute.nodeValue().split ( QRegExp ( "\\s+" ) );
                         for ( int k = 0; k < sl.size() && sl.size()%2 == 0; k += 2 ) {
                             QString resolved = ICatalogManager::self()->resolveSystemId(sl[k+1]);
                             if (resolved.isEmpty())
