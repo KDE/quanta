@@ -2,6 +2,7 @@
 Type=Service
 Exec=blubb
 Comment=This plugin provides a frontend for Crossfire
+Comment[ca]=Aquest connector proveeix d'un frontal per Crossfire
 Comment[en_GB]=This plugin provides a frontend for Crossfire
 Comment[es]=Este complemento proporciona una interfaz para Crossfire
 Comment[fr]=Ce module externe fournit une interface graphique pour Crossfire
@@ -11,6 +12,7 @@ Comment[sv]=Insticksprogrammet tillhandahåller ett gränssnitt för Crossfire
 Comment[uk]=Цей додаток є оболонкою до Crossfire
 Comment[x-test]=xxThis plugin provides a frontend for Crossfirexx
 Name=Crossfire Support
+Name[ca]=Implementació de Crossfire
 Name[en_GB]=Crossfire Support
 Name[es]=Implementación de Crossfire
 Name[fr]=Prise en charge de Crossfire
