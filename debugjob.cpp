@@ -162,7 +162,7 @@ XDebugJob::XDebugJob( DebugSession* session, KDevelop::ILaunchConfiguration* cfg
     
     kDebug() << "setting app:" << program;
 
-    m_proc->setOutputChannelMode(KProcess::ForwardedChannels);
+    m_proc->setOutputChannelMode(KProcess::MergedChannels);
 
     m_proc->setProgram( program );
 
@@ -194,18 +194,6 @@ bool XDebugJob::doKill()
     if (m_session) m_session->stopDebugger();
     return true;
 }
-/*
-void XDebugJob::stderrReceived(const QStringList& l )
-{
-    model()->appendLines( l );
-}
-
-void XDebugJob::stdoutReceived(const QStringList& l )
-{
-    model()->appendLines( l );
-}
-*/
-
 
 void XDebugJob::processFinished( int exitCode , QProcess::ExitStatus status )
 {
@@ -246,13 +234,6 @@ KDevelop::OutputModel* XDebugJob::model()
 {
     return dynamic_cast<KDevelop::OutputModel*>( KDevelop::OutputJob::model() );
 }
-
-/*
-void XDebugJob::done()
-{
-    emitResult();
-}
-*/
 
 
 XDebugBrowserJob::XDebugBrowserJob(DebugSession* session, KDevelop::ILaunchConfiguration* cfg, QObject* parent)
