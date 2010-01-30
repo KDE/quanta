@@ -178,7 +178,7 @@ void XDebugJob::start()
         m_session->listenForConnection();
 
         startOutput();
-        model()->appendLine( i18n("Starting: %1", m_proc->program().join(" ") ) );
+        appendLine( i18n("Starting: %1", m_proc->program().join(" ") ) );
         m_proc->start();
     } else
     {
@@ -198,15 +198,15 @@ bool XDebugJob::doKill()
 void XDebugJob::processFinished( int exitCode , QProcess::ExitStatus status )
 {
     if (exitCode == 0 && status == QProcess::NormalExit)
-        model()->appendLine( i18n("*** Exited normally ***") );
+        appendLine( i18n("*** Exited normally ***") );
     else
         if (status == QProcess::NormalExit)
-            model()->appendLine( i18n("*** Exited with return code: %1 ***", QString::number(exitCode)) );
+            appendLine( i18n("*** Exited with return code: %1 ***", QString::number(exitCode)) );
         else
             if (error() == KJob::KilledJobError)
-                model()->appendLine( i18n("*** Process aborted ***") );
+                appendLine( i18n("*** Process aborted ***") );
             else
-                model()->appendLine( i18n("*** Crashed with return code: %1 ***", QString::number(exitCode)) );
+                appendLine( i18n("*** Crashed with return code: %1 ***", QString::number(exitCode)) );
     kDebug() << "Process done";
     emitResult();
 
@@ -229,6 +229,12 @@ void XDebugJob::processError( QProcess::ProcessError error )
     if (m_session) delete m_session;
 }
 
+void XDebugJob::appendLine(const QString& l)
+{
+    if (KDevelop::OutputModel* m = model()) {
+        m->appendLine(l);
+    }
+}
 
 KDevelop::OutputModel* XDebugJob::model()
 {
