@@ -42,6 +42,7 @@ public:
     DebugSession();
 
     void setLaunchConfiguration(KDevelop::ILaunchConfiguration *cfg);
+    void setAcceptMultipleConnections(bool v);
 
     bool listenForConnection();
     
@@ -78,19 +79,21 @@ public Q_SLOTS:
     virtual void interruptDebugger();
     virtual void stopDebugger();
     virtual void restartDebugger();
-    void startDebugger();
 
     void eval(QByteArray source);
 
 private Q_SLOTS:
     void incomingConnection();
     void _stateChanged(KDevelop::IDebugSession::DebuggerState);
+    void connectionClosed();
+private:
+    void closeServer();
 
 private:
     QTcpServer* m_server;
     Connection *m_connection;
     KDevelop::ILaunchConfiguration *m_launchConfiguration;
-
+    bool m_acceptMultipleConnections;
 };
 
 }

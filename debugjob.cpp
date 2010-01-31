@@ -262,9 +262,11 @@ XDebugBrowserJob::XDebugBrowserJob(DebugSession* session, KDevelop::ILaunchConfi
         return;
     }
 
-    m_url.addQueryItem("XDEBUG_SESSION_START", "kdev");
+    setObjectName(cfg->name());
 
     connect(m_session, SIGNAL(finished()), SLOT(sessionFinished()));
+
+    m_session->setAcceptMultipleConnections(true);
 }
 
 void XDebugBrowserJob::start()
@@ -276,13 +278,11 @@ void XDebugBrowserJob::start()
             emitResult();
             return;
         }
-        if (!QDesktopServices::openUrl(m_url)) {
+        KUrl url = m_url;
+        url.addQueryItem("XDEBUG_SESSION_START", "kdev");
+        if (!QDesktopServices::openUrl(url)) {
             kWarning() << "openUrl failed, something went wrong when creating the job";
             emitResult();
-        } else {
-    //         startOutput();
-    //         model()->appendLine( i18n("Starting: %1", proc->program().join(" ") ) );
-    //         proc->start();
         }
     }
 }
@@ -292,6 +292,9 @@ bool XDebugBrowserJob::doKill()
 {
     kDebug();
     m_session->stopDebugger();
+    KUrl url = m_url;
+    url.addQueryItem("XDEBUG_SESSION_STOP_NO_EXEC", "kdev");
+    QDesktopServices::openUrl(url);
     return true;
 }
 

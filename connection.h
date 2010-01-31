@@ -87,6 +87,7 @@ public:
 
     void sendCommand(const QString& cmd, QStringList arguments = QStringList(),
                 const QByteArray& data = QByteArray(), CallbackBase* callback = 0);
+    void setState(DebugSession::DebuggerState state);
     DebugSession::DebuggerState currentState();
 
     QTcpSocket* socket();
@@ -100,9 +101,9 @@ Q_SIGNALS:
     void output(QString content);
     void outputLine(QString content);
 //     void initDone(const QString& ideKey);
+    void closed();
 
 private Q_SLOTS:
-    void closed();
     void readyRead();
     void error(QAbstractSocket::SocketError error);
 
@@ -110,7 +111,6 @@ private:
     void processInit(const QDomDocument & xml);
     void processResponse(const QDomDocument &xml);
     void processStream(const QDomDocument &xml);
-    void setState(DebugSession::DebuggerState state);
 
     QTcpSocket* m_socket;
     

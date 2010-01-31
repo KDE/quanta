@@ -41,7 +41,8 @@
 namespace XDebug {
 
 DebugSession::DebugSession()
-    : KDevelop::IDebugSession(), m_server(0), m_connection(0), m_launchConfiguration(0)
+    : KDevelop::IDebugSession(), m_server(0), m_connection(0),
+      m_launchConfiguration(0), m_acceptMultipleConnections(false)
 {
     m_breakpointController = new BreakpointController(this);
     m_variableController = new VariableController(this);
@@ -50,6 +51,11 @@ DebugSession::DebugSession()
 void DebugSession::setLaunchConfiguration(KDevelop::ILaunchConfiguration* cfg)
 {
     m_launchConfiguration = cfg;
+}
+
+void DebugSession::setAcceptMultipleConnections(bool v)
+{
+    m_acceptMultipleConnections = v;
 }
 
 bool DebugSession::listenForConnection()
@@ -68,6 +74,14 @@ bool DebugSession::listenForConnection()
     return m_server->isListening();
 }
 
+void DebugSession::closeServer()
+{
+    if (m_server) {
+        m_server->close();
+        m_server->deleteLater();
+        m_server = 0;
+    }
+}
 
 void DebugSession::incomingConnection()
 {
@@ -81,10 +95,20 @@ void DebugSession::incomingConnection()
     connect(m_connection, SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)), SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)));
     connect(m_connection, SIGNAL(stateChanged(KDevelop::IDebugSession::DebuggerState)), SLOT(_stateChanged(KDevelop::IDebugSession::DebuggerState)));
     connect(m_connection, SIGNAL(showStepInSource(KUrl,int)), SIGNAL(showStepInSource(KUrl,int)));
+    connect(m_connection, SIGNAL(closed()), SLOT(connectionClosed()));
 
-    m_server->close();
-    m_server->deleteLater();
-    m_server = 0;
+    if (!m_acceptMultipleConnections) {
+        closeServer();
+    }
+}
+
+void DebugSession::connectionClosed()
+{
+    if (m_acceptMultipleConnections) {
+        m_connection->setState(DebugSession::NotStartedState);
+    } else {
+        m_connection->setState(DebugSession::EndedState);
+    }
 }
 
 
@@ -104,10 +128,6 @@ DebugSession::DebuggerState DebugSession::state() const
 {
     if (!m_connection) return NotStartedState;
     return m_connection->currentState();
-}
-
-void DebugSession::startDebugger()
-{
 }
 
 void DebugSession::run() {
@@ -148,8 +168,11 @@ void DebugSession::interruptDebugger() {
 
 void DebugSession::stopDebugger()
 {
+    closeServer();
     if (!m_connection || m_connection->currentState() == DebugSession::StoppedState) return;
-    m_connection->sendCommand("stop");
+    if (m_connection->socket()) {
+        m_connection->sendCommand("stop");
+    }
 }
 
 void DebugSession::restartDebugger() {
