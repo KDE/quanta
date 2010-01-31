@@ -109,6 +109,8 @@ void DebugSession::connectionClosed()
     } else {
         m_connection->setState(DebugSession::EndedState);
     }
+    m_connection->deleteLater();
+    m_connection = 0;
 }
 
 

@@ -38,6 +38,8 @@ BreakpointController::BreakpointController(DebugSession* parent)
 
 void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
 {
+    if (!debugSession()->connection()) return;
+
     if (breakpoint->deleted()) {
         if (m_ids.contains(breakpoint)) {
             QString cmd("breakpoint_remove");
@@ -116,6 +118,7 @@ void BreakpointController::stateChanged(KDevelop::IDebugSession::DebuggerState s
 {
     kDebug() << state;
     if (state == KDevelop::IDebugSession::StartingState) {
+        m_ids.clear();
         sendMaybeAll();
     } else if (state == KDevelop::IDebugSession::PausedState) {
         Callback<BreakpointController>* cb =
