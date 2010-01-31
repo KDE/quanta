@@ -167,6 +167,7 @@ XDebugJob::XDebugJob( DebugSession* session, KDevelop::ILaunchConfiguration* cfg
     m_proc->setProgram( program );
 
     setTitle(cfg->name());
+    setStandardToolView(KDevelop::IOutputView::DebugView);
 
 }
 
