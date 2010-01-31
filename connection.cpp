@@ -89,7 +89,7 @@ void Connection::readyRead()
             }
             data += m_socket->read(length - data.length() + 1);
         }
-        kDebug() << data;
+        //kDebug() << data;
 
         QDomDocument doc;
         doc.setContent(data);

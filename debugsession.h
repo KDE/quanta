@@ -40,6 +40,7 @@ class DebugSession : public KDevelop::IDebugSession
     Q_OBJECT
 public:
     DebugSession();
+    ~DebugSession();
 
     void setLaunchConfiguration(KDevelop::ILaunchConfiguration *cfg);
     void setAcceptMultipleConnections(bool v);

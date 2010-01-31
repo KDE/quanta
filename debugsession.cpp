@@ -48,6 +48,11 @@ DebugSession::DebugSession()
     m_variableController = new VariableController(this);
 }
 
+DebugSession::~DebugSession()
+{
+    emit finished();
+}
+
 void DebugSession::setLaunchConfiguration(KDevelop::ILaunchConfiguration* cfg)
 {
     m_launchConfiguration = cfg;
@@ -104,7 +109,7 @@ void DebugSession::incomingConnection()
 
 void DebugSession::connectionClosed()
 {
-    if (m_acceptMultipleConnections) {
+    if (m_acceptMultipleConnections && m_server && m_server->isListening()) {
         m_connection->setState(DebugSession::NotStartedState);
     } else {
         m_connection->setState(DebugSession::EndedState);
@@ -171,8 +176,9 @@ void DebugSession::interruptDebugger() {
 void DebugSession::stopDebugger()
 {
     closeServer();
-    if (!m_connection || m_connection->currentState() == DebugSession::StoppedState) return;
-    if (m_connection->socket()) {
+    if (!m_connection || m_connection->currentState() == DebugSession::StoppedState || !m_connection->socket()) {
+        emit finished();
+    } else {
         m_connection->sendCommand("stop");
     }
 }
