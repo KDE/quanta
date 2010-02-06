@@ -48,6 +48,7 @@ Comment[en_GB]=A simple Quanta project was created in %{dest}
 Comment[es]=Se ha creado un proyecto sencillo de Quanta en %{dest}
 Comment[et]=Lihtne Quanta projekt loodi asukohas %{dest}
 Comment[fr]=Un projet Quanta simple a été créé dans %{dest}
+Comment[nds]=In %{dest} wöör en eenfach Quanta-Projekt opstellt.
 Comment[pt]=Foi criado um projecto simples do Quanta em %{dest}
 Comment[pt_BR]=Foi criado um projeto simples do Quanta em %{dest}
 Comment[sv]=Ett enkelt Quanta-projekt skapades i %{dest}
