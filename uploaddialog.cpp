@@ -117,7 +117,7 @@ void UploadDialog::startUpload()
 {
     
     if (m_ui->profileCombobox->currentIndex() == -1) {
-        KMessageBox::sorry(this, i18n("Can not upload, no profile selected."));
+        KMessageBox::sorry(this, i18n("Cannot upload, no profile selected."));
         return;
     }
     UploadJob* job = new UploadJob(m_project, m_uploadProjectModel, this);
