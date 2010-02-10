@@ -13,12 +13,14 @@
 
 #include <QWidget>
 
+class QMenu;
 class QModelIndex;
 class QComboBox;
 class QLabel;
 
 class KUrl;
-class KFileTreeView;
+class KDirOperator;
+class KFileItem;
 
 class UploadPlugin;
 class AllProfilesModel;
@@ -41,16 +43,11 @@ public:
      */
     void setModel(AllProfilesModel* model);
 
-protected Q_SLOTS:
+private Q_SLOTS:
     /**
      * Open the Url in the editor
      */
     void openUrl(const KUrl& url);
-
-    /**
-     * Slot called when on file tree is doubleclicked
-     */
-    void treeDoubleClicked();
 
     /**
      * Slot called when current profile has changed, sets the new root-url for
@@ -69,13 +66,19 @@ protected Q_SLOTS:
      */
     void modifyProfile();
 
+    void fileSelected(const KFileItem& item);
+    void urlEntered(const KUrl&);
+    void contextMenuAboutToShow(KFileItem,QMenu*);
+    void copyUrl();
+    void browseUrl();
+
 private:
     UploadPlugin* m_plugin;
     AllProfilesModel* m_profilesModel;
 
     QComboBox* m_profilesCombo;
     QLabel* m_pleaseSelectLabel;
-    KFileTreeView* m_tree;
+    KDirOperator* m_tree;
     UploadProfileDlg* m_editProfileDlg;
 };
 

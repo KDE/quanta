@@ -14,10 +14,17 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QPushButton>
+#include <QMenu>
+#include <QClipboard>
+#include <QApplication>
+#include <QDesktopServices>
 
 #include <kdebug.h>
 #include <kfiletreeview.h>
 #include <klocale.h>
+#include <KDirOperator>
+#include <KFileWidget>
+#include <KActionCollection>
 
 #include <interfaces/icore.h>
 #include <interfaces/idocument.h>
@@ -54,22 +61,70 @@ ProfilesFileTree::ProfilesFileTree(UploadPlugin* plugin, QWidget *parent)
     m_pleaseSelectLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     l->addWidget(m_pleaseSelectLabel);
 
-    m_tree = new KFileTreeView();
-    m_tree->setVisible(false);
-    for (int i = 1; i < m_tree->model()->columnCount(); ++i) {
-        m_tree->hideColumn(i);
-    }
-    m_tree->header()->hide();
-    connect(m_tree, SIGNAL(activated(KUrl)),
-            this, SLOT(openUrl(KUrl)));
 
-    //additional to activate also connect doubleClicked
-    //activated *should* be emitted on doubleclick - but for me it doesn't
-    connect(m_tree, SIGNAL(doubleClicked(QModelIndex)),
-            this, SLOT(treeDoubleClicked()));
+    m_tree = new KDirOperator();
+    m_tree->setView(KFile::Tree);
+    connect(m_tree, SIGNAL(fileSelected(const KFileItem &)),
+           SLOT(fileSelected(KFileItem)));
+    connect(m_tree, SIGNAL(urlEntered(KUrl)), SLOT(urlEntered(KUrl)), Qt::QueuedConnection);
+    connect(m_tree, SIGNAL(contextMenuAboutToShow(KFileItem,QMenu*)), SLOT(contextMenuAboutToShow(KFileItem,QMenu*)));
+
+    QAction* a = new QAction(i18n("&Copy Url"), this);
+    connect(a, SIGNAL(triggered(bool)), SLOT(copyUrl()));
+    m_tree->actionCollection()->addAction("copyUrl", a);
+    a = new QAction(i18n("&Open Url"), this);
+    connect(a, SIGNAL(triggered(bool)), SLOT(browseUrl()));
+    m_tree->actionCollection()->addAction("browse", a);
 
     l->addWidget(m_tree);
+
 }
+
+void ProfilesFileTree::browseUrl()
+{
+    KUrl url;
+    if (m_tree->selectedItems().isEmpty()) {
+        url = m_tree->url();
+    } else {
+        url = m_tree->selectedItems().first().url();
+    }
+    QDesktopServices::openUrl(url);
+}
+
+void ProfilesFileTree::copyUrl()
+{
+    KUrl url;
+    if (m_tree->selectedItems().isEmpty()) {
+        url = m_tree->url();
+    } else {
+        url = m_tree->selectedItems().first().url();
+    }
+    QApplication::clipboard()->setText(url.url());
+}
+
+
+void ProfilesFileTree::contextMenuAboutToShow(KFileItem item, QMenu* menu)
+{
+    m_tree->setupMenu(KDirOperator::FileActions);
+    menu->addSeparator();
+    if (item.isDir()) {
+        menu->addAction(m_tree->actionCollection()->action("browse"));
+    }
+    menu->addAction(m_tree->actionCollection()->action("copyUrl"));
+}
+
+
+void ProfilesFileTree::urlEntered(const KUrl& url)
+{
+    profileIndexChanged(m_profilesCombo->currentIndex());
+}
+
+void ProfilesFileTree::fileSelected(const KFileItem& item)
+{
+    openUrl(item.url());
+}
+
+
 void ProfilesFileTree::profileIndexChanged(int index)
 {
     if (index == -1) {
@@ -81,20 +136,15 @@ void ProfilesFileTree::profileIndexChanged(int index)
     UploadProfileItem* item = m_profilesModel->uploadItem(
                             m_profilesModel->index(index, 0, QModelIndex()));
     if (item) {
+        kDebug() << "item->url()" << item->url();
         m_tree->setVisible(true);
         m_pleaseSelectLabel->setVisible(false);
-        if (m_tree->rootUrl() != item->url()) {
-            m_tree->setRootUrl(item->url());
+        kDebug() << "m_tree->url()" << m_tree->url();
+        if (m_tree->url() != item->url()) {
+            m_tree->setUrl(item->url(), true);
         }
     } else {
         profileIndexChanged(-1);
-    }
-}
-
-void ProfilesFileTree::treeDoubleClicked()
-{
-    if (m_tree->selectedUrl().isValid()) {
-        openUrl(m_tree->selectedUrl());
     }
 }
 
