@@ -68,7 +68,10 @@ QVariant UploadProjectModel::data(const QModelIndex & indx, int role) const
             if (m_checkStates.contains(indx)) {
                 return m_checkStates.value(indx);
             } else {
+                kDebug() << "project folder" << m_project->folder() << "file" << i << i->file();
+                kDebug() << "file url" << i->file()->url();
                 QString url = KUrl::relativeUrl(m_project->folder(), i->file()->url());
+                kDebug() << "resulting url" << url;
                 KDateTime uploadTime = KDateTime(m_profileConfigGroup.readEntry(url, QDateTime()));
                 if (uploadTime.isValid()) {
                     KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, i->file()->url());
