@@ -69,10 +69,10 @@ ProfilesFileTree::ProfilesFileTree(UploadPlugin* plugin, QWidget *parent)
     connect(m_tree, SIGNAL(urlEntered(KUrl)), SLOT(urlEntered(KUrl)), Qt::QueuedConnection);
     connect(m_tree, SIGNAL(contextMenuAboutToShow(KFileItem,QMenu*)), SLOT(contextMenuAboutToShow(KFileItem,QMenu*)));
 
-    QAction* a = new QAction(i18n("&Copy Url"), this);
+    QAction* a = new QAction(i18n("&Copy URL"), this);
     connect(a, SIGNAL(triggered(bool)), SLOT(copyUrl()));
     m_tree->actionCollection()->addAction("copyUrl", a);
-    a = new QAction(i18n("&Open Url"), this);
+    a = new QAction(i18n("&Open URL"), this);
     connect(a, SIGNAL(triggered(bool)), SLOT(browseUrl()));
     m_tree->actionCollection()->addAction("browse", a);
 
