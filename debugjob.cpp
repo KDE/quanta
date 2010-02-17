@@ -198,6 +198,7 @@ bool XDebugJob::doKill()
 
 void XDebugJob::processFinished( int exitCode , QProcess::ExitStatus status )
 {
+    m_lineMaker->flushBuffers();
     if (exitCode == 0 && status == QProcess::NormalExit)
         appendLine( i18n("*** Exited normally ***") );
     else
