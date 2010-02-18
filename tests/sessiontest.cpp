@@ -495,7 +495,90 @@ void SessionTest::testInsertInvalidBreakpoint()
     QVERIFY(errors.contains(KDevelop::Breakpoint::LocationColumn));
 }
 
+void SessionTest::testStepInto()
+{
+    QStringList contents;
+    contents << "<html>"
+            << "<body>"
+            << "foo"
+            << "<script type=\"text/javascript\">"
+            << "setTimeout(function() {"
+            << "  var i=0;"
+            << "  i++;"
+            << "  i++;"
+            << "}, 3000);"
+            << "</script>"
+            << "</body>"
+            << "</html>";
+    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
+    file.open();
+    KUrl url(buildBaseUrl + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+    file.setPermissions(QFile::ReadOther | file.permissions());
 
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 6);
+
+    TestDebugSession session;
+
+    TestLaunchConfiguration cfg(url);
+    TestDebugJob job(&session, &cfg);
+    job.start();
+
+    QVERIFY(session.waitForHandshake());
+    QTest::qWait(5000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 6);
+    QCOMPARE(session.url(), url);
+    session.stepInto();
+    QTest::qWait(2000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 7);
+    QCOMPARE(session.url(), url);
+}
+
+void SessionTest::testContinue()
+{
+    QStringList contents;
+    contents << "<html>"
+            << "<body>"
+            << "foo"
+            << "<script type=\"text/javascript\">"
+            << "setTimeout(function() {"
+            << "  var i=0;"
+            << "  i++;"
+            << "  i++;"
+            << "}, 3000);"
+            << "</script>"
+            << "</body>"
+            << "</html>";
+    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
+    file.open();
+    KUrl url(buildBaseUrl + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+    file.setPermissions(QFile::ReadOther | file.permissions());
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 6);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 7);
+
+    TestDebugSession session;
+
+    TestLaunchConfiguration cfg(url);
+    TestDebugJob job(&session, &cfg);
+    job.start();
+
+    QVERIFY(session.waitForHandshake());
+    QTest::qWait(5000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 6);
+    QCOMPARE(session.url(), url);
+    session.run();
+    QTest::qWait(2000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 7);
+    QCOMPARE(session.url(), url);
+}
 
 QTEST_KDEMAIN(SessionTest, GUI)
 

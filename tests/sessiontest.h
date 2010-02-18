@@ -42,6 +42,8 @@ private slots:
     void testVariablesLocals();
     void testVariablesWatch();
     void testInsertInvalidBreakpoint();
+    void testStepInto();
+    void testContinue();
 
 private:
     KDevelop::TestCore* m_core;
