@@ -37,14 +37,16 @@ To run this tests you have to:
 - eventually adapt firefoxCmd below
 */
 
-static const char* firefoxCmd = "/opt/firefox/firefox-bin";
+static const char* firefoxCmd = "firefox";
 
 using namespace Crossfire;
 
 void ConnectionTest::testConnect()
 {
     QTcpServer server;
-    QVERIFY(server.listen(QHostAddress::Any, 5000));
+
+
+                          QVERIFY(server.listen(QHostAddress::Any, 5000));
 
     KProcess p;
     p << firefoxCmd;
@@ -169,3 +171,25 @@ void ConnectionTest::testStack()
 QTEST_KDEMAIN(ConnectionTest, GUI)
 
 #include "connectiontest.moc"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

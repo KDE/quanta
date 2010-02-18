@@ -138,7 +138,7 @@ void SessionTest::init()
     qRegisterMetaType<DebugSession*>("DebugSession*");
     qRegisterMetaType<KUrl>("KUrl");
 
-    AutoTestShell::init();
+    KDevelop::AutoTestShell::init();
     m_core = new KDevelop::TestCore();
     m_core->initialize(KDevelop::Core::NoUi);
 
@@ -166,7 +166,7 @@ void SessionTest::testOutput()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretest");
+    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
     file.open();
     KUrl url(buildBaseUrl + file.fileName());
     file.write(contents.join("\n").toUtf8());
@@ -209,7 +209,7 @@ void SessionTest::testInsertBreakpoint()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretest");
+    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
     file.open();
     KUrl url(buildBaseUrl + file.fileName());
     file.write(contents.join("\n").toUtf8());
@@ -250,7 +250,7 @@ void SessionTest::testRemoveBreakpoint()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretest");
+    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
     file.open();
     KUrl url(buildBaseUrl + file.fileName());
     file.write(contents.join("\n").toUtf8());
@@ -308,7 +308,7 @@ void SessionTest::testFrameStack()
             << "</body>"
             << "</html>";
 
-    QTemporaryFile file("crossfiretest");
+    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
     file.open();
     KUrl url(buildBaseUrl + file.fileName());
     file.write(contents.join("\n").toUtf8());
@@ -333,7 +333,7 @@ void SessionTest::testFrameStack()
     QCOMPARE(stackModel->rowCount(QModelIndex()), 1); //one fake thread
 
     QModelIndex tIdx = stackModel->index(0,0);
-    QCOMPARE(stackModel->rowCount(tIdx), 4);
+    QCOMPARE(stackModel->rowCount(tIdx), 5);
     QCOMPARE(stackModel->columnCount(tIdx), 3);
     COMPARE_DATA(tIdx.child(0, 0), "0");
     COMPARE_DATA(tIdx.child(0, 1), "asdf");
@@ -343,6 +343,7 @@ void SessionTest::testFrameStack()
     COMPARE_DATA(tIdx.child(1, 2), url.url()+":9");
     COMPARE_DATA(tIdx.child(2, 1), "csdf");
     COMPARE_DATA(tIdx.child(3, 1), "dsdf");
+    COMPARE_DATA(tIdx.child(4, 1), "anonymous");
 }
 
 KDevelop::VariableCollection *variableCollection()
@@ -368,7 +369,7 @@ void SessionTest::testVariablesLocals()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretest");
+    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
     file.open();
     KUrl url(buildBaseUrl + file.fileName());
     file.write(contents.join("\n").toUtf8());
@@ -429,7 +430,7 @@ void SessionTest::testVariablesWatch()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretest");
+    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
     file.open();
     KUrl url(buildBaseUrl + file.fileName());
     file.write(contents.join("\n").toUtf8());

@@ -82,12 +82,14 @@ void DebugJob::start()
             return;
         }
         QStringList p;
-        p << "/opt/firefox/firefox-bin"; //TODO this should obviously not stay
+        //p << "/opt/firefox/firefox-bin"; //TODO this should obviously not stay
+        p << "firefox";
         p << "--crossfire-host=localhost";
         p << "--crossfire-port=5000";
         p << m_url.url();
         startOutput();
         model()->appendLine( i18n("Opening: %1", m_url.url() ) );
+        kDebug() << p;
         m_browserPid = KProcess::startDetached(p);
         if (!m_browserPid) {
             kWarning() << "openUrl failed, something went wrong when creating the job";
