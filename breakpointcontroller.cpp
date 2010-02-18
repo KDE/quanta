@@ -99,8 +99,12 @@ void BreakpointController::handleSetBreakpoint(KDevelop::Breakpoint* breakpoint,
     Q_ASSERT(data["command"] == "setbreakpoint");
     Q_ASSERT(data["success"].toBool());
     Q_ASSERT(breakpoint);
-    m_ids[breakpoint] = data["body"].toMap()["breakpoint"].toMap()["handle"].toInt();
-    Q_ASSERT(m_ids[breakpoint]);
+    QVariantMap breakpointData = data["body"].toMap()["breakpoint"].toMap();
+    if (breakpointData.contains("handle")) {
+        m_ids[breakpoint] = breakpointData["handle"].toInt();
+    } else {
+        error(breakpoint, i18n("Invalid Location"), KDevelop::Breakpoint::LocationColumn);
+    }
 }
 
 

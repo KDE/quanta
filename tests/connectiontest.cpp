@@ -46,7 +46,7 @@ void ConnectionTest::testConnect()
     QTcpServer server;
 
 
-                          QVERIFY(server.listen(QHostAddress::Any, 5000));
+    QVERIFY(server.listen(QHostAddress::Any, 5000));
 
     KProcess p;
     p << firefoxCmd;

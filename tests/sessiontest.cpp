@@ -37,6 +37,7 @@
 #include <debugger/interfaces/iframestackmodel.h>
 #include <debugger/interfaces/ivariablecontroller.h>
 #include <debugger/variable/variablecollection.h>
+#include <debugger/interfaces/ibreakpointcontroller.h>
 
 #include "connection.h"
 #include "debugsession.h"
@@ -460,6 +461,40 @@ void SessionTest::testVariablesWatch()
     COMPARE_DATA(variableCollection()->index(0, 0, i), "i");
     COMPARE_DATA(variableCollection()->index(0, 1, i), "0");
 }
+
+void SessionTest::testInsertInvalidBreakpoint()
+{
+    QStringList contents;
+    contents << "<html>"
+            << "<body>"
+            << "foo"
+            << "<script type=\"text/javascript\">"
+            << "setTimeout(function() {"
+            << "}, 1000);"
+            << "</script>"
+            << "</body>"
+            << "</html>";
+    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
+    file.open();
+    KUrl url(buildBaseUrl + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+    file.setPermissions(QFile::ReadOther | file.permissions());
+
+    KDevelop::Breakpoint* b = KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(KUrl("nonexisting"), 6);
+
+    TestDebugSession session;
+
+    TestLaunchConfiguration cfg(url);
+    TestDebugJob job(&session, &cfg);
+    job.start();
+
+    QVERIFY(session.waitForHandshake());
+    QTest::qWait(5000);
+    QSet<KDevelop::Breakpoint::Column> errors = session.breakpointController()->breakpointErrors(b);
+    QVERIFY(errors.contains(KDevelop::Breakpoint::LocationColumn));
+}
+
 
 
 QTEST_KDEMAIN(SessionTest, GUI)
