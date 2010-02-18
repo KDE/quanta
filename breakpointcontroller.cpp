@@ -97,7 +97,10 @@ void BreakpointController::handleSetBreakpoint(KDevelop::Breakpoint* breakpoint,
 {
     kDebug() << data;
     Q_ASSERT(data["command"] == "setbreakpoint");
-    Q_ASSERT(data["success"].toBool());
+    if (!data["success"].toBool()) {
+        error(breakpoint, i18n("Failed setting Breakpoint"), KDevelop::Breakpoint::LocationColumn);
+        return;
+    }
     Q_ASSERT(breakpoint);
     QVariantMap breakpointData = data["body"].toMap()["breakpoint"].toMap();
     if (breakpointData.contains("handle")) {
