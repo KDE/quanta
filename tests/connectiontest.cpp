@@ -96,7 +96,7 @@ void ConnectionTest::init()
     qRegisterMetaType<DebugSession*>("DebugSession*");
     qRegisterMetaType<KUrl>("KUrl");
 
-    AutoTestShell::init();
+    KDevelop::AutoTestShell::init();
     m_core = new KDevelop::TestCore();
     m_core->initialize(KDevelop::Core::NoUi);
 
