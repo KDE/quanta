@@ -179,4 +179,8 @@ void BrowserAppConfigType::configureLaunchFromItem(KConfigGroup config, KDevelop
 
 }
 
+void BrowserAppConfigType::configureLaunchFromCmdLineArguments(KConfigGroup config, const QStringList &args) const
+{
+}
+
 #include "browserappconfig.moc"
