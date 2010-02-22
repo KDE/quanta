@@ -44,6 +44,8 @@ private slots:
     void testInsertInvalidBreakpoint();
     void testStepInto();
     void testContinue();
+    void testPrepocessedMerged();
+    void testPrepocessedMergedLinesRemoved();
 
 private:
     KDevelop::TestCore* m_core;

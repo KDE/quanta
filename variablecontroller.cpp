@@ -134,10 +134,14 @@ QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, co
 
 void VariableController::addWatch(KDevelop::Variable* variable)
 {
+    Q_UNUSED(variable);
+    //TODO: implement
 }
 
 void VariableController::addWatchpoint(KDevelop::Variable* variable)
 {
+    Q_UNUSED(variable);
+    //TODO: implement
 }
 
 KDevelop::Variable* VariableController::

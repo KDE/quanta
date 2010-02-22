@@ -53,14 +53,16 @@ public:
     void setState(DebugSession::DebuggerState state);
     virtual DebuggerState state() const;
 
-    virtual KUrl convertToLocalUrl(const KUrl& url) const;
-    virtual KUrl convertToRemoteUrl(const KUrl& url) const;
+    virtual QPair<KUrl, int> convertToLocalUrl(const QPair<KUrl, int>& url) const;
+    virtual QPair<KUrl, int> convertToRemoteUrl(const QPair<KUrl, int>& url) const;
 
     bool waitForConnected(int timeout = 30000);
     bool waitForHandshake(int timeout = 30000);
 
 private:
     virtual KDevelop::IFrameStackModel* createFrameStackModel();
+
+    void handleSource(const QVariantMap &data);
 
 Q_SIGNALS:
     void outputLine(QString line);
@@ -87,6 +89,7 @@ private:
     Connection *m_connection;
     KDevelop::ILaunchConfiguration *m_launchConfiguration;
     QString m_currentContext;
+    QHash<KUrl, QString> m_sources;
     KUrl m_startUrl;
     KDevelop::IDebugSession::DebuggerState m_currentState;
 

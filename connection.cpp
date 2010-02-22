@@ -98,7 +98,7 @@ void Connection::readyRead()
         }
     }
     while (m_socket && m_socket->bytesAvailable()) {
-        long length;
+        long length = 0;
         {
             QByteArray buff;
             char prev = 0;

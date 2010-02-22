@@ -33,6 +33,7 @@
 #include "breakpointcontroller.h"
 #include "variablecontroller.h"
 #include "framestackmodel.h"
+#include <QFileInfo>
 
 namespace Crossfire {
 
@@ -84,8 +85,10 @@ void DebugSession::eventReceived(const QVariantMap &event)
         kDebug() << event["data"].toMap()["href"] << m_startUrl;
         if (event["data"].toMap()["href"] == m_startUrl.url()) {
             m_currentContext = event["context_id"].toString();
-            setState(KDevelop::IDebugSession::StartingState);
-            setState(KDevelop::IDebugSession::ActiveState);
+            Callback<DebugSession>* cb =
+                new Callback<DebugSession>
+                    (this, &DebugSession::handleSource);
+            sendCommand("source", QVariantMap(), cb);
         }
     }
     if (event["context_id"] == m_currentContext) {
@@ -93,10 +96,27 @@ void DebugSession::eventReceived(const QVariantMap &event)
             raiseEvent(program_state_changed);
             setState(KDevelop::IDebugSession::PausedState);
             KUrl url(event["data"].toMap()["url"].toString());
-            emit showStepInSource(url, event["data"].toMap()["line"].toInt()-1);
+            QPair<KUrl, int> u = convertToLocalUrl(qMakePair(url, event["data"].toMap()["line"].toInt()-1));
+            emit showStepInSource(u.first, u.second);
         }
     }
 }
+
+void DebugSession::handleSource(const QVariantMap& data)
+{
+    m_sources.clear();
+    Q_ASSERT(data["command"] == "source");
+    Q_ASSERT(data["body"].toMap()["context_id"] == m_currentContext);
+    foreach (const QVariant &script, data["body"].toMap()["scripts"].toList()) {
+        QVariantMap s = script.toMap()["script"].toMap();
+        if (!s["id"].isNull()) {
+            m_sources[KUrl(s["id"].toString())] = s["source"].toString();
+        }
+    }
+    setState(KDevelop::IDebugSession::StartingState);
+    setState(KDevelop::IDebugSession::ActiveState);
+}
+
 
 void DebugSession::setStartUrl(const KUrl& url)
 {
@@ -131,16 +151,67 @@ KDevelop::IDebugSession::DebuggerState DebugSession::state() const
     return m_currentState;
 }
 
-KUrl DebugSession::convertToLocalUrl(const KUrl& remoteUrl) const
+QPair<KUrl, int> DebugSession::convertToLocalUrl(const QPair<KUrl, int>& remoteUrl) const
 {
+    kDebug() << remoteUrl;
     Q_ASSERT(m_launchConfiguration);
-    return KDevelop::PathMappings::convertToLocalUrl(m_launchConfiguration->config(), remoteUrl);
+    QPair<KUrl, int> ret = remoteUrl;
+    ret.first = KDevelop::PathMappings::convertToLocalUrl(m_launchConfiguration->config(), remoteUrl.first);
+    kDebug() << ret;
+    if (!QFileInfo(ret.first.toLocalFile()).exists()) {
+        kDebug() << "does not exist, try looking for processed file markers";
+        //look for sever-side processed, merged file with markers
+        if (!m_sources.contains(remoteUrl.first)) {
+            kWarning() << "m_sources does not contain remote url";
+            return ret;
+        }
+        QStringList lines = m_sources[remoteUrl.first].split('\n');
+        //look upwards from remote line
+        for (int line=remoteUrl.second; line > 0; line--) {
+            QString l = lines.at(line);
+            if (!l.startsWith("//line ")) continue;
+            static QRegExp r("^//line (\\d+) \"(.*)\"$");
+            if (r.indexIn(l) == -1) continue;
+            ret.first = KDevelop::PathMappings::convertToLocalUrl(m_launchConfiguration->config(), r.cap(2));
+            ret.second = remoteUrl.second - line - 1 + r.cap(1).toInt();
+            break;
+        }
+    }
+    kDebug() << ret;
+    return ret;
 }
 
-KUrl DebugSession::convertToRemoteUrl(const KUrl& localUrl) const
+QPair<KUrl, int> DebugSession::convertToRemoteUrl(const QPair<KUrl, int>& localUrl) const
 {
+    kDebug() << localUrl;
     Q_ASSERT(m_launchConfiguration);
-    return KDevelop::PathMappings::convertToRemoteUrl(m_launchConfiguration->config(), localUrl);
+    QPair<KUrl, int> ret = localUrl;
+    ret.first = KDevelop::PathMappings::convertToRemoteUrl(m_launchConfiguration->config(), localUrl.first);
+    if (!m_sources.contains(ret.first) && ret.first != m_startUrl) {
+        //look for sever-side processed, merged file with markers
+        QHashIterator<KUrl, QString> i(m_sources);
+        while (i.hasNext()) {
+            i.next();
+            //TODO i guess this is dead slow for larger files
+            int line = -1;
+            foreach (const QString &l, i.value().split('\n')) {
+                line++;
+                if (!l.startsWith("//line ")) continue;
+                static QRegExp r("^//line (\\d+) \"(.*)\"$");
+                if (r.indexIn(l) == -1) continue;
+                kDebug() << r.cap(2) << ret.first;
+                line++;
+                if (KUrl(r.cap(2)) != localUrl.first) continue;
+                //we got a match, use that url
+                ret.first = i.key();
+                ret.second += line + 1 - r.cap(1).toInt();
+                kDebug() << "matched";
+                //don't break to get the best fitting line
+            }
+        }
+    }
+    kDebug() << ret;
+    return ret;
 }
 
 KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()

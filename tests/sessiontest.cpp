@@ -64,6 +64,9 @@ public:
         cfg.writeEntry("Server", script.host());
         cfg.writeEntry("Path", script.path());
         cfg.writeEntry("Arguments", script.query());
+        KConfigGroup pmCfg = cfg.group("Path Mappings").group("0");
+        pmCfg.writeEntry("Remote", KUrl(buildBaseUrl));
+        pmCfg.writeEntry("Local", KUrl(QDir::currentPath()));
     }
     ~TestLaunchConfiguration() {
         delete c;
@@ -134,6 +137,34 @@ void compareData(QModelIndex index, QString expected, const char *file, int line
 }
 
 
+class TempTestFile : public QTemporaryFile
+{
+public:
+    TempTestFile(const QStringList &contents, const QString &templateName = "crossfiretestXXXXXXXXXXXX.html")
+        : QTemporaryFile(templateName)
+    {
+        open();
+        write(contents.join("\n").toUtf8());
+        close();
+        setPermissions(QFile::ReadOther | permissions());
+        m_url = buildBaseUrl + fileName();
+        m_localPath = QDir::currentPath() + '/' + fileName();
+    }
+    KUrl url()
+    {
+        return m_url;
+    }
+    QString localPath()
+    {
+        return m_localPath;
+    }
+private:
+    KUrl m_url;
+    QString m_localPath;
+};
+
+
+
 void SessionTest::init()
 {
     qRegisterMetaType<DebugSession*>("DebugSession*");
@@ -167,16 +198,11 @@ void SessionTest::testOutput()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
-    file.open();
-    KUrl url(buildBaseUrl + file.fileName());
-    file.write(contents.join("\n").toUtf8());
-    file.close();
-    file.setPermissions(QFile::ReadOther | file.permissions());
+    TempTestFile file(contents);
 
     TestDebugSession session;
 
-    TestLaunchConfiguration cfg(url);
+    TestLaunchConfiguration cfg(file.url());
     TestDebugJob job(&session, &cfg);
 
     QSignalSpy outputLineSpy(&session, SIGNAL(outputLine(QString)));
@@ -210,18 +236,13 @@ void SessionTest::testInsertBreakpoint()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
-    file.open();
-    KUrl url(buildBaseUrl + file.fileName());
-    file.write(contents.join("\n").toUtf8());
-    file.close();
-    file.setPermissions(QFile::ReadOther | file.permissions());
+    TempTestFile file(contents);
 
-    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 6);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file.url(), 6);
 
     TestDebugSession session;
 
-    TestLaunchConfiguration cfg(url);
+    TestLaunchConfiguration cfg(file.url());
     TestDebugJob job(&session, &cfg);
     job.start();
 
@@ -229,7 +250,7 @@ void SessionTest::testInsertBreakpoint()
     QTest::qWait(5000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 6);
-    QCOMPARE(session.url(), url);
+    QCOMPARE(session.url(), file.url());
 
 }
 
@@ -251,19 +272,14 @@ void SessionTest::testRemoveBreakpoint()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
-    file.open();
-    KUrl url(buildBaseUrl + file.fileName());
-    file.write(contents.join("\n").toUtf8());
-    file.close();
-    file.setPermissions(QFile::ReadOther | file.permissions());
+    TempTestFile file(contents);
 
-    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 5);
-    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 10);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file.url(), 5);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file.url(), 10);
 
     TestDebugSession session;
 
-    TestLaunchConfiguration cfg(url);
+    TestLaunchConfiguration cfg(file.url());
     TestDebugJob job(&session, &cfg);
     job.start();
 
@@ -271,7 +287,7 @@ void SessionTest::testRemoveBreakpoint()
     QTest::qWait(6000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 5);
-    QCOMPARE(session.url(), url);
+    QCOMPARE(session.url(), file.url());
 
     KDevelop::ICore::self()->debugController()->breakpointModel()->removeRow(0);
     QTest::qWait(1000);
@@ -280,7 +296,7 @@ void SessionTest::testRemoveBreakpoint()
 
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 10);
-    QCOMPARE(session.url(), url);
+    QCOMPARE(session.url(), file.url());
 }
 
 void SessionTest::testFrameStack()
@@ -309,18 +325,13 @@ void SessionTest::testFrameStack()
             << "</body>"
             << "</html>";
 
-    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
-    file.open();
-    KUrl url(buildBaseUrl + file.fileName());
-    file.write(contents.join("\n").toUtf8());
-    file.close();
-    file.setPermissions(QFile::ReadOther | file.permissions());
+    TempTestFile file(contents);
 
-    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 5);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file.url(), 5);
 
     TestDebugSession session;
 
-    TestLaunchConfiguration cfg(url);
+    TestLaunchConfiguration cfg(file.url());
     TestDebugJob job(&session, &cfg);
     job.start();
 
@@ -338,10 +349,10 @@ void SessionTest::testFrameStack()
     QCOMPARE(stackModel->columnCount(tIdx), 3);
     COMPARE_DATA(tIdx.child(0, 0), "0");
     COMPARE_DATA(tIdx.child(0, 1), "asdf");
-    COMPARE_DATA(tIdx.child(0, 2), url.url()+":6");
+    COMPARE_DATA(tIdx.child(0, 2), file.url().url()+":6");
     COMPARE_DATA(tIdx.child(1, 0), "1");
     COMPARE_DATA(tIdx.child(1, 1), "bsdf");
-    COMPARE_DATA(tIdx.child(1, 2), url.url()+":9");
+    COMPARE_DATA(tIdx.child(1, 2), file.url().url()+":9");
     COMPARE_DATA(tIdx.child(2, 1), "csdf");
     COMPARE_DATA(tIdx.child(3, 1), "dsdf");
     COMPARE_DATA(tIdx.child(4, 1), "anonymous");
@@ -370,19 +381,14 @@ void SessionTest::testVariablesLocals()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
-    file.open();
-    KUrl url(buildBaseUrl + file.fileName());
-    file.write(contents.join("\n").toUtf8());
-    file.close();
-    file.setPermissions(QFile::ReadOther | file.permissions());
+    TempTestFile file(contents);
 
-    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 7);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file.url(), 7);
 
     TestDebugSession session;
     session.variableController()->setAutoUpdate(KDevelop::IVariableController::UpdateLocals);
 
-    TestLaunchConfiguration cfg(url);
+    TestLaunchConfiguration cfg(file.url());
     TestDebugJob job(&session, &cfg);
     job.start();
 
@@ -431,19 +437,14 @@ void SessionTest::testVariablesWatch()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
-    file.open();
-    KUrl url(buildBaseUrl + file.fileName());
-    file.write(contents.join("\n").toUtf8());
-    file.close();
-    file.setPermissions(QFile::ReadOther | file.permissions());
+    TempTestFile file(contents);
 
-    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 7);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file.url(), 7);
 
     TestDebugSession session;
     session.variableController()->setAutoUpdate(KDevelop::IVariableController::UpdateWatches);
 
-    TestLaunchConfiguration cfg(url);
+    TestLaunchConfiguration cfg(file.url());
     TestDebugJob job(&session, &cfg);
     job.start();
 
@@ -474,18 +475,13 @@ void SessionTest::testInsertInvalidBreakpoint()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
-    file.open();
-    KUrl url(buildBaseUrl + file.fileName());
-    file.write(contents.join("\n").toUtf8());
-    file.close();
-    file.setPermissions(QFile::ReadOther | file.permissions());
+    TempTestFile file(contents);
 
     KDevelop::Breakpoint* b = KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(KUrl("nonexisting"), 6);
 
     TestDebugSession session;
 
-    TestLaunchConfiguration cfg(url);
+    TestLaunchConfiguration cfg(file.url());
     TestDebugJob job(&session, &cfg);
     job.start();
 
@@ -510,18 +506,14 @@ void SessionTest::testStepInto()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
-    file.open();
-    KUrl url(buildBaseUrl + file.fileName());
-    file.write(contents.join("\n").toUtf8());
-    file.close();
-    file.setPermissions(QFile::ReadOther | file.permissions());
+    TempTestFile file(contents);
 
-    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 6);
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file.url(), 6);
 
     TestDebugSession session;
 
-    TestLaunchConfiguration cfg(url);
+    TestLaunchConfiguration cfg(file.url());
     TestDebugJob job(&session, &cfg);
     job.start();
 
@@ -529,12 +521,12 @@ void SessionTest::testStepInto()
     QTest::qWait(5000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 6);
-    QCOMPARE(session.url(), url);
+    QCOMPARE(session.url(), file.url());
     session.stepInto();
     QTest::qWait(2000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 7);
-    QCOMPARE(session.url(), url);
+    QCOMPARE(session.url(), file.url());
 }
 
 void SessionTest::testContinue()
@@ -552,19 +544,15 @@ void SessionTest::testContinue()
             << "</script>"
             << "</body>"
             << "</html>";
-    QTemporaryFile file("crossfiretestXXXXXXXXXXXX.html");
-    file.open();
-    KUrl url(buildBaseUrl + file.fileName());
-    file.write(contents.join("\n").toUtf8());
-    file.close();
-    file.setPermissions(QFile::ReadOther | file.permissions());
+    TempTestFile file(contents);
 
-    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 6);
-    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 7);
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file.url(), 6);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file.url(), 7);
 
     TestDebugSession session;
 
-    TestLaunchConfiguration cfg(url);
+    TestLaunchConfiguration cfg(file.url());
     TestDebugJob job(&session, &cfg);
     job.start();
 
@@ -572,13 +560,148 @@ void SessionTest::testContinue()
     QTest::qWait(5000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 6);
-    QCOMPARE(session.url(), url);
+    QCOMPARE(session.url(), file.url());
     session.run();
     QTest::qWait(2000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 7);
-    QCOMPARE(session.url(), url);
+    QCOMPARE(session.url(), file.url());
 }
+
+void SessionTest::testPrepocessedMerged()
+{
+    QStringList jsContents1;
+    jsContents1 << "var i = 0;";
+    TempTestFile file1(jsContents1, "crossfiretest-test1-XXXXXXXXXXXX.js");
+
+    QStringList jsContents2;
+    jsContents2 << "setTimeout(function() {";
+    jsContents2 << "i++;";
+    jsContents2 << "console.log(i);";
+    jsContents2 << "}, 3000);";
+    TempTestFile file2(jsContents2, "crossfiretest-test2-XXXXXXXXXXXX.js");
+
+    QStringList jsContentsMerged;
+    jsContentsMerged << "//line 1 \""+file1.localPath()+"\"";
+    jsContentsMerged << jsContents1;
+    jsContentsMerged << "//line 1 \""+file2.localPath()+"\"";
+    jsContentsMerged << jsContents2;
+    TempTestFile fileMerged(jsContentsMerged, "crossfiretest-merged-XXXXXXXXXXXX.js");
+
+    QStringList contents;
+    contents << "<html>"
+            << "<body>"
+            << "foo"
+            << "<script type=\"text/javascript\" src=\""+fileMerged.url().url()+"\">"
+            << "</script>"
+            << "</body>"
+            << "</html>";
+    TempTestFile file(contents);
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file2.localPath(), 2);
+
+    TestDebugSession session;
+
+    TestLaunchConfiguration cfg(file.url());
+    TestDebugJob job(&session, &cfg);
+    job.start();
+
+    QVERIFY(session.waitForHandshake());
+    QTest::qWait(2500);
+    fileMerged.remove(); //because else the merged file (which actually exists on disk) is used
+    QTest::qWait(5000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 2);
+    QCOMPARE(session.url(), KUrl(file2.localPath()));
+}
+
+void SessionTest::testPrepocessedMergedLinesRemoved()
+{
+    QStringList jsContents1;
+    jsContents1 << "var i = 0;";
+    TempTestFile file1(jsContents1, "crossfiretest-test1-XXXXXXXXXXXX.js");
+
+    QStringList jsContents2;
+    jsContents2 << "setTimeout(function() {";      //0
+    jsContents2 << "i++;";                         //1
+    jsContents2 << "/*";                           //2
+    jsContents2 << "Useless comment that will get removed serverside (at least we pretend so)";
+    jsContents2 << "*/";                           //3
+    jsContents2 << "console.log(i);";              //4
+    jsContents2 << "}, 3000);";
+    TempTestFile file2(jsContents2, "crossfiretest-test2-XXXXXXXXXXXX.js");
+
+    QStringList jsContentsMerged;
+    jsContentsMerged << "//line 1 \""+file1.localPath()+"\"";
+    jsContentsMerged << jsContents1;
+    jsContentsMerged << "//line 1 \""+file2.localPath()+"\"";
+    jsContentsMerged << jsContents2.mid(0, 2);
+    jsContentsMerged << "//line 6 \""+file2.localPath()+"\"";
+    jsContentsMerged << jsContents2.mid(5);
+    TempTestFile fileMerged(jsContentsMerged, "crossfiretest-merged-XXXXXXXXXXXX.js");
+
+    QStringList contents;
+    contents << "<html>"
+            << "<body>"
+            << "foo"
+            << "<script type=\"text/javascript\" src=\""+fileMerged.url().url()+"\">"
+            << "</script>"
+            << "</body>"
+            << "</html>";
+    TempTestFile file(contents);
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file2.localPath(), 1);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(file2.localPath(), 4);
+
+    TestDebugSession session;
+    TestLaunchConfiguration cfg(file.url());
+    TestDebugJob job(&session, &cfg);
+    job.start();
+
+    QVERIFY(session.waitForHandshake());
+    QTest::qWait(2500);
+    fileMerged.remove(); //because else the merged file (which actually exists on disk) is used
+
+
+
+    QPair<KUrl, int> u = session.convertToRemoteUrl(qMakePair(KUrl(file1.localPath()), 0));
+    kDebug() << u.first << fileMerged.url();
+    QCOMPARE(u.first, fileMerged.url());
+    QCOMPARE(u.second, 1);
+
+    u = session.convertToRemoteUrl(qMakePair(KUrl(file2.localPath()), 0));
+    QCOMPARE(u.second, 3);
+
+    u = session.convertToRemoteUrl(qMakePair(KUrl(file2.localPath()), 1));
+    QCOMPARE(u.second, 4);
+
+    u = session.convertToRemoteUrl(qMakePair(KUrl(file2.localPath()), 4));
+    QCOMPARE(u.second, 6);
+
+    u = session.convertToLocalUrl(qMakePair(KUrl(fileMerged.url()), 1));
+    QCOMPARE(u.first, KUrl(file1.localPath()));
+    QCOMPARE(u.second, 0);
+
+    u = session.convertToLocalUrl(qMakePair(KUrl(fileMerged.url()), 3));
+    QCOMPARE(u.first, KUrl(file2.localPath()));
+    QCOMPARE(u.second, 0);
+
+    u = session.convertToLocalUrl(qMakePair(KUrl(fileMerged.url()), 6));
+    QCOMPARE(u.first, KUrl(file2.localPath()));
+    QCOMPARE(u.second, 4);
+
+    QTest::qWait(2000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 1);
+    QCOMPARE(session.url(), KUrl(file2.localPath()));
+    session.run();
+    QTest::qWait(2000);
+    QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QCOMPARE(session.line(), 4);
+    QCOMPARE(session.url(), KUrl(file2.localPath()));
+}
+
+
 
 QTEST_KDEMAIN(SessionTest, GUI)
 
