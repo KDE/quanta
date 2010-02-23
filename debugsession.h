@@ -57,8 +57,8 @@ public:
     
     virtual bool restartAvaliable() const;
 
-    virtual KUrl convertToLocalUrl(const KUrl& url) const;
-    virtual KUrl convertToRemoteUrl(const KUrl& url) const;
+    virtual QPair<KUrl, int> convertToLocalUrl(const QPair<KUrl, int>& url) const;
+    virtual QPair<KUrl, int> convertToRemoteUrl(const QPair<KUrl, int>& url) const;
 
 private:
     virtual KDevelop::IFrameStackModel* createFrameStackModel();

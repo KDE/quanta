@@ -245,17 +245,21 @@ KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
     return new FrameStackModel(this);
 }
 
-KUrl DebugSession::convertToLocalUrl(const KUrl& remoteUrl) const
+QPair<KUrl, int> DebugSession::convertToLocalUrl(const QPair<KUrl, int>& remoteUrl) const
 {
     Q_ASSERT(m_launchConfiguration);
-    return KDevelop::PathMappings::convertToLocalUrl(m_launchConfiguration->config(), remoteUrl);
+    QPair<KUrl, int> ret = remoteUrl;
+    ret.first = KDevelop::PathMappings::convertToLocalUrl(m_launchConfiguration->config(), remoteUrl.first);
+    return ret;
 }
 
 
-KUrl DebugSession::convertToRemoteUrl(const KUrl& localUrl) const
+QPair<KUrl, int> DebugSession::convertToRemoteUrl(const QPair<KUrl, int>& localUrl) const
 {
     Q_ASSERT(m_launchConfiguration);
-    return KDevelop::PathMappings::convertToRemoteUrl(m_launchConfiguration->config(), localUrl);
+    QPair<KUrl, int> ret = localUrl;
+    ret.first = KDevelop::PathMappings::convertToRemoteUrl(m_launchConfiguration->config(), localUrl.first);
+    return ret;
 }
 
 }
