@@ -63,6 +63,7 @@ public:
 
     virtual void execute(const QDomDocument &xml)
     {
+        kDebug() << xml.toString();
         Q_ASSERT(xml.documentElement().attribute("command") == "property_get");
 
         if (!m_variable) return;
