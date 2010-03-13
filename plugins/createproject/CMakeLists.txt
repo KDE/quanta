@@ -33,7 +33,7 @@ kde4_add_plugin(kdevcreatequantaproject WITH_PREFIX ${kdevcreatequantaproject_PA
 
 
 
-target_link_libraries(kdevcreatequantaproject kdevquanta kdevplatforminterfaces ${KDE4_KDEUI_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kdevplatformshell)
+target_link_libraries(kdevcreatequantaproject kdevquanta ${KDEVPLATFORM_INTERFACES_LIBRARIES} ${KDE4_KDEUI_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDEVPLATFORM_SHELL_LIBRARIES})
 
 install(TARGETS kdevcreatequantaproject  DESTINATION ${PLUGIN_INSTALL_DIR})
 

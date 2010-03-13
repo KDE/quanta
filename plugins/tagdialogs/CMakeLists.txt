@@ -35,7 +35,7 @@ kde4_add_plugin(kdevtagdialogs WITH_PREFIX ${kdevtagdialogs_PART_SRCS})
 
 
 
-target_link_libraries(kdevtagdialogs  kdevquanta kdevplatforminterfaces ${KDE4_KDECORE_LIBS} ${KDE4_KDE3SUPPORT_LIBS})
+target_link_libraries(kdevtagdialogs  kdevquanta ${KDEVPLATFORM_INTERFACES_LIBRARIES} ${KDE4_KDECORE_LIBS} ${KDE4_KDE3SUPPORT_LIBS})
 
 install(TARGETS kdevtagdialogs  DESTINATION ${PLUGIN_INSTALL_DIR})
 
