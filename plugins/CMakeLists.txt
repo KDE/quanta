@@ -7,5 +7,4 @@ add_subdirectory( filestree )
 add_subdirectory( templatestree )
 add_subdirectory( preview )
 add_subdirectory( usertoolbars )
-macro_optional_add_subdirectory( kxsldbg )
 
