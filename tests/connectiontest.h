@@ -45,6 +45,7 @@ private slots:
     void testBreakpointError();
     void testVariablesLocals();
     void testVariablesSuperglobals();
+    void testVariableExpanding();
 
 private:
     KDevelop::TestCore* m_core;

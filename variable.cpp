@@ -107,7 +107,12 @@ void Variable::fetchMoreChildren()
         // FIXME: Eventually, should be a property of variable.
         KDevelop::IDebugSession* is = KDevelop::ICore::self()->debugController()->currentSession();
         DebugSession* s = static_cast<DebugSession*>(is);
-        //TODO: implement
+        kDebug() << expression() << m_fullName;
+        QStringList args;
+        args << "-n " + m_fullName;
+        args << QString("-d %0").arg(s->frameStackModel()->currentFrame());
+        s->connection()->sendCommand("property_get", args, QByteArray(),
+                                     new PropertyGetCallback(this, 0, 0));
     }
 }
 
@@ -132,7 +137,7 @@ void Variable::handleProperty(const QDomElement &xml)
     }
 
     QMap<QString, Variable*> existing;
-    for (int i = 0; i < childCount(); i++) {
+    for (int i = 0; i < childCount() - (hasMore() ? 1 : 0) ; i++) {
         Q_ASSERT(dynamic_cast<Variable*>(child(i)));
         Variable* v = static_cast<Variable*>(child(i));
         existing[v->expression()] = v;
@@ -152,27 +157,25 @@ void Variable::handleProperty(const QDomElement &xml)
             v = existing[name];
         }
 
-        /* TODO: implement correctly
-        kDebug() << "children" << xml->attributes().value("children");
-        bool hasMore = xml->attributes().value("children") == "true";
-        m_variable->setHasMore(hasMore);
-        if (isExpanded() && hasMore) {
-            fetchMoreChildren();
-        }
-        */
-
         v->handleProperty(el);
 
         el = el.nextSiblingElement("property");
     }
 
-    for (int i = 0; i < childCount(); ++i) {
+    for (int i = 0; i < childCount() - (hasMore() ? 1 : 0); ++i) {
         Q_ASSERT(dynamic_cast<KDevelop::Variable*>(child(i)));
         KDevelop::Variable* v = static_cast<KDevelop::Variable*>(child(i));
         if (!current.contains(v->expression())) {
             removeChild(i);
             --i;
             delete v;
+        }
+    }
+    if (!childCount() && xml.attribute("children") == "1") {
+        kDebug() << "has more" << this;
+        setHasMore(true);
+        if (isExpanded()) {
+            fetchMoreChildren();
         }
     }
 }

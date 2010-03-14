@@ -663,7 +663,59 @@ QStringList contents;
     session.run();
     session.waitForFinished();
 }
+void ConnectionTest::testVariableExpanding()
+{
+    QStringList contents;
+    contents << "<?php"                 // 1
+            << "$foo = array(array(array(1, 2, 5)));" // 2
+            << "echo '';";              // 3
 
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    DebugSession session;
+    KDevelop::ICore::self()->debugController()->addSession(&session);
+
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
+
+    session.variableController()->setAutoUpdate(KDevelop::IVariableController::UpdateLocals);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 2);
+
+    job.start();
+    session.waitForConnected();
+
+    session.waitForState(DebugSession::PausedState);
+    QTest::qWait(1000);
+
+    QVERIFY(variableCollection()->rowCount() >= 2);
+    QModelIndex i = variableCollection()->index(1, 0);
+    COMPARE_DATA(i, "Locals");
+    QCOMPARE(variableCollection()->rowCount(i), 1);
+    COMPARE_DATA(variableCollection()->index(0, 0, i), "$foo");
+    COMPARE_DATA(variableCollection()->index(0, 1, i), "");
+    i = i.child(0, 0);
+    variableCollection()->expanded(i);
+    QTest::qWait(1000);
+    QCOMPARE(variableCollection()->rowCount(i), 1);
+    i = i.child(0, 0);
+    variableCollection()->expanded(i);
+    QTest::qWait(1000);
+    QCOMPARE(variableCollection()->rowCount(i), 1);
+    i = i.child(0, 0);
+    variableCollection()->expanded(i);
+    QTest::qWait(1000);
+    QCOMPARE(variableCollection()->rowCount(i), 3);
+    COMPARE_DATA(variableCollection()->index(0, 0, i), "0");
+    COMPARE_DATA(variableCollection()->index(0, 1, i), "1");
+    COMPARE_DATA(variableCollection()->index(2, 0, i), "2");
+    COMPARE_DATA(variableCollection()->index(2, 1, i), "5");
+    session.run();
+    session.waitForFinished();
+}
 //     controller.connection()->sendCommand("eval -i 124", QStringList(), "eval(\"function test124() { return rand(); } return test124();\")");
 //     controller.connection()->sendCommand("eval -i 126", QStringList(), "test124();");
 
