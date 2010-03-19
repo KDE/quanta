@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "xmlformatter.h"
 
 #include <interfaces/isourceformatter.h>
+#include <KDebug>
 
 XmlFormatter::XmlFormatter() {
     m_options.insert ( "INDENT", QVariant ( 2 ) );
@@ -87,6 +88,7 @@ QString XmlFormatter::formatSource ( const QString& text, const QString& leftCon
                 content = token;
                 break;
             case  Error:
+                kDebug() << "Error in document: " << token;
                 return text;
                 break;
             };
@@ -98,9 +100,11 @@ QString XmlFormatter::formatSource ( const QString& text, const QString& leftCon
 
         switch ( type ) {
         case  None:
+            kDebug() << "Error in document: " << token;
             return text;
             break;
         case  Error:
+            kDebug() << "Error in document: " << token;
             return text;
             break;
         case  Processing:
@@ -197,6 +201,7 @@ QString XmlFormatter::formatSource ( const QString& text, const QString& leftCon
             formatCount++;
             break;
         default:
+            kDebug() << "Error in document: " << token;
             return text;
         };
     }
@@ -226,9 +231,10 @@ QString XmlFormatter::compactSource ( const QString& text ) const {
         //KMessageBox::information(0, QString("%1  #%2#").arg(tokenText(type),token));
         switch ( type ) {
         case  None:
+            kDebug() << "Error in document: " << token;
             return text;
-            break;
         case  Error:
+            kDebug() << "Error in document: " << token;
             return text;
             break;
         case  Processing:
@@ -285,6 +291,7 @@ QString XmlFormatter::compactSource ( const QString& text ) const {
             content = token;
             break;
         default:
+            kDebug() << "Error in document: " << token;
             return text;
         };
     }

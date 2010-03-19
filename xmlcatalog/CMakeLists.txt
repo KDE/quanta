@@ -19,6 +19,7 @@ set(kdevxmlcatalog_LIB_SRCS documentcachemanager.cpp
 
 kde4_add_library(kdevxmlcatalog SHARED ${kdevxmlcatalog_LIB_SRCS})
 
+
 target_link_libraries(kdevxmlcatalog
     ${KDE4_KIO_LIBS}
     ${QT_QTXML_LIBRARY}

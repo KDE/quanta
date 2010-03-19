@@ -41,6 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <interfaces/iruncontroller.h>
 
 
+#define debug() kDebug()
+
 class AddSchemaDialog::AddSchemaDialogPrivate : public Ui_AddSchemaForm {
 public:
     AddSchemaDialogPrivate() : widget(0) {}
@@ -227,13 +229,13 @@ void XmlCatalogDialog::removeItem()
 {
     QModelIndex index = d->catalogTree->currentIndex();
     if (!index.isValid()) {
-        kDebug() << "Invalid model index";
+        debug() << "Invalid model index";
         KMessageBox::error(this, i18n("Unable to remove the entry."));
         return;
     }
     XmlCatalogModelNode *n = static_cast<XmlCatalogModelNode *>(index.internalPointer());
     if (!n) {
-        kDebug() << "Null node";
+        debug() << "Null node";
         KMessageBox::error(this, i18n("Unable to remove the entry."));
         return;
     }
@@ -292,7 +294,7 @@ void XmlCatalogDialog::slotAddEntry()
     QObject * sender = this->sender();
     AddSchemaDialog * dialog = dynamic_cast<AddSchemaDialog *>(sender);
     if (!dialog) {
-        kDebug() << "Expected instance of AddSchemaDialog";
+        debug() << "Expected instance of AddSchemaDialog";
         KMessageBox::error(dialog, i18n("Unable to add the entry."));
         return;
     }
@@ -308,7 +310,7 @@ void XmlCatalogDialog::slotAddEntry()
         catalog = entry->catalog();
 
     if (!catalog) {
-        kDebug() << "Null catalog";
+        debug() << "Null catalog";
         KMessageBox::error(dialog, i18n("Unable to add the entry."));
         return;
     }
@@ -374,13 +376,13 @@ void XmlCatalogDialog::getSelection(ICatalog *&catalog, ICatalogEntry *&entry)
     catalog = 0;
     QModelIndex index = d->catalogTree->currentIndex();
     if (!index.isValid()) {
-        kDebug() << "Invalid model index";
+        debug() << "Invalid model index";
         KMessageBox::error(this, i18n("Unable to add the entry."));
         return;
     }
     XmlCatalogModelNode *n = static_cast<XmlCatalogModelNode *>(index.internalPointer());
     if (!n) {
-        kDebug() << "Null node";
+        debug() << "Null node";
         KMessageBox::error(this, i18n("Unable to add the entry."));
         return;
     }

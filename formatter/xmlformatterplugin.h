@@ -35,7 +35,7 @@ class XmlFormatterPlugin : public KDevelop::IPlugin, public KDevelop::ISourceFor
     Q_INTERFACES ( KDevelop::ISourceFormatter )
 
 public:
-    XmlFormatterPlugin ( QObject *parent, const QVariantList & = QVariantList() );
+    explicit XmlFormatterPlugin ( QObject *parent, const QVariantList & = QVariantList() );
     ~XmlFormatterPlugin();
 
     virtual KDevelop::ContextMenuExtension contextMenuExtension ( KDevelop::Context* context );
@@ -50,6 +50,9 @@ public:
     */
     virtual QString formatSource ( const QString &text, const KMimeType::Ptr &mime, const QString& leftContext, const QString& rightContext );
 
+    virtual QString formatSourceWithStyle(KDevelop::SourceFormatterStyle , const QString& text, const KMimeType::Ptr& mime, const QString& leftContext = QString(), const QString& rightContext = QString());
+
+    
     /* \return A map of predefined styles (a key and a caption for each type)
     */
     //virtual QMap<QString, QString> predefinedStyles ( const KMimeType::Ptr &mime );

@@ -40,6 +40,7 @@ XmlValidatorJob* XmlValidatorJob::dtdValidationJob(const QString &document, cons
     XmlValidatorJob *job = new XmlValidatorJob();
     job->m_dtdUrl = dtd;
     job->m_documentUrl = document;
+    job->setObjectName(i18n("Validating document: ") + document);
     return job;
 }
 
@@ -48,6 +49,7 @@ XmlValidatorJob* XmlValidatorJob::schemaValidationJob(const QString &document, c
     XmlValidatorJob *job = new XmlValidatorJob();
     job->m_schemaUrl = schema;
     job->m_documentUrl = document;
+    job->setObjectName(i18n("Validating document: ") + document);
     return job;
 }
 
@@ -61,8 +63,7 @@ void XmlValidatorJob::start()
         return;
     }
 
-    setObjectName(i18n("Validating document: ") + m_documentUrl);
-
+    
     QString localUrl;
     KJob *copyJob = 0;
 
@@ -119,6 +120,7 @@ void XmlValidatorJob::ready(KJob* job)
     if(job->error() > 0) {
         if(job != this) {
             m_result = Failed;
+            setError(m_result);
             m_errors = job->errorString().split("\n");
         }
         emitResult();

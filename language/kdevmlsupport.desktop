@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Exec=blubb
+Comment=Markup Language Support
+Name=KDevMlSupport
+GenericName=Markup Language Support
+ServiceTypes=KDevelop/Plugin
+Icon=source
+X-KDE-Library=kdevmllanguagesupport
+X-KDevelop-Version=8
+X-KDevelop-Language=Ml
+X-KDevelop-Args=ML
+X-KDevelop-Interfaces=ILanguageSupport
+X-KDevelop-SupportedMimeTypes=text/xml,text/html,application/xml,application/xslt+xml,application/xsd,application/wsdl+xml,application/x-wsdl,application/xml-dtd
+X-KDE-PluginInfo-Name=KDevMlSupport
+X-KDevelop-Mode=NoGUI

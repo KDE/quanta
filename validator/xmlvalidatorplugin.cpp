@@ -240,7 +240,7 @@ void XmlValidatorPlugin::slotValidated(KJob* job)
     } else if (validateJob->error() == XmlValidator::Failed) {
         KMessageBox::error(0, i18n("Failed: Error:\n") + validateJob->errorString());
     } else if (validateJob->error() == XmlValidator::Success) {
-        KMessageBox::information(0, i18n("Success: The XML is valid."));
+        KMessageBox::information(0, i18n("Success: The XML is valid.\n") + validateJob->errorString());
     }
 }
 

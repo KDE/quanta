@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDE/KUrl>
 #include <KDE/KDebug>
 
+#define debug() kDebug()
 
 #define SCC static const char *
 #define SCCI const char * OASISCatalogReaderWriter::
@@ -106,7 +107,7 @@ OASISCatalogReaderWriter::~OASISCatalogReaderWriter() {
 bool OASISCatalogReaderWriter::accepts ( const QString& file ) const {
     QFile f(file);
     if(!f.open(QIODevice::ReadOnly)) {
-        kDebug() << "Unable to open file:" << file;
+        debug() << "Unable to open file:" << file;
         return false;
     }
     QDomDocument d;
@@ -121,7 +122,7 @@ bool OASISCatalogReaderWriter::accepts ( const QDomDocument& doc ) const {
     QDomNodeList nl = doc.elementsByTagName(e::Catalog);
     for(int ni = 0; ni < nl.size(); ni++) {
         QDomElement el = nl.at(ni).toElement();
-        //kDebug() << el.namespaceURI();
+        //debug() << el.namespaceURI();
         if(el.nodeName() == e::Catalog /*&& PublicId::encodeURN(el.namespaceURI()) == "urn:oasis:names:tc:entity:xmlns:xml:catalog"*/)
             return true;
     }
@@ -132,7 +133,7 @@ bool OASISCatalogReaderWriter::accepts ( const QDomDocument& doc ) const {
 ICatalog* OASISCatalogReaderWriter::readCatalog ( const QString& file ) const {
     QFile f(file);
     if(!f.open(QIODevice::ReadOnly)) {
-        kDebug() << "Unable to open file:" << file;
+        debug() << "Unable to open file:" << file;
         return 0;
     }
     QDomDocument d;
@@ -386,7 +387,7 @@ bool OASISCatalogReaderWriter::writeCatalog(const ICatalog* catalog, const QStri
 
     QFile f(file);
     if(!f.open(QIODevice::WriteOnly)) {
-        kDebug() << "Unable to write to file: " << file;
+        debug() << "Unable to write to file: " << file;
         return false;
     }
     

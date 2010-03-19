@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDE/KDebug>
 #include <KDE/KLocalizedString>
 
+#define debug() kDebug()
+
 CatalogManager::CatalogManager() {
     m_rw.append(new OASISCatalogReaderWriter);
     load();
@@ -116,7 +118,7 @@ bool CatalogManager::addCatalog ( const QString& file ) {
     QFile f ( file );
 
     if(!f.exists()) {
-        kDebug() << "Catalog does not exist:" << file;
+        debug() << "Catalog does not exist:" << file;
         return false;
     }
 
@@ -127,12 +129,12 @@ bool CatalogManager::addCatalog ( const QString& file ) {
 
     const ICatalogReaderWriter * rw = readerForContent ( file );
     if ( !rw ) {
-        kDebug() << "No reader for content:" << file;
+        debug() << "No reader for content:" << file;
         return false;
     }
     ICatalog *c = rw->readCatalog ( file );
     if ( !c ) {
-        kDebug() << "Unable to create catalog for:" << file;
+        debug() << "Unable to create catalog for:" << file;
         return false;
     }
     c->setParameter(ICatalogManager::ParameterFile, file);
@@ -163,16 +165,16 @@ bool CatalogManager::removeCatalog ( const QString& file ) {
 bool CatalogManager::load() {
     QFile f(catalogDirectory() + "config.xml");
     if (!f.exists()) {
-        kDebug() << "File does not exist: " << f.fileName();
+        debug() << "File does not exist: " << f.fileName();
         return false;
     }
     if (!f.open(QIODevice::ReadOnly)) {
-        kDebug() << "Unable to open file: " << f.fileName();
+        debug() << "Unable to open file: " << f.fileName();
         return false;
     }
     QDomDocument doc;
     if (!doc.setContent(&f)) {
-        kDebug() << "Unable to parse file: " << f.fileName();
+        debug() << "Unable to parse file: " << f.fileName();
         return false;
     }
     QDomNodeList nl = doc.elementsByTagName("catalog");
@@ -182,7 +184,7 @@ bool CatalogManager::load() {
             continue;
         QString catalog = e.attribute("file");
         if (!addCatalog(catalog)) {
-            kDebug() << "Unable load catalog: " << catalog;
+            debug() << "Unable load catalog: " << catalog;
             continue;
         }
     }
@@ -198,7 +200,7 @@ bool CatalogManager::load() {
 bool CatalogManager::save() const {
     QFile f(catalogDirectory() + "config.xml");
     if (!f.open(QIODevice::WriteOnly)) {
-        kDebug() << "Unable to open file: " << f.fileName();
+        debug() << "Unable to open file: " << f.fileName();
         return false;
     }
     QTextStream stream(&f);
@@ -208,7 +210,7 @@ bool CatalogManager::save() const {
             continue;
         QString catalogFile = c->parameter(ICatalogManager::ParameterFile).toString();
         if (catalogFile.isEmpty()) {
-            kDebug() << "No file parameter for catalog";
+            debug() << "No file parameter for catalog";
             continue;
         }
         stream << QString("  <catalog file=\"%1\"/>\n").arg(catalogFile);

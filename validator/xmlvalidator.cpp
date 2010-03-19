@@ -30,6 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <xmlcatalog/icatalogmanager.h>
 #include <xmlcatalog/idocumentcachemanager.h>
+#include <KDE/KLocalizedString>
+#include <KDE/KDebug>
+
+#define debug() kDebug()
 
 int XmlValidator::m_refCount = 0;
 
@@ -45,8 +49,11 @@ xmlParserInputPtr catalogManagerEntityLoader(const char *URL, const char *ID, xm
         resolved = URL;
     //TODO This can lock down the ui as it is not run in a seperate process.
     resolved = IDocumentCacheManager::self()->cachedUrl(resolved);
-    if(resolved.isEmpty())
+    debug() << "Resolved" << URL << ID << " to " << resolved;
+    if(resolved.isEmpty()) {
+        debug() << "Unable to locate file for" << URL << ID;
         return NULL;
+    }
     ret = xmlNewInputFromFile(ctxt, resolved.toAscii().constData());
     if (ret != NULL)
         return(ret);
@@ -87,6 +94,7 @@ void XmlValidator::errorMessage ( void* ctx, const char* msg, ... ) {
     vsprintf ( errorStr, msg, vl );
     v->m_errors.append ( errorStr );
     va_end ( vl );
+    kDebug() << errorStr;
 }
 
 void XmlValidator::warnMessage ( void* ctx, const char* msg, ... ) {
@@ -99,6 +107,7 @@ void XmlValidator::warnMessage ( void* ctx, const char* msg, ... ) {
     vsprintf ( errorStr, msg, vl );
     v->m_warnings.append ( errorStr );
     va_end ( vl );
+    kDebug() << errorStr;
 }
 
 
@@ -112,7 +121,7 @@ XmlValidator::ValidationResult XmlValidator::validateSchema ( const QString &doc
 
     xmlSchemaParserCtxtPtr parserCtxPtr = xmlSchemaNewParserCtxt ( KUrl ( schemaUrl ).toEncoded().constData() );
     if ( !parserCtxPtr ) {
-        qDebug() << "Unable to create xmlSchemaParserCtxtPtr";
+        debug() << "Unable to create xmlSchemaParserCtxtPtr";
         return InternalError;
     }
     xmlSchemaValidityErrorFunc errorFunc = &XmlValidator::errorMessage;

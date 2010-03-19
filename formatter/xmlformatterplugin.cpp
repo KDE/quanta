@@ -136,6 +136,14 @@ QString XmlFormatterPlugin::highlightModeForMime ( const KMimeType::Ptr &mime ) 
 
 QString XmlFormatterPlugin::formatSource ( const QString& text, const KMimeType::Ptr& mime, const QString& leftContext, const QString& rightContext ) {
     Q_UNUSED ( mime );
+    m_formatter->loadStyle(m_style.content());
+    return m_formatter->formatSource ( text, leftContext, rightContext );
+}
+
+QString XmlFormatterPlugin::formatSourceWithStyle(SourceFormatterStyle style, const QString& text, const KMimeType::Ptr& mime, const QString& leftContext, const QString& rightContext)
+{
+    Q_UNUSED ( mime );
+    m_formatter->loadStyle(style.content());
     return m_formatter->formatSource ( text, leftContext, rightContext );
 }
 
