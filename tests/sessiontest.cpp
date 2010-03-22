@@ -250,7 +250,7 @@ void SessionTest::testInsertBreakpoint()
     QTest::qWait(5000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 6);
-    QCOMPARE(session.url(), file.url());
+    QCOMPARE(session.url(), KUrl(file.localPath()));
 
 }
 
@@ -287,7 +287,7 @@ void SessionTest::testRemoveBreakpoint()
     QTest::qWait(6000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 5);
-    QCOMPARE(session.url(), file.url());
+    QCOMPARE(session.url(), KUrl(file.localPath()));
 
     KDevelop::ICore::self()->debugController()->breakpointModel()->removeRow(0);
     QTest::qWait(1000);
@@ -295,8 +295,9 @@ void SessionTest::testRemoveBreakpoint()
     QTest::qWait(1000);
 
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
+    QTest::qWait(1000);
     QCOMPARE(session.line(), 10);
-    QCOMPARE(session.url(), file.url());
+    QCOMPARE(session.url(), KUrl(file.localPath()));
 }
 
 void SessionTest::testFrameStack()
@@ -521,12 +522,12 @@ void SessionTest::testStepInto()
     QTest::qWait(5000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 6);
-    QCOMPARE(session.url(), file.url());
+    QCOMPARE(session.url(), KUrl(file.localPath()));
     session.stepInto();
     QTest::qWait(2000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 7);
-    QCOMPARE(session.url(), file.url());
+    QCOMPARE(session.url(), KUrl(file.localPath()));
 }
 
 void SessionTest::testContinue()
@@ -560,12 +561,12 @@ void SessionTest::testContinue()
     QTest::qWait(5000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 6);
-    QCOMPARE(session.url(), file.url());
+    QCOMPARE(session.url(), KUrl(file.localPath()));
     session.run();
     QTest::qWait(2000);
     QCOMPARE(session.state(), KDevelop::IDebugSession::PausedState);
     QCOMPARE(session.line(), 7);
-    QCOMPARE(session.url(), file.url());
+    QCOMPARE(session.url(), KUrl(file.localPath()));
 }
 
 void SessionTest::testPrepocessedMerged()

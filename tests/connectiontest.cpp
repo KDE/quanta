@@ -37,7 +37,7 @@ To run this tests you have to:
 - eventually adapt firefoxCmd below
 */
 
-static const char* firefoxCmd = "firefox";
+static const char* firefoxCmd = "/opt/firefox/firefox-bin";
 
 using namespace Crossfire;
 
@@ -62,6 +62,7 @@ void ConnectionTest::testConnect()
     connection.sendCommand("version");
 
     QTest::qWait(3000);
+    kDebug() << p.pid();
     p.kill();
     p.waitForFinished();
 }

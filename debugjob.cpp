@@ -82,8 +82,8 @@ void DebugJob::start()
             return;
         }
         QStringList p;
-        //p << "/opt/firefox/firefox-bin"; //TODO this should obviously not stay
-        p << "firefox";
+        p << "/opt/firefox/firefox-bin"; //TODO this should obviously not stay
+        //p << "firefox";
         p << "--crossfire-host=localhost";
         p << "--crossfire-port=5000";
         p << m_url.url();
