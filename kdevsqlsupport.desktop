@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Icon=source
+Name=KDevSqlSupport
+GenericName=Sql Support
+ServiceTypes=KDevelop/Plugin
+X-KDE-Library=kdevsqllanguagesupport
+X-KDE-PluginInfo-Name=kdevsqllanguagesupport
+X-KDevelop-Version=8
+X-KDevelop-Category=Global
+X-KDevelop-Mode=GUI
+#X-KDevelop-Language=Sql
+#X-KDevelop-SupportedMimeTypes=text/sql
