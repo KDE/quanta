@@ -1,0 +1,14 @@
+[Desktop Entry]
+Icon=server-database
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kcm_kdev_sqlconnections
+X-KDE-FactoryName=kcm_kdev_sqlconnections
+X-KDE-ParentApp=kdevplatformproject
+X-KDE-ParentComponents=kdevplatformproject
+X-KDE-CfgDlgHierarchy=GENERAL
+
+Name=DB Connections
+Comment=Configure Database Connections

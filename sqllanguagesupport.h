@@ -21,7 +21,6 @@
 
 #include <interfaces/iplugin.h>
 #include <language/interfaces/ilanguagesupport.h>
-#include <QSqlDatabase>
 
 namespace Sql
 {
@@ -51,7 +50,6 @@ private slots:
 private:
     static LanguageSupport* m_self;
     ToolFactory<ResultTableWidget>* m_resultTableFactory;
-    QSqlDatabase m_db;
 };
 
 }

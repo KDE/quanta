@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Icon=source
+Icon=server-database
 Name=KDevSqlSupport
 Name[pt]=KDevSqlSupport
 Name[sv]=KDevelop SQL-stöd

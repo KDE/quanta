@@ -15,15 +15,20 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set(kdevsqllanguagesupport_PART_SRCS resulttablewidget.cpp
-    sqllanguagesupport.cpp
-)
+add_subdirectory(connections)
 
-kde4_add_plugin(kdevsqllanguagesupport ${kdevsqllanguagesupport_PART_SRCS})
+set(kdevsqllanguagesupport_SRCS
+    sqllanguagesupport.cpp
+    resulttablewidget.cpp
+    connections/connectionsmodel.cpp
+)
+kde4_add_ui_files( kdevsqllanguagesupport_SRCS results.ui )
+
+kde4_add_plugin(kdevsqllanguagesupport ${kdevsqllanguagesupport_SRCS})
 
 target_link_libraries(kdevsqllanguagesupport
     ${QT_QTSQL_LIBRARY}
-    ${KDE4_KDEUI_LIBS}
+    ${KDE4_KUTILS_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
 )

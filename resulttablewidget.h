@@ -20,22 +20,38 @@
 #define SQL_RESULTTABLEWIDGET_H
 
 #include <QWidget>
+#include <QSqlDatabase>
+
+class QSqlQueryModel;
+namespace Ui {
+    class Results;
+}
 
 
 class QTableView;
 
 namespace Sql {
 
+class ConnectionsAllProjectsModel;
+
 class ResultTableWidget : public QWidget
 {
     Q_OBJECT
 public:
     ResultTableWidget(QWidget* parent = 0);
+    ~ResultTableWidget();
 
-    QTableView *view() const;
+    void runSql(QString sql);
+
+private slots:
+    void currentConnectionChanged(int index);
+    void connectionChanged();
 
 private:
-    QTableView *m_view;
+    Ui::Results *m_ui;
+    QSqlQueryModel *m_model;
+    QSqlDatabase m_db;
+    ConnectionsAllProjectsModel* m_connectionsModel;
 };
 
 }

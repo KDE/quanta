@@ -120,25 +120,8 @@ void LanguageSupport::runSql()
     Q_ASSERT(w);
     ResultTableWidget* resTable = dynamic_cast<ResultTableWidget*>(w);
     Q_ASSERT(resTable);
-
-    if (!m_db.isOpen()) {
-        //obviously this should not be hardcoded but configurable per project
-        m_db = QSqlDatabase::addDatabase("QMYSQL");
-        m_db.setHostName("localhost");
-        m_db.setUserName("root");
-        m_db.setPassword("");
-        m_db.setDatabaseName("test");
-        if (!m_db.open()) {
-            kWarning() << m_db.lastError().text();
-            return;
-        }
-    }
-
-    QSqlQueryModel *model = new QSqlQueryModel;
     QString text = core()->documentController()->activeDocument()->textDocument()->text();
-    model->setQuery(text, m_db);
-
-    resTable->view()->setModel(model);
+    resTable->runSql(text);
 }
 
 }
