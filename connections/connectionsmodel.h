@@ -36,6 +36,7 @@ public:
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
 
     struct Connection {
+        QString driver;
         QString hostName;
         QString databaseName;
         QString userName;

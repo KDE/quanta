@@ -156,7 +156,7 @@ void ResultTableWidget::currentConnectionChanged(int index)
     }
     if (index != -1) {
         ConnectionsModel::Connection c = m_connectionsModel->connection(index);
-        m_db = QSqlDatabase::addDatabase("QMYSQL", "kdevsql"); //TODO configurable
+        m_db = QSqlDatabase::addDatabase(c.driver, "kdevsql");
         m_db.setHostName(c.hostName);
         m_db.setUserName(c.userName);
         m_db.setPassword(c.password);

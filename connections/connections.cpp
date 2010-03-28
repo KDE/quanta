@@ -72,12 +72,14 @@ Connections::Connections( QWidget *parent, const QVariantList &args )
             this, SLOT(changed()));
     connect(m_ui->list->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), SLOT(currentRowChanged(QModelIndex)));
 
+    m_ui->testResult->setText("");
+    m_ui->driver->insertItems(0, QSqlDatabase::drivers());;
+
+    connect(m_ui->driver, SIGNAL(currentIndexChanged(int)), SLOT(connectionEdited()));
     connect(m_ui->hostName, SIGNAL(textEdited(QString)), SLOT(connectionEdited()));
     connect(m_ui->database, SIGNAL(textEdited(QString)), SLOT(connectionEdited()));
     connect(m_ui->userName, SIGNAL(textEdited(QString)), SLOT(connectionEdited()));
     connect(m_ui->password, SIGNAL(textEdited(QString)), SLOT(connectionEdited()));
-
-    m_ui->testResult->setText("");
 
     load();
 }
@@ -101,6 +103,9 @@ void Connections::load()
 void Connections::currentRowChanged(const QModelIndex& index)
 {
     ConnectionsModel::Connection c = m_model->connection(index.row());
+    m_ui->driver->blockSignals(true);
+    m_ui->driver->setCurrentItem(c.driver);
+    m_ui->driver->blockSignals(false);
     m_ui->hostName->setText(c.hostName);
     m_ui->database->setText(c.databaseName);
     m_ui->userName->setText(c.userName);
@@ -111,6 +116,7 @@ void Connections::currentRowChanged(const QModelIndex& index)
 void Connections::connectionEdited()
 {
     ConnectionsModel::Connection c;
+    c.driver = m_ui->driver->currentText();
     c.hostName = m_ui->hostName->text();
     c.databaseName = m_ui->database->text();
     c.userName = m_ui->userName->text();
@@ -129,7 +135,11 @@ void Connections::testConnection()
     }
     {
         ConnectionsModel::Connection c = m_model->connection(m_ui->list->currentIndex().row());
-        QSqlDatabase testDb = QSqlDatabase::addDatabase("QMYSQL", "kdevsqltest"); //TODO configurable driver
+        if (c.driver.isEmpty()) {
+            m_ui->testResult->setText("");
+            return;
+        }
+        QSqlDatabase testDb = QSqlDatabase::addDatabase(c.driver, "kdevsqltest");
         testDb.setHostName(c.hostName);
         testDb.setUserName(c.userName);
         testDb.setPassword(c.password);

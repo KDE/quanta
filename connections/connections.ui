@@ -21,7 +21,13 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QFormLayout" name="formLayout">
-         <item row="0" column="0">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::ExpandingFieldsGrow</enum>
+         </property>
+         <item row="0" column="1">
+          <widget class="KComboBox" name="driver"/>
+         </item>
+         <item row="1" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
             <string>Host Name:</string>
@@ -31,7 +37,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
+         <item row="1" column="1">
           <widget class="KLineEdit" name="hostName">
            <property name="minimumSize">
             <size>
@@ -41,7 +47,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
             <string>Database Name:</string>
@@ -51,10 +57,10 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="KLineEdit" name="database"/>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
             <string>User Name:</string>
@@ -64,10 +70,10 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="KLineEdit" name="userName"/>
          </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
             <string>Password:</string>
@@ -77,10 +83,17 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <widget class="KLineEdit" name="password">
            <property name="echoMode">
             <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Driver:</string>
            </property>
           </widget>
          </item>
@@ -116,6 +129,11 @@
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

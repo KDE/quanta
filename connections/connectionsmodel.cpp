@@ -74,6 +74,7 @@ void ConnectionsModel::revert()
     for (int i=0; i < count; ++i) {
         Connection c;
         KConfigGroup g = group.group(QString("Connection %1").arg(i));
+        c.driver = g.readEntry("Driver", QString());
         c.hostName = g.readEntry("HostName", QString());
         c.databaseName = g.readEntry("DatabaseName", QString());
         c.userName = g.readEntry("UserName", QString());
@@ -91,6 +92,7 @@ bool ConnectionsModel::submit()
     for (int i=0; i < m_connections.count(); ++i) {
         Connection c = m_connections.at(i);
         KConfigGroup g = group.group(QString("Connection %1").arg(i));
+        g.writeEntry("Driver", c.driver);
         g.writeEntry("HostName", c.hostName);
         g.writeEntry("DatabaseName", c.databaseName);
         g.writeEntry("UserName", c.userName);
