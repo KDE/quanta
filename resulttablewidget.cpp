@@ -101,7 +101,6 @@ private slots:
     {
         m_models[project] = new ConnectionsModel(project, this);
         connect(m_models[project], SIGNAL(modelReset()), SLOT(childModelReset()));
-        //TODO reload when changed
         reset();
     }
 
