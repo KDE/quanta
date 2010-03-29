@@ -20,12 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTest>
 
 #include "parsesession.h"
-#include "mldebugvisitor.h"
+#include "sgmldebugvisitor.h"
 #include "editorintegrator.h"
 
-QTEST_MAIN(Ml::TestParser)
+QTEST_MAIN(Xml::TestParser)
 
-namespace Ml
+namespace Xml
 {
 
 TestParser::TestParser()
@@ -37,24 +37,15 @@ void TestParser::parser_data()
 
     QTest::addColumn<QString>("contents");
     
+    
     QTest::newRow("XML ATT NS       ") << "<ns:name attname='value' attns:attname='value'> text </ns:name>";
     QTest::newRow("XML PROC         ") << "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root/>";
     QTest::newRow("XML DOCTYPE      ") << "<root><![CDATA[]]></root>";
-    QTest::newRow("HTML JAVASCRIPT  ") << "<script type=\"text/javascript\">var t=1<2?1:2;</script>";
-    QTest::newRow("DTD ELE SEQUENCE ") << "<!ELEMENT Name (Last_Name, First_Name, Tel+)>";
-    QTest::newRow("DTD ELE CHOICE   ") << "<!ELEMENT ITEM (PRODUCT, NUMBER?, (PRICE | CHARGEACCT | SAMPLE)+)>";
-    QTest::newRow("DTD ELE MIXED    ") << "<!ELEMENT PRODUCT (#PCDATA | PRODUCT_ID)*>";
-    QTest::newRow("DTD ELE ENT PARM ") << "<!ELEMENT CUSTOMER %record;>";
-    QTest::newRow("DTD ENTITY VALUE ") << "<!ENTITY name \"value\">";
-    QTest::newRow("DTD ENTITY EXTERN") << "<!ENTITY name SYSTEM \"uri\">";
-    QTest::newRow("DTD ENTITY PARM  ") << "<!ENTITY % record \"(NAME, DATE, ORDERS)\">";
-    QTest::newRow("DTD ATTLIST      ") << "<!ATTLIST elementName name CDATA #REQUIRED>";
-    QTest::newRow("DTD ATTLIST DEF  ") << "<!ATTLIST elementName name CDATA \"default\">";
-    QTest::newRow("DTD ATTLIST ENUM ") << "<!ATTLIST elementName name (check | cash) \"default\">";
-    QTest::newRow("DTD DEFINE       ") << "<!DOCTYPE root [<!ELEMENT name ANY> ]>";
     QTest::newRow("DTD HTML         ") << "<!doctype html>";
+    QTest::newRow("DTD DEFINE       ") << "<!DOCTYPE root [<!ELEMENT name ANY> ]>";
     QTest::newRow("DTD HTML PUBLICID") << "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">";
-
+    QTest::newRow("HTML JAVASCRIPT  ") << "<!doctype html><script type=\"text/javascript\">var t=1<2?1:2;</script>";
+    QTest::newRow("HTML TEXT        ") << "<!doctype html><head><body><p>Some text<p>More text</body></head>";
 }
 
 void TestParser::parser()
@@ -71,19 +62,7 @@ void TestParser::parser()
 void TestParser::parserForFun()
 {
     QList<QString> contents;
-    contents << "<?xml?>\n\
-    <!--Users DOCTYPE-->\n\
-    <!DOCTYPE users [\n\
-        <!--Simple User-->\n\
-        <!ELEMENT user (userName | passWord) >\n\
-        <!ATTLIST user\n\
-            islocked (true | false) \"true\"\n\
-            group CDATA #REQUIRED\n\
-            issystem CDATA #FIXED \"false\">\n\
-    ]>\n\
-    <users>\n\
-        <user isLocked=\"false\" group=\"operator\"/>\n\
-    </users>";
+    contents << "<?xml?><root1><child1/><child2><child3/></child2></root1><root2/>";
 
     foreach(QString content, contents) {
         ParseSession session;

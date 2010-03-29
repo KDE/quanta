@@ -26,7 +26,7 @@ namespace KDevelop
 class ParseJob;
 }
 
-namespace Ml
+namespace Xml
 {
 
 class LanguageSupport : public KDevelop::IPlugin, public KDevelop::ILanguageSupport

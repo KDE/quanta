@@ -25,7 +25,7 @@
 #include "parserexport.h"
 #include "kdev-pg-token-stream.h"
 
-namespace Ml
+namespace Xml
 {
 
 class ParseSession;
@@ -40,7 +40,7 @@ class AstNode;
  *
  * \todo introduce stacks for the state?
  */
-class KDEVMLPARSER_EXPORT EditorIntegrator : public KDevelop::EditorIntegrator
+class KDEVXMLPARSER_EXPORT EditorIntegrator : public KDevelop::EditorIntegrator
 {
 public:
     EditorIntegrator(ParseSession* session);

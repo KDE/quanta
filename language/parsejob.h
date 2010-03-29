@@ -26,7 +26,7 @@
 #include <ktexteditor/range.h>
 #include <language/interfaces/iproblem.h>
 
-namespace Ml
+namespace Xml
 {
 class AstNode;
 class LanguageSupport;
@@ -40,7 +40,7 @@ public:
     explicit ParseJob(const KUrl &url);
     virtual ~ParseJob();
 
-    LanguageSupport* ml() const;
+    LanguageSupport* xml() const;
 
 protected:
     virtual void run();

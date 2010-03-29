@@ -33,22 +33,22 @@ else(KDEVPGQT_FOUND)
     )
 endif(KDEVPGQT_FOUND)
 
-set(kdevmllanguagesupport_PART_SRCS
+set(kdevxmllanguagesupport_PART_SRCS
     languagesupport.cpp
     parsejob.cpp
 )
 
-kde4_add_plugin(kdevmllanguagesupport ${kdevmllanguagesupport_PART_SRCS})
+kde4_add_plugin(kdevxmllanguagesupport ${kdevxmllanguagesupport_PART_SRCS})
 
-target_link_libraries(kdevmllanguagesupport
+target_link_libraries(kdevxmllanguagesupport
     ${KDE4_KDEUI_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDE4_KTEXTEDITOR_LIBS}
-    kdevmlparser
+    kdevsgmlparser
 )
 
-install(TARGETS kdevmllanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kdevxmllanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kdevmlsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 

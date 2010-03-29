@@ -31,17 +31,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "parsejob.h"
 
-K_PLUGIN_FACTORY(KDevMlSupportFactory, registerPlugin<Ml::LanguageSupport>();)
-K_EXPORT_PLUGIN(KDevMlSupportFactory(KAboutData("kdevmlsupport","kdevml", ki18n("Markup Language Support"), "0.1", 
-                                      ki18n("Support for Markup Language"), KAboutData::License_GPL)
+K_PLUGIN_FACTORY(KDevXmlSupportFactory, registerPlugin<Xml::LanguageSupport>();)
+K_EXPORT_PLUGIN(KDevXmlSupportFactory(KAboutData("kdevxmlsupport","kdevxml", ki18n("XML Language Support"), "0.1", 
+                                      ki18n("Support for XML"), KAboutData::License_GPL)
                                       .addAuthor(ki18n("Ruan Strydom"), ki18n("Author"), "ruan@jcell.co.za", "")))
 
-namespace Ml
+namespace Xml
 {
 LanguageSupport* LanguageSupport::m_self = 0;
     
 LanguageSupport::LanguageSupport(QObject* parent, const QVariantList& args) :
-        KDevelop::IPlugin(KDevMlSupportFactory::componentData(), parent),
+        KDevelop::IPlugin(KDevXmlSupportFactory::componentData(), parent),
         KDevelop::ILanguageSupport()
 {
     m_self = this;
@@ -49,7 +49,7 @@ LanguageSupport::LanguageSupport(QObject* parent, const QVariantList& args) :
 
 QString LanguageSupport::name() const
 {
-    return "Ml";
+    return "XML";
 }
 
 LanguageSupport* LanguageSupport::self()

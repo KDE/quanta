@@ -28,7 +28,7 @@
 
 #include <QtCore/QString>
 #include <language/editor/simplecursor.h>
-#include "mlparser.h"
+#include "sgmlparser.h"
 
 namespace KDevPG
 {
@@ -38,14 +38,14 @@ namespace KDevelop
 {
 class SimpleCursor;
 }
-namespace Ml
+namespace Xml
 {
 class TokenStream;
 class StartAst;
 
 typedef QPair<KDevelop::DUContextPointer, KDevelop::SimpleRange> SimpleUse;
 
-class KDEVMLPARSER_EXPORT ParseSession
+class KDEVXMLPARSER_EXPORT ParseSession
 {
 public:
     ParseSession();
@@ -58,7 +58,7 @@ public:
     TokenStream* tokenStream() const;
     QString contents() const;
 
-    bool parse(Ml::StartAst**);
+    bool parse(StartAst**);
     Parser* createParser();
 
     QString symbol(qint64 token) const;

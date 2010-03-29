@@ -20,18 +20,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 
-namespace Ml
+namespace Xml
 {
 
-class TestMlLexer : public QObject
+class TestSgmlLexer : public QObject
 {
     Q_OBJECT
 
 public:
-    TestMlLexer();
+    TestSgmlLexer();
 
 private Q_SLOTS:
+    void testDoctype();
     void testElementName();
+    void testStringRefList();
     void testReadUntill();
     void testReadUntillAny();
     void testReadWhileAny();

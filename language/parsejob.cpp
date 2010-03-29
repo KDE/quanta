@@ -19,7 +19,7 @@
 #include "languagesupport.h"
 
 #include "parser/parsesession.h"
-#include "parser/mlparser.h"
+#include "parser/sgmlparser.h"
 
 #include <QFile>
 #include <QReadWriteLock>
@@ -38,7 +38,7 @@
 #include <language/backgroundparser/urlparselock.h>
 
 
-namespace Ml
+namespace Xml
 {
 
 ParseJob::ParseJob(const KUrl& url) : KDevelop::ParseJob(url)
@@ -89,7 +89,7 @@ void ParseJob::run()
     session.parse(&start);
 }
 
-LanguageSupport* ParseJob::ml() const
+LanguageSupport* ParseJob::xml() const
 {
     return LanguageSupport::self();
 }

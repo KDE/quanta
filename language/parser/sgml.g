@@ -21,9 +21,11 @@
 [:
 
 #include <QtCore/QString>
+#include <QtCore/QList>
 #include <kdebug.h>
 #include <language/interfaces/iproblem.h>
-#include "mllexer.h"
+#include "sgmllexer.h"
+#include "idtdhelper.h"
 
 namespace KDevelop
 {
@@ -36,13 +38,13 @@ namespace KDevelop
 ------------------------------------------------------------
 -- Export macro to use the parser in a shared lib
 ------------------------------------------------------------
-%export_macro "KDEVMLPARSER_EXPORT"
+%export_macro "KDEVXMLPARSER_EXPORT"
 %export_macro_header "parserexport.h"
 
 
 ------------------------------------------------------------
 -- Enumeration types for additional AST members,
--- in the global "Ml" namespace
+-- in the global "Xml" namespace
 ------------------------------------------------------------
 %namespace
 [:
@@ -73,7 +75,7 @@ namespace KDevelop
   QList<KDevelop::ProblemPointer> problems() {
       return m_problems;
   }
-  QString tokenText(qint64 begin, qint64 end);
+  QString tokenText(qint64 begin, qint64 end) const;
   void setDebug(bool debug);
   void setCurrentDocument(QString url);
 
@@ -85,6 +87,10 @@ namespace KDevelop
     bool m_debug;
     QString m_currentDocument;
     QList<KDevelop::ProblemPointer> m_problems;
+    const IDtdHelper *m_dtdHelper;
+    QString tagName(const ElementTagAst *ast) const;
+    QString tagName(const ElementCloseTagAst *ast) const;
+    QStack<ElementTagAst *> m_stack;
 :]
 
 
@@ -98,19 +104,17 @@ namespace KDevelop
 ---------------
 
 %token TEXT ("text"),
-       COMMENT_START ("<!--"),
-       COMMENT_END ("-->"),
+       COMMENT ("<!-- -->"),
        LT ("<"),
        GT (">"),
-       LTFS("</"),
-       FSGT("/>"),
+       CLOSE("</ />"),
+       --LTFS ("</"),
+       --FSGT ("/>"),
        QUOTE ("quote"),
        EQUAL ("="),
        COLON (":"),
-       CDATA_START ("<![CDATA["),       --Treated seperately because of <![ in DTD
-       CDATA_END ("]]>"),
-       PCDATA_START ("<![PCDATA["),     --Treated seperately because of <![ in DTD
-       PCDATA_END ("]]>"),
+       CDATA ("<![CDATA[ ]>"),       --Treated seperately because of <![ in DTD
+       PCDATA ("<![PCDATA[ ]>"),     --Treated seperately because of <![ in DTD
        PROC_START ("<?xml"),
        PROC_END ("?>"),
        PHP_START ("<?php"),
@@ -124,38 +128,42 @@ namespace KDevelop
 ---------------
 
 %token DECLARE_START("<!"),
-       DECLARE_END(">"),
        DOCTYPE("DOCTYPE"),
        ELEMENT("ELEMENT"),
        ATTLIST("ATTLIST"),
        ENTITY("ENTITY"),
+       NOTATION("NOTATION"),
        PUBLIC("PUBLIC"),
        SYSTEM("SYSTEM"),
-       CDATA("CDATA"),
-       PCDATA("PCDATA"),
-       SDATA("SDATA"),
-       NMTOKEN("NMTOKEN"),
-       ID("ID"),
        ANY("ANY"),
        IMPLIED("IMPLIED"),
        REQUIRED("REQUIRED"),
        FIXED("FIXED"),
        EMPTY("EMPTY"),
-       COND_START("<!["),               --TODO Not used - DTD Condition for a lack of a better term
-       COND_END("]]>"),                 --TODO Not used - DTD Condition for a lack of a better term
+       COND_START("<!["),               --TODO Not used - DTD Condition
+       COND_END("]]>"),                 --TODO Not used - DTD Condition
        OBRACKET ("["),
        CBRACKET ("]"),
        OPAREN ("("),
        CPAREN (")"),
        VBAR("|"),
        PLUS("+"),
-       SQUOTE("'"),
+       OPT("O"),                        --Optional tag
+       HYPHEN("-"),                     --Required tag
        ASTERISK("*"),
        COMMA,
        PERCENT("%"),
        NUMBER("#"),
        SEMICOLON(";"),
        QUESTION("?");;
+
+-- data types
+%token NDATA("NDATA"),
+       CDATA("CDATA"),
+       PCDATA("PCDATA"),
+       SDATA("SDATA"),
+       NMTOKEN("NMTOKEN"),
+       ID("ID");;
 
 -- lexer error
 %token ERROR ("error") ;;
@@ -165,7 +173,7 @@ namespace KDevelop
 
 
 ---------------------------------------------------------------------------------
--- HTML XML etc grammar starts here.
+-- XML etc grammar starts here.
 -- NOTE
 -- The parser do not create a tree at the moment the logic was that DTD and the mime
 -- defines how tag/elements are opened and closed ?
@@ -177,7 +185,9 @@ namespace KDevelop
 
 
     --TODO how to get rid of element
-    element=elementText
+    elementCloseTag
+    | element=elementText
+    | element=elementPCDATA
     | element=elementCDATA
     | element=elementPHP
     | element=elementTag
@@ -218,18 +228,41 @@ namespace KDevelop
 ->  attribute ;;
 
     --NOTE safe but irritating FIRST/FIRST conflict
-    ( LTFS | LT )
-    maybeWhites
-    (? [: LA(2).kind == Token_COLON :] (ns=text COLON name=text) | (name=text)) maybeWhites
+    --TODO Supported tags marked with *:
+    --  <sgml>                  * root not a problem
+    --      <child1>            
+    --          blah, blah
+    --          <child1.1>
+    --      <child2>
+    --          <child2.1/>     *supported using dtdHelper not a problem
+    --          <child2.2>      Problem as DTD will specify that child2.2 belongs actualy to child2
+    --      </child2>           * will correctly pop to child2
+
+    LT maybeWhites
+    (?  [: LA(2).kind == Token_COLON :] (ns=text COLON name=text)
+        | (name=text)
+    ) maybeWhites
     #attributes=attribute @ whites
-    (FSGT | GT )
+    (
+        CLOSE [: while(m_dtdHelper && !m_stack.empty() && !m_dtdHelper->hasChild(tagName(m_stack.top()), tagName(*yynode))) m_stack.pop(); :]
+        | GT [: m_stack.push(*yynode); :] (#children=element [: if(m_stack.empty() || m_stack.top() != *yynode) break; :])*
+    )
 ->  elementTag ;;
 
+    CLOSE maybeWhites
+    (?  [: LA(2).kind == Token_COLON :] (ns=text COLON name=text)
+        | (name=text)
+    ) maybeWhites
+    GT [: while(!m_stack.empty() && tagName(m_stack.top()) != tagName(*yynode)) m_stack.pop(); :]
+->  elementCloseTag ;;
 
-    CDATA_START
-    ( text=text | 0 )
-    CDATA_END
+
+    CDATA
 ->  elementCDATA ;;
+
+
+    PCDATA
+->  elementPCDATA ;;
 
 
     PHP_START
@@ -250,131 +283,28 @@ namespace KDevelop
 ->  elementProcessing ;;
 
 
-    COMMENT_START
-    (text=text | 0)
-    COMMENT_END
+    COMMENT
 ->  elementComment ;;
 
 
-    --FIXME does not work
+    --FIXME does not work here
     ERROR [: reportProblem( Error, "Sequence not allowed here" ); :]
 ->  error ;;
 
 ---------------------------------------------------------------------------------
 -- DTD grammar starts here.
 -- NOTE
--- When the DOCTYPE is defined inline with the XML the ELEMENT, ATTLIST etc become children of the doctype,
--- however when its defined in a DTD file its an list. ATTLIST do belong to ELEMENT's and could become
--- children of the ELEMENT
+-- The lexer skips over [ ] sections
 ---------------------------------------------------------------------------------
 
-    VBAR | 0
-->  maybeVbar ;;
-
-
-    COMMA | 0
-->  maybeComma ;;
-
-
-    name=text |  PERCENT ref=text SEMICOLON | NUMBER (type=CDATA | type=PCDATA | type=ID | type=NMTOKEN | type=SDATA)
-->  dtdElementChoice ;;
-
-
-    (
-        name=text
-        | PERCENT ref=text SEMICOLON
-        | NUMBER (type=CDATA | type=PCDATA | type=ID | type=NMTOKEN | type=SDATA)
-        | OPAREN maybeWhites (#choice=dtdElementChoice maybeWhites maybeVbar maybeWhites)* maybeWhites CPAREN
-    )
-    ( cardinality=QUESTION | cardinality=ASTERISK | cardinality=PLUS | 0 )
-->  dtdElementSequence ;;
-
-
-    -- NOTE scary :o also FIRST/FIRST conflict
-    type=ELEMENT whites
-    name=text maybeWhites
-    (
-        (catagory=ANY | catagory=EMPTY)
-        | PERCENT ref=text SEMICOLON
-        | OPAREN maybeWhites
-            (
-                ?[:{
-                      int i=1;
-                      bool isChoice = false;
-                      while(++i < 9999 &&
-                          LA(i).kind != Token_EOF &&
-                          LA(i).kind != Token_CPAREN &&
-                          LA(i).kind != Token_COMMA &&
-                          LA(i).kind != Token_OPAREN)
-                          if(LA(i).kind == Token_VBAR && (isChoice = true))
-                              break;
-                      isChoice;
-                }:] (#choice=dtdElementChoice maybeWhites maybeVbar  maybeWhites)*
-                | (#sequence=dtdElementSequence maybeWhites maybeComma  maybeWhites)*
-            )
-            maybeWhites CPAREN
-        | 0
-    ) maybeWhites
-    ( cardinality=QUESTION | cardinality=ASTERISK | cardinality=PLUS | 0 ) maybeWhites
-->  dtdElement ;;
-
-
-    element=elementDTD | element=elementComment
-->  dtdDoctypeChild [
-        member variable element: AstNode*;
-    ];;
-
-
-    type=DOCTYPE whites
-    name=text maybeWhites
-    (
-        PUBLIC whites QUOTE publicId=text QUOTE maybeWhites (QUOTE systemId=text QUOTE | 0)
-        | SYSTEM whites QUOTE systemId=text QUOTE
-        | 0
-    )
-    ( maybeWhites (OBRACKET maybeWhites (#children=dtdDoctypeChild maybeWhites)* maybeWhites CBRACKET) | 0 )
-->  dtdDoctype ;;
-
-
-    type=ENTITY whites
-    (parameter=PERCENT whites | 0)
-    name=text maybeWhites
-    (
-        PUBLIC whites QUOTE publicId=text QUOTE maybeWhites (QUOTE systemId=text QUOTE | 0)
-        | SYSTEM whites QUOTE systemId=text QUOTE
-        | (type=CDATA | type=PCDATA | type=ID | type=NMTOKEN | type=SDATA | 0) maybeWhites QUOTE (value=text | 0) QUOTE
-    )
-->  dtdEntity ;;
-
-
-    name=text whites
-    (
-        OPAREN maybeWhites (#enum=dtdElementChoice maybeWhites maybeVbar maybeWhites)* maybeWhites CPAREN
-        | (type=CDATA | type=PCDATA | type=ID | type=NMTOKEN | type=SDATA)
-    )
-    maybeWhites
-    (
-        NUMBER (useage=IMPLIED | useage=REQUIRED | useage=FIXED) maybeWhites (QUOTE (defaultValue=text | 0) QUOTE | 0) maybeWhites
-        | QUOTE (defaultValue=text | 0) QUOTE maybeWhites
-        | 0
-    )
-->  dtdAtt ;;
-
-
-    --FIXME FIRST/FOLLOW conflict
-    type=ATTLIST whites
-    elementName=text whites
-    (#attributes=dtdAtt)*
-->  dtdAttlist ;;
-
-
     DECLARE_START maybeWhites
-    ( element=dtdDoctype | element=dtdElement | element=dtdEntity | element=dtdAttlist ) maybeWhites
-    DECLARE_END
-->  elementDTD [
-        member variable element: AstNode*;
-    ];;
-
+    DOCTYPE maybeWhites
+    name=text maybeWhites
+    (PUBLIC maybeWhites QUOTE publicId=maybeText QUOTE maybeWhites (QUOTE systemId=maybeText QUOTE  | 0) | 0)
+    (SYSTEM maybeWhites QUOTE systemId=maybeText QUOTE | 0)
+    maybeWhites
+    GT
+->  elementDTD ;;
 
 -----------------------------------------------------------------
 -- Code segments copied to the implementation (.cpp) file.
@@ -386,15 +316,15 @@ namespace KDevelop
 
 #include <QtCore/QDebug>
 #include <KTextEditor/Range>
-#include "mllexer.h"
+#include "sgmllexer.h"
 
-namespace Ml
+namespace Xml
 {
 
 void Parser::tokenize(const QString& contents)
 {
     m_contents = contents;
-    MlLexer lexer(tokenStream, contents);
+    SgmlLexer lexer(tokenStream, contents);
     int kind = Parser::Token_EOF;
 
     do
@@ -412,15 +342,37 @@ void Parser::tokenize(const QString& contents)
     }
     while ( kind != Parser::Token_EOF );
 
+    m_dtdHelper = lexer.dtdHelper(); //If doctype found this will be non null.
+
     yylex(); // produce the look ahead token
 }
 
 
-QString Parser::tokenText(qint64 begin, qint64 end)
+QString Parser::tokenText(qint64 begin, qint64 end) const
 {
     return m_contents.mid(begin,end-begin+1);
 }
 
+
+QString Parser::tagName(const ElementTagAst *ast) const
+{
+    if(!ast)
+        return QString();
+    if(ast->ns && ast->name)
+        return tokenText(ast->ns->startToken, ast->ns->endToken) + ":" + tokenText(ast->name->startToken, ast->name->endToken);
+    if(ast->name)
+        return tokenText(ast->name->startToken, ast->name->endToken);
+}
+
+QString Parser::tagName(const ElementCloseTagAst *ast) const
+{
+    if(!ast)
+        return QString();
+    if(ast->ns && ast->name)
+        return tokenText(ast->ns->startToken, ast->ns->endToken) + ":" + tokenText(ast->name->startToken, ast->name->endToken);
+    if(ast->name)
+        return tokenText(ast->name->startToken, ast->name->endToken);
+}
 
 void Parser::reportProblem( Parser::ProblemType type, const QString& message )
 {
@@ -497,7 +449,7 @@ void Parser::setCurrentDocument(QString url)
     m_currentDocument = url;
 }
 
-} // end of namespace Ml
+} // end of namespace Xml
 
 :]
 

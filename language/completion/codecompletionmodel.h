@@ -27,9 +27,9 @@
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/codecompletion/codecompletionworker.h>
 
-namespace Ml {
+namespace Xml {
 
-class KDEVMLCOMPLETION_EXPORT CodeCompletionModel  : public KTextEditor::CodeCompletionModel2, public KTextEditor::CodeCompletionModelControllerInterface
+class KDEVXMLCOMPLETION_EXPORT CodeCompletionModel  : public KTextEditor::CodeCompletionModel2, public KTextEditor::CodeCompletionModelControllerInterface
 {
     Q_OBJECT
     Q_INTERFACES(KTextEditor::CodeCompletionModelControllerInterface)

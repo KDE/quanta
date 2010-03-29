@@ -25,11 +25,11 @@
 #include <language/editor/documentrange.h>
 #include <language/editor/documentrangeobject.h>
 
-#include "mlast.h"
+#include "sgmlast.h"
 #include "parsesession.h"
 
 using namespace KTextEditor;
-using namespace Ml;
+using namespace Xml;
 
 EditorIntegrator::EditorIntegrator(ParseSession* session)
         : m_session(session)

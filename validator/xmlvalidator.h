@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /** Validates a XML document with a XML schema or DTD using libxml.
  *  @todo Should use QT when it supports validation.
  *  @todo Fix the thread problem.
- *  @note There can not run in a different thread than the GUI.
+ *  @note It can not run in a different thread than the GUI.
  */
 class XmlValidator {
 public:

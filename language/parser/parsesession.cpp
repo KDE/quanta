@@ -24,14 +24,14 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 #include "parsesession.h"
-#include "mllexer.h"
+#include "sgmllexer.h"
 #include "kdev-pg-memory-pool.h"
 #include "kdev-pg-token-stream.h"
 
 #include <QFile>
 #include <QTextCodec>
 
-namespace Ml
+namespace Xml
 {
 
 #define debug() kDebug()
@@ -102,7 +102,7 @@ Parser* ParseSession::createParser()
     return parser;
 }
 
-bool ParseSession::parse(Ml::StartAst** ast)
+bool ParseSession::parse(StartAst** ast)
 {
     Parser* parser = createParser();
     StartAst* mlAst;
