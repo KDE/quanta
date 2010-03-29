@@ -12,6 +12,6 @@ X-KDevelop-Version=8
 X-KDevelop-Language=XML
 X-KDevelop-Args=XML
 X-KDevelop-Interfaces=ILanguageSupport
-X-KDevelop-SupportedMimeTypes=text/xml,application/xml,application/xslt+xml,application/xsd,application/wsdl+xml,application/x-wsdl
+X-KDevelop-SupportedMimeTypes=text/html,application/xhtml+xml,text/xml,application/xml,application/xslt+xml,application/xsd,application/wsdl+xml,application/x-wsdl
 X-KDE-PluginInfo-Name=KDevXmlSupport
 X-KDevelop-Mode=NoGUI

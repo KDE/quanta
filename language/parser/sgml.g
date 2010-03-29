@@ -244,7 +244,7 @@ namespace KDevelop
     ) maybeWhites
     #attributes=attribute @ whites
     (
-        CLOSE [: while(m_dtdHelper && !m_stack.empty() && !m_dtdHelper->hasChild(tagName(m_stack.top()), tagName(*yynode))) m_stack.pop(); :]
+        CLOSE [: while(m_dtdHelper && !m_stack.empty() && !m_dtdHelper->hasChild(tagName(m_stack.top()), tagName(*yynode))) m_stack.pop(); if(m_stack.empty()) {kDebug() << "EMPTY STACK 1 !!" << tagName(*yynode);} :]
         | GT [: m_stack.push(*yynode); :] (#children=element [: if(m_stack.empty() || m_stack.top() != *yynode) break; :])*
     )
 ->  elementTag ;;
@@ -253,7 +253,7 @@ namespace KDevelop
     (?  [: LA(2).kind == Token_COLON :] (ns=text COLON name=text)
         | (name=text)
     ) maybeWhites
-    GT [: while(!m_stack.empty() && tagName(m_stack.top()) != tagName(*yynode)) m_stack.pop(); :]
+    GT [: while(!m_stack.empty() && tagName(m_stack.top()) != tagName(*yynode)) m_stack.pop(); if(m_stack.empty()) {kDebug() << "EMPTY STACK 2 !!" << tagName(*yynode);} :]
 ->  elementCloseTag ;;
 
 
@@ -350,7 +350,7 @@ void Parser::tokenize(const QString& contents)
 
 QString Parser::tokenText(qint64 begin, qint64 end) const
 {
-    return m_contents.mid(begin,end-begin+1);
+    return m_contents.mid(begin, end - begin + 1);
 }
 
 
@@ -359,9 +359,11 @@ QString Parser::tagName(const ElementTagAst *ast) const
     if(!ast)
         return QString();
     if(ast->ns && ast->name)
-        return tokenText(ast->ns->startToken, ast->ns->endToken) + ":" + tokenText(ast->name->startToken, ast->name->endToken);
+        return tokenText(tokenStream->token(ast->ns->startToken).begin, tokenStream->token(ast->ns->endToken).end) + 
+                ":" + 
+                tokenText(tokenStream->token(ast->name->startToken).begin, tokenStream->token(ast->name->endToken).end);
     if(ast->name)
-        return tokenText(ast->name->startToken, ast->name->endToken);
+        return tokenText(tokenStream->token(ast->name->startToken).begin, tokenStream->token(ast->name->endToken).end);
 }
 
 QString Parser::tagName(const ElementCloseTagAst *ast) const
@@ -369,9 +371,11 @@ QString Parser::tagName(const ElementCloseTagAst *ast) const
     if(!ast)
         return QString();
     if(ast->ns && ast->name)
-        return tokenText(ast->ns->startToken, ast->ns->endToken) + ":" + tokenText(ast->name->startToken, ast->name->endToken);
+        return tokenText(tokenStream->token(ast->ns->startToken).begin, tokenStream->token(ast->ns->endToken).end) + 
+                ":" + 
+                tokenText(tokenStream->token(ast->name->startToken).begin, tokenStream->token(ast->name->endToken).end);
     if(ast->name)
-        return tokenText(ast->name->startToken, ast->name->endToken);
+        return tokenText(tokenStream->token(ast->name->startToken).begin, tokenStream->token(ast->name->endToken).end);
 }
 
 void Parser::reportProblem( Parser::ProblemType type, const QString& message )

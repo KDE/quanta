@@ -66,6 +66,10 @@ set(sgmllexertest_SRCS tests/sgmllexertest.cpp stringreflist.cpp)
 kde4_add_unit_test(sgmllexertest ${sgmllexertest_SRCS})
 target_link_libraries(sgmllexertest kdevsgmlparser ${QT_QTTEST_LIBRARY})
 
+### next target
+kde4_add_executable( ml-parser main.cpp ${parser_SRCS} ${parser_STAT_SRCS} )
+target_link_libraries(ml-parser ${QT_QTCORE_LIBRARY} ${KDEVPLATFORM_LANGUAGE_LIBRARIES})
+
 #Does not work?
 add_custom_target( copy-generated
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/sgmlparser.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/generated/sgmlparser.cpp"
