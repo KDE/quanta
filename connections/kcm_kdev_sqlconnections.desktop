@@ -11,10 +11,12 @@ X-KDE-ParentComponents=kdevplatformproject
 X-KDE-CfgDlgHierarchy=GENERAL
 
 Name=DB Connections
+Name[es]=Conexiones de BD
 Name[pt]=Ligações a BD's
 Name[sv]=Databasanslutningar
 Name[uk]=З’єднання з базою даних
 Comment=Configure Database Connections
+Comment[es]=Configurar conexiones de bases de datos
 Comment[pt]=Configurar as Ligações a Bases de Dados
 Comment[sv]=Anpassa databasanslutningar
 Comment[uk]=Налаштування з’єднань з базою даних
