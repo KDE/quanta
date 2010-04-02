@@ -12,6 +12,7 @@ Comment[sv]=Stöd för taggspråk
 Comment[uk]=Підтримка мов розмітки
 Comment[x-test]=xxMarkup Language Supportxx
 Name=KDevXmlSupport
+Name[en_GB]=KDevXmlSupport
 Name[es]=KDevXmlSupport
 Name[pt]=KDevXmlSupport
 Name[pt_BR]=KDevXmlSupport
