@@ -16,9 +16,6 @@
     <height>200</height>
    </size>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,100">
    <item>
     <layout class="QGridLayout" name="gridLayout">
