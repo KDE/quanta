@@ -55,6 +55,7 @@
 
 #include "debugsession.h"
 #include "xdebugplugin.h"
+#include "connection.h"
 
 namespace XDebug {
 
@@ -189,6 +190,12 @@ void XDebugJob::start()
     }
 }
 
+KProcess* XDebugJob::process() const
+{
+    return m_proc;
+}
+
+
 bool XDebugJob::doKill()
 {
     kDebug();
@@ -212,7 +219,9 @@ void XDebugJob::processFinished( int exitCode , QProcess::ExitStatus status )
     kDebug() << "Process done";
     emitResult();
 
-    if (m_session) delete m_session;
+    if (m_session && m_session->connection()) {
+        m_session->connection()->setState(DebugSession::EndedState);
+    }
 }
 
 void XDebugJob::processError( QProcess::ProcessError error )
@@ -228,7 +237,9 @@ void XDebugJob::processError( QProcess::ProcessError error )
     }
     kDebug() << "Process error";
 
-    if (m_session) delete m_session;
+    if (m_session && m_session->connection()) {
+        m_session->connection()->setState(DebugSession::EndedState);
+    }
 }
 
 void XDebugJob::appendLine(const QString& l)

@@ -48,6 +48,8 @@ Q_OBJECT
 public:
     XDebugJob( DebugSession* session, KDevelop::ILaunchConfiguration*, QObject* parent = 0 );
     virtual void start();
+
+    KProcess *process() const;
 protected:
     virtual bool doKill();
 

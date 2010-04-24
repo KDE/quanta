@@ -716,6 +716,68 @@ void ConnectionTest::testVariableExpanding()
     session.run();
     session.waitForFinished();
 }
+
+void ConnectionTest::testPhpCrash()
+{
+    QStringList contents;
+    contents << "<?php"
+            << "$i = 0;"
+            << "$i++;";
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    DebugSession session;
+
+    TestLaunchConfiguration cfg(url);
+    XDebugJob *job = new XDebugJob(&session, &cfg);
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 1);
+
+    job->start();
+    session.waitForConnected();
+
+    session.waitForState(DebugSession::PausedState);
+    job->process()->kill(); //simulate crash
+    QTest::qWait(1000);
+    QCOMPARE(session.state(), DebugSession::NotStartedState); //well, it should be EndedState in reality, but this works too
+
+    //job seems to gets deleted automatically
+}
+
+void ConnectionTest::testConnectionClosed()
+{
+    QStringList contents;
+    contents << "<?php"
+            << "$i = 0;"
+            << "$i++;";
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    DebugSession session;
+
+    TestLaunchConfiguration cfg(url);
+    XDebugJob *job = new XDebugJob(&session, &cfg);
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 1);
+
+    job->start();
+    session.waitForConnected();
+
+    session.waitForState(DebugSession::PausedState);
+    session.connection()->close(); //simulate eg webserver restart
+    QTest::qWait(1000);
+    QCOMPARE(session.state(), DebugSession::NotStartedState); //well, it should be EndedState in reality, but this works too
+
+    //job seems to gets deleted automatically
+}
+
+
 //     controller.connection()->sendCommand("eval -i 124", QStringList(), "eval(\"function test124() { return rand(); } return test124();\")");
 //     controller.connection()->sendCommand("eval -i 126", QStringList(), "test124();");
 

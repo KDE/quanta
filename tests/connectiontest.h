@@ -46,6 +46,8 @@ private slots:
     void testVariablesLocals();
     void testVariablesSuperglobals();
     void testVariableExpanding();
+    void testPhpCrash();
+    void testConnectionClosed();
 
 private:
     KDevelop::TestCore* m_core;
