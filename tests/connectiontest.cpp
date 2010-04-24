@@ -778,6 +778,55 @@ void ConnectionTest::testConnectionClosed()
 }
 
 
+//see bug 235061
+void ConnectionTest::testMultipleConnectionsClosed()
+{
+    QStringList contents;
+    contents << "<?php echo 123;"
+            << "$i = 0;"
+            << "$i++;";
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    DebugSession session;
+    session.setAcceptMultipleConnections(true);
+
+    TestLaunchConfiguration cfg(url);
+    XDebugJob *job = new XDebugJob(&session, &cfg);
+
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 1);
+
+    job->start();
+    session.waitForConnected();
+    Connection* firstConnection = session.connection();
+
+    session.waitForState(DebugSession::PausedState);
+
+    //start a second process, as XDebugBrowserJob does
+    KProcess secondProcess;
+    secondProcess.setProgram(job->process()->program());
+    secondProcess.setEnvironment(job->process()->environment());
+    secondProcess.setOutputChannelMode(KProcess::ForwardedChannels);
+    secondProcess.start();
+
+    QTest::qWait(1000);
+    QVERIFY(session.connection() != firstConnection); //must be a different connection
+
+    session.connection()->close(); //close second connection
+    QTest::qWait(1000);
+
+    firstConnection->close(); //close first connection _after_ second
+
+    QTest::qWait(1000);
+    QCOMPARE(session.state(), DebugSession::NotStartedState); //well, it should be EndedState in reality, but this works too
+
+    //job seems to gets deleted automatically
+}
+
+
 //     controller.connection()->sendCommand("eval -i 124", QStringList(), "eval(\"function test124() { return rand(); } return test124();\")");
 //     controller.connection()->sendCommand("eval -i 126", QStringList(), "test124();");
 
