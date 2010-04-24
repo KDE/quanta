@@ -93,6 +93,12 @@ void DebugSession::incomingConnection()
     kDebug();
     QTcpSocket* client = m_server->nextPendingConnection();
 
+    if (m_connection) {
+        m_connection->disconnect();
+        m_connection->deleteLater();
+        m_connection = 0;
+    }
+
     m_connection = new Connection(client, this);
     connect(m_connection, SIGNAL(output(QString)), SIGNAL(output(QString)));
     connect(m_connection, SIGNAL(outputLine(QString)), SIGNAL(outputLine(QString)));
@@ -109,6 +115,8 @@ void DebugSession::incomingConnection()
 
 void DebugSession::connectionClosed()
 {
+    Q_ASSERT(sender() == m_connection);
+
     if (m_acceptMultipleConnections && m_server && m_server->isListening()) {
         m_connection->setState(DebugSession::NotStartedState);
     } else {
