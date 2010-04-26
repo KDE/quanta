@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     {
       KUrl url = args->url( 0 );
       QString ext = QFileInfo( url.fileName() ).suffix();
-      if( ext == "kdevelop" || ext == "quanta" )
+      if( ext == KDevelop::ShellExtension::getInstance()->projectFileExtension() )
       {
         KDevelop::Core::self()->projectController()->openProject( url );
         openProject = true;

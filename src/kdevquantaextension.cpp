@@ -38,7 +38,7 @@ KDevelop::AreaParams KDevQuantaExtension::defaultArea()
 
 QString KDevQuantaExtension::projectFileExtension()
 {
-    return i18n("*.kdev4");
+    return "kdev4";
 }
 
 QString KDevQuantaExtension::projectFileDescription()
