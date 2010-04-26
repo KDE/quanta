@@ -15,16 +15,10 @@
 
 #include <QStringList>
 
-class SettingsWidget;
-class KDialog;
-
 class KDevQuantaExtension : public KDevelop::ShellExtension {
 public:
     static void init();
 
-    virtual void createGlobalSettingsPage(KDialog *dlg);
-    virtual void acceptGlobalSettingsPage(KDialog *dlg);
-    
     virtual QString xmlFile();
     
     virtual KDevelop::AreaParams defaultArea();
@@ -37,9 +31,6 @@ public:
     
 protected:
     KDevQuantaExtension();
-    
-private:
-    SettingsWidget *gsw;
 };
 
 #endif
