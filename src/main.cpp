@@ -18,6 +18,7 @@
 #include <kstandarddirs.h>
 #include <kdebug.h>
 #include <kparts/componentfactory.h>
+#include <KSplashScreen>
 
 #include <QFileInfo>
 
@@ -69,7 +70,19 @@ int main(int argc, char *argv[])
 
   KApplication app;
   KDevQuantaExtension::init();
-  KDevelop::Core::initialize();
+
+  KSplashScreen* splash = 0;
+  QString splashFile = KStandardDirs::locate( "appdata", "pics/quanta-splash.png" );
+  if( !splashFile.isEmpty() )
+  {
+      QPixmap pm;
+      pm.load( splashFile );
+      splash = new KSplashScreen( pm );
+      splash->show();
+  }
+
+  if(!KDevelop::Core::initialize(splash))
+      return 5;
   
   for( int i=0; i<args->count(); ++i )
   {
