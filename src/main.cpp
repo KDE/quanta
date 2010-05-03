@@ -39,7 +39,6 @@ int main(int argc, char *argv[])
 {
   static const char description[] =
       I18N_NOOP("Quanta Plus Web Development Environment");
-// INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
 
   static const char othertext[] =
       I18N_NOOP("Our goal is to be nothing less than the best possible tool for\n \
@@ -51,13 +50,12 @@ int main(int argc, char *argv[])
   KAboutData aboutData("quanta", 0, ki18n("Quanta"),
                        QUANTA_VERSION, ki18n(description), KAboutData::License_GPL,
                        ki18n("(c) 1999-2006, The Quanta+ developers"), ki18n(othertext), "http://www.kdewebdev.org");
-                           
+
   aboutData.addAuthor(ki18n("Eric Laffoon"),ki18n("Project Lead - public liaison"), "sequitur@kde.org");
   aboutData.addAuthor(ki18n("Andras Mantia"),ki18n("Program Lead - bug squisher"), "amantia@kde.org");
   aboutData.addCredit(ki18n("Jens Herden"),
                       ki18n("Invaluable member - Help with code cleanup, porting to KDevelop and KDE4, etc."),
                       "jens@kdewebdev.org");
- 
 
   KCmdLineArgs::init(argc, argv, &aboutData);
 
@@ -73,40 +71,37 @@ int main(int argc, char *argv[])
 
   KSplashScreen* splash = 0;
   QString splashFile = KStandardDirs::locate( "appdata", "pics/quanta-splash.png" );
-  if( !splashFile.isEmpty() )
-  {
+  if ( !splashFile.isEmpty() ) {
       QPixmap pm;
       pm.load( splashFile );
       splash = new KSplashScreen( pm );
       splash->show();
   }
 
-  if(!KDevelop::Core::initialize(splash))
+  if ( !KDevelop::Core::initialize(splash) ) {
       return 5;
-  
-  for( int i=0; i<args->count(); ++i )
-  {
+  }
+
+  for ( int i=0; i<args->count(); ++i ) {
     kDebug(24000) << "------> arg " << args->arg(i);
   }
 
   bool openProject = false;
-  if( args->count() == 0 ){
+  if ( args->count() == 0 ) {
     openProject = true;
-  } else
-    if( args->count() > 0 )
-    {
+  } else {
+    if ( args->count() > 0 ) {
       KUrl url = args->url( 0 );
       QString ext = QFileInfo( url.fileName() ).suffix();
-      if( ext == KDevelop::ShellExtension::getInstance()->projectFileExtension() )
-      {
+      if ( ext == KDevelop::ShellExtension::getInstance()->projectFileExtension() ) {
         KDevelop::Core::self()->projectController()->openProject( url );
         openProject = true;
       }
+    }
   }
 
-  if( !openProject ){
-    for( int a = 0; a < args->count(); ++a )
-    {
+  if ( !openProject ) {
+    for ( int a = 0; a < args->count(); ++a ) {
       KDevelop::Core::self()->documentController()->openDocument( KUrl(args->url(a)) );
     }
   }
