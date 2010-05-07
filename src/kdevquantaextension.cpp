@@ -12,8 +12,7 @@
 
 #include <KLocalizedString>
 
-//kdevelop includes
-
+#include <QApplication>
 
 KDevQuantaExtension::KDevQuantaExtension()
  : KDevelop::ShellExtension()
@@ -28,6 +27,11 @@ void KDevQuantaExtension::init()
 QString KDevQuantaExtension::xmlFile()
 {
     return "quantaui.rc";
+}
+
+QString KDevQuantaExtension::binaryPath()
+{
+    return QApplication::applicationDirPath() + "/quanta";
 }
 
 KDevelop::AreaParams KDevQuantaExtension::defaultArea()

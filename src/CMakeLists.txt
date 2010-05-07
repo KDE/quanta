@@ -8,18 +8,53 @@ include_directories(
   
 )
 
+########### main binaries ###############
 
-########### next target ###############
+find_package(SharedMimeInfo REQUIRED)
 
-set(quanta_SRCS main.cpp kdevquantaextension.cpp )
+set(quanta_SRCS main.cpp)
+kde4_add_executable(quanta ${quanta_SRCS} )
 
+set(quanta_bin_SRCS
+    main_internal.cpp
+    kdevquantaextension.cpp
+)
 
-kde4_add_executable(quanta ${quanta_SRCS})
+target_link_libraries(quanta
+    ${KDE4_KDECORE_LIBS}
+    ${KDE4_KIO_LIBS}
+    ${KDE4_KUTILS_LIBS}
+    ${KDE4_KPARTS_LIBS}
+    ${KDE4_KNOTIFYCONFIG_LIBS}
+    ${KDE4_KTEXTEDITOR_LIBS}
+    ${KDE4_THREADWEAVER_LIBRARIES}
+)
+install(TARGETS quanta ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
-target_link_libraries(quanta  ${KDE4_KDEUI_LIBS} ${KDE4_KTEXTEDITOR_LIBRARIES} ${KDEVPLATFORM_SHELL_LIBRARIES} ${KDEVPLATFORM_PROJECT_LIBRARIES})
+kde4_add_app_icon(quanta_bin_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../data/pics/hi*-app-quanta.png")
 
-install(TARGETS quanta  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+kde4_add_executable(quanta.bin ${quanta_bin_SRCS})
 
+if (Q_WS_MAC)
+    #sets MacOSX bundle properties for all targets in this cmake file
+    #make those assignments target-dependent when cmake 2.6 is useful on MacOSX
+    set(MACOSX_BUNDLE_BUNDLE_NAME Quanta)
+    set(MACOSX_BUNDLE_BUNDLE_VERSION "4.0")
+    set(MACOSX_BUNDLE_COPYRIGHT "Quanta Team")
+endif (Q_WS_MAC)
+
+target_link_libraries(quanta.bin
+    ${KDE4_KDECORE_LIBS}
+    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
+    ${KDEVPLATFORM_SHELL_LIBRARIES}
+    ${KDE4_KIO_LIBS}
+    ${KDE4_KUTILS_LIBS}
+    ${KDE4_KPARTS_LIBS}
+    ${KDE4_KNOTIFYCONFIG_LIBS}
+    ${KDE4_KTEXTEDITOR_LIBS}
+    ${KDE4_THREADWEAVER_LIBRARIES}
+)
+install(TARGETS quanta.bin ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 ########### install files ###############
 

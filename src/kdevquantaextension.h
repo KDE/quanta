@@ -20,7 +20,9 @@ public:
     static void init();
 
     virtual QString xmlFile();
-    
+
+    virtual QString binaryPath();
+
     virtual KDevelop::AreaParams defaultArea();
 
     virtual QString projectFileExtension();
