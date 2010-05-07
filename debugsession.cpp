@@ -147,10 +147,12 @@ DebugSession::DebuggerState DebugSession::state() const
 
 void DebugSession::run() {
     m_connection->sendCommand("run");
+    m_connection->setState(ActiveState);
 }
 
 void DebugSession::stepOut() {
     m_connection->sendCommand("step_out");
+    m_connection->setState(ActiveState);
 }
 
 void DebugSession::stepOverInstruction() {
@@ -159,6 +161,7 @@ void DebugSession::stepOverInstruction() {
 
 void DebugSession::stepInto() {
     m_connection->sendCommand("step_into");
+    m_connection->setState(ActiveState);
 }
 
 void DebugSession::stepIntoInstruction() {
@@ -167,6 +170,7 @@ void DebugSession::stepIntoInstruction() {
 
 void DebugSession::stepOver() {
     m_connection->sendCommand("step_over");
+    m_connection->setState(ActiveState);
 }
 
 void DebugSession::jumpToCursor() {

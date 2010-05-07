@@ -826,6 +826,54 @@ void ConnectionTest::testMultipleConnectionsClosed()
     //job seems to gets deleted automatically
 }
 
+void ConnectionTest::testVariableUpdates()
+{
+    QStringList contents;
+    contents << "<?php"                 // 1
+            << "$foo = 1;"          // 2
+            << "$foo++;"            // 3
+            << "$foo++;";            // 4
+
+    QTemporaryFile file("xdebugtest");
+    file.open();
+    KUrl url(QDir::currentPath() + "/" + file.fileName());
+    file.write(contents.join("\n").toUtf8());
+    file.close();
+
+    DebugSession session;
+    KDevelop::ICore::self()->debugController()->addSession(&session);
+
+    TestLaunchConfiguration cfg(url);
+    XDebugJob job(&session, &cfg);
+
+    session.variableController()->setAutoUpdate(KDevelop::IVariableController::UpdateLocals);
+    KDevelop::ICore::self()->debugController()->breakpointModel()->addCodeBreakpoint(url, 2);
+
+    job.start();
+    session.waitForConnected();
+
+    session.waitForState(DebugSession::PausedState);
+    QTest::qWait(1000);
+
+    QVERIFY(variableCollection()->rowCount() >= 2);
+    QModelIndex i = variableCollection()->index(1, 0);
+    COMPARE_DATA(i, "Locals");
+    QCOMPARE(variableCollection()->rowCount(i), 1);
+    COMPARE_DATA(variableCollection()->index(0, 0, i), "$foo");
+    COMPARE_DATA(variableCollection()->index(0, 1, i), "1");
+
+    session.stepInto();
+    QTest::qWait(1000);
+    QVERIFY(variableCollection()->rowCount() >= 2);
+    i = variableCollection()->index(1, 0);
+    COMPARE_DATA(i, "Locals");
+    QCOMPARE(variableCollection()->rowCount(i), 1);
+    COMPARE_DATA(variableCollection()->index(0, 0, i), "$foo");
+    COMPARE_DATA(variableCollection()->index(0, 1, i), "2");
+
+    session.run();
+    session.waitForFinished();
+}
 
 //     controller.connection()->sendCommand("eval -i 124", QStringList(), "eval(\"function test124() { return rand(); } return test124();\")");
 //     controller.connection()->sendCommand("eval -i 126", QStringList(), "test124();");

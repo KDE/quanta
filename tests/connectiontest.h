@@ -49,6 +49,7 @@ private slots:
     void testPhpCrash();
     void testConnectionClosed();
     void testMultipleConnectionsClosed();
+    void testVariableUpdates();
 
 private:
     KDevelop::TestCore* m_core;
