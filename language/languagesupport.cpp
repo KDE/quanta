@@ -28,18 +28,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <interfaces/idocumentcontroller.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
+#include <language/duchain/declaration.h>
 
 #include "parsejob.h"
+#include "duchain/navigation/navigationwidget.h"
+#include <language/duchain/duchainutils.h>
+#include <language/duchain/use.h>
 
 K_PLUGIN_FACTORY(KDevXmlSupportFactory, registerPlugin<Xml::LanguageSupport>();)
-K_EXPORT_PLUGIN(KDevXmlSupportFactory(KAboutData("kdevxmlsupport","kdevxml", ki18n("XML Language Support"), "0.1", 
-                                      ki18n("Support for XML"), KAboutData::License_GPL)
+K_EXPORT_PLUGIN(KDevXmlSupportFactory(KAboutData("kdevsgmlsupport","kdevsgml", ki18n("Markup Language Support"), "0.1",
+                                      ki18n("Support for markup languages"), KAboutData::License_GPL)
                                       .addAuthor(ki18n("Ruan Strydom"), ki18n("Author"), "ruan@jcell.co.za", "")))
 
 namespace Xml
 {
 LanguageSupport* LanguageSupport::m_self = 0;
-    
+
 LanguageSupport::LanguageSupport(QObject* parent, const QVariantList& args) :
         KDevelop::IPlugin(KDevXmlSupportFactory::componentData(), parent),
         KDevelop::ILanguageSupport()
@@ -49,7 +53,7 @@ LanguageSupport::LanguageSupport(QObject* parent, const QVariantList& args) :
 
 QString LanguageSupport::name() const
 {
-    return "XML";
+    return "Sgml";
 }
 
 LanguageSupport* LanguageSupport::self()
@@ -59,18 +63,52 @@ LanguageSupport* LanguageSupport::self()
 
 QWidget* LanguageSupport::specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position)
 {
-    return 0;
+/*
+    KDevelop::TopDUContextPointer top;
+    {
+        KDevelop::DUChainReadLocker lock(KDevelop::DUChain::lock());
+        top = KDevelop::DUChain::self()->chainForDocument(url);
+        if (!top) { 
+            kDebug() << "No top context";
+            return 0;
+        }
+        KDevelop::Declaration * decl = itemUnderCursor(top.data(), position);
+        if (!decl) { 
+            kDebug() << "No declaration for cursor";
+            return 0;
+        }
+        return new NavigationWidget(KDevelop::DeclarationPointer(decl), top);
+    }
+*/
+    return KDevelop::ILanguageSupport::specialLanguageObjectNavigationWidget(url, position);
 }
 
 KDevelop::SimpleRange LanguageSupport::specialLanguageObjectRange(const KUrl& url, const KDevelop::SimpleCursor& position)
 {
-    return KDevelop::SimpleRange();
+/*
+    KDevelop::TopDUContextPointer top;
+    {
+        KDevelop::DUChainReadLocker lock(KDevelop::DUChain::lock());
+        top = KDevelop::DUChain::self()->chainForDocument(url);
+        if (!top) { 
+            kDebug() << "No top context";
+            return KDevelop::SimpleRange::invalid();
+        }
+        KDevelop::Declaration * decl = KDevelop::DUChainUtils::itemUnderCursor(url, position);
+        if (!decl) { 
+            kDebug() << "No declaration for cursor";
+            return KDevelop::SimpleRange::invalid();
+        }
+        return decl->range();
+    }
+*/
+    return KDevelop::ILanguageSupport::specialLanguageObjectRange(url, position);
 }
-    
+
 KDevelop::ParseJob* LanguageSupport::createParseJob(const KUrl& url)
 {
     return new ParseJob(url);
-}       
+}
 
 }
 

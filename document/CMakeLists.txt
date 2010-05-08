@@ -6,6 +6,7 @@ set(kdevxmldocument_SRCS
     xmltree.cpp
     abstractxmlmodel.cpp
     xmldocumentmodel.cpp
+    #htmldocumentmodel.cpp
     xsddocumentmodel.cpp
 )
 

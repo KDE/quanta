@@ -38,12 +38,13 @@ class ParseJob : public KDevelop::ParseJob
 
 public:
     explicit ParseJob(const KUrl &url);
+    
     virtual ~ParseJob();
 
-    LanguageSupport* xml() const;
-
+    LanguageSupport* sgml() const;
 protected:
     virtual void run();
+    void visit(KDevelop::Declaration *);
 
 };
 

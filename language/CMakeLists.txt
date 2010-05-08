@@ -1,13 +1,7 @@
-PROJECT(language)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${language_SOURCE_DIR}/cmake)
-
-enable_testing()
 
 add_subdirectory(parser)
-
-find_package(KDE4 REQUIRED)
-find_package(KDevPlatform REQUIRED)
+add_subdirectory(duchain)
 
 include_directories(
     ${KDEVPLATFORM_INCLUDE_DIR}
@@ -33,22 +27,23 @@ else(KDEVPGQT_FOUND)
     )
 endif(KDEVPGQT_FOUND)
 
-set(kdevxmllanguagesupport_PART_SRCS
+set(kdevsgmllanguagesupport_PART_SRCS
     languagesupport.cpp
     parsejob.cpp
 )
 
-kde4_add_plugin(kdevxmllanguagesupport ${kdevxmllanguagesupport_PART_SRCS})
+kde4_add_plugin(kdevsgmllanguagesupport ${kdevsgmllanguagesupport_PART_SRCS})
 
-target_link_libraries(kdevxmllanguagesupport
+target_link_libraries(kdevsgmllanguagesupport
     ${KDE4_KDEUI_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDE4_KTEXTEDITOR_LIBS}
     kdevsgmlparser
+    kdevsgmlduchain
 )
 
-install(TARGETS kdevxmllanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kdevsgmllanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
-install(FILES kdevmlsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES kdevsgmlsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 

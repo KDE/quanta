@@ -16,8 +16,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef ML_EDITORINTEGRATOR_H
-#define ML_EDITORINTEGRATOR_H
+#ifndef XML_EDITORINTEGRATOR_H
+#define XML_EDITORINTEGRATOR_H
 
 #include <language/editor/editorintegrator.h>
 #include <language/editor/simplerange.h>
@@ -40,7 +40,7 @@ class AstNode;
  *
  * \todo introduce stacks for the state?
  */
-class KDEVXMLPARSER_EXPORT EditorIntegrator : public KDevelop::EditorIntegrator
+class KDEVSGMLPARSER_EXPORT EditorIntegrator : public KDevelop::EditorIntegrator
 {
 public:
     EditorIntegrator(ParseSession* session);

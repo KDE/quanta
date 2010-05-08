@@ -131,6 +131,7 @@ int main(int argc, char* argv[])
     QStringList files;
     bool debug = false;
     bool printTokens = false;
+    bool dtd = false;
     QStringList code;
     for (int i = 1; i < argc; i++) {
         QString arg(argv[i]);

@@ -16,8 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "idtdhelper.h"
-#include <QHash>
-#include <QString>
+
+#include <QtCore/QHash>
+#include <QtCore/QString>
 
 using namespace Xml;
 
@@ -187,20 +188,24 @@ const IDtdHelper * IDtdHelper::instance(const QString& publicId, const QString& 
 }
 
 
-const IDtdHelper* IDtdHelper::instanceForMime(const QString& mime)
+const IDtdHelper* IDtdHelper::instanceForMime(KMimeType::Ptr mime)
 {
-    QString lower = mime.toLower();
-    if (lower.contains("xml")
-            || lower.contains("xsd")
-            || lower.contains("wsdl")
-            || lower.contains("xsl")
-            || lower.contains("xhtm")) {
+    if (!mime || !mime->isValid())
+        return 0;
+    if (mime->is("application/xml")
+            || mime->is("text/xml")
+            || mime->is("application/xslt+xml")
+            || mime->is("application/wsdl+xml")
+            || mime->is("application/x-wsdl")) {
         return xmlHelper;
     }
 
-    if (lower.contains("htm")
-            || lower.contains("php")) {
+    if (mime->is("text/html")) {
         return html4LooseHelper;
+    }
+    
+    if (mime->is("application/xhtml+xml")) {
+        return xmlHelper;
     }
     
     return 0;
@@ -208,16 +213,17 @@ const IDtdHelper* IDtdHelper::instanceForMime(const QString& mime)
 
 const Xml::IDtdHelper* IDtdHelper::instanceForName(const QString& name)
 {
-    if (name.toLower() == "html") {
+    if(name.trimmed().toLower() == "html") {
         return html4LooseHelper;
     }
-
-    if (name.toLower() == "xhtml") {
-        return xmlHelper;
+    
+    if(name.trimmed().toLower() == "xml") {
+        return html4LooseHelper;
     }
     
     return 0;
 }
+
 
 
 /*

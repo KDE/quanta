@@ -23,8 +23,8 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
-#ifndef ML_PARSESESSION_H
-#define ML_PARSESESSION_H
+#ifndef XML_PARSESESSION_H
+#define XML_PARSESESSION_H
 
 #include <QtCore/QString>
 #include <language/editor/simplecursor.h>
@@ -45,7 +45,7 @@ class StartAst;
 
 typedef QPair<KDevelop::DUContextPointer, KDevelop::SimpleRange> SimpleUse;
 
-class KDEVXMLPARSER_EXPORT ParseSession
+class KDEVSGMLPARSER_EXPORT ParseSession
 {
 public:
     ParseSession();
@@ -60,6 +60,7 @@ public:
 
     bool parse(StartAst**);
     Parser* createParser();
+    Parser* createParser(KMimeType::Ptr mime) {setMime(mime); return createParser();}
 
     QString symbol(qint64 token) const;
     
@@ -80,6 +81,10 @@ public:
         Q_UNUSED(node);
         Q_UNUSED(use);
     }
+    
+    ///Tells the parser to use DTD or SGML
+    ///If this is not set the parser will guess the mime using the document URL and/or content.
+    void setMime(KMimeType::Ptr mime) { m_mime = mime; }
 
 private:
     QString m_contents;
@@ -88,6 +93,7 @@ private:
     KDevPG::MemoryPool* m_pool;
     TokenStream* m_tokenStream;
     QList<KDevelop::ProblemPointer> m_problems;
+    KMimeType::Ptr m_mime;
 };
 
 }

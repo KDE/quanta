@@ -15,6 +15,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "codecompletionmodel.h"
 
-#include "codecompletionmodel.moc"
+#ifndef XML_NAVIGATIONWIDGET_H
+#define XML_NAVIGATIONWIDGET_H
+
+#include <language/duchain/navigation/abstractnavigationwidget.h>
+#include "../duchainexport.h"
+
+
+namespace Xml
+{
+
+class KDEVSGMLDUCHAIN_EXPORT NavigationWidget : public KDevelop::AbstractNavigationWidget
+{
+public:
+    NavigationWidget(KDevelop::DeclarationPointer declaration, KDevelop::TopDUContextPointer topContext);
+
+protected:
+    KDevelop::DeclarationPointer m_declaration;
+};
+
+}
+
+#endif

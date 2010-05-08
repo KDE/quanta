@@ -28,8 +28,8 @@ public:
     virtual QString name() const = 0;
     virtual QString info() const = 0;
     virtual int childCount() const {return 0;}
-    virtual XmlCatalogModelNode * child(int i) {return 0;}
-    virtual void removeChild(XmlCatalogModelNode * child) {return;}
+    virtual XmlCatalogModelNode * child(int i) {Q_UNUSED(i); return 0;}
+    virtual void removeChild(XmlCatalogModelNode * child) {Q_UNUSED(child); return;}
     virtual XmlCatalogModelNode * parent() const {return m_parent;}
     virtual int row() const {return m_row;}
     virtual void setRow(int row) {m_row = row;}
@@ -47,7 +47,7 @@ class XmlCatalogModel : public QAbstractItemModel
     XmlCatalogModel();
     virtual ~XmlCatalogModel();
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    int columnCount(const QModelIndex& parent = QModelIndex()) const {return 2;}
+    int columnCount(const QModelIndex& parent = QModelIndex()) const {Q_UNUSED(parent); return 2;}
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex& child) const;
     QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;

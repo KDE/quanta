@@ -36,6 +36,9 @@
 #include <language/duchain/parsingenvironment.h>
 #include <language/duchain/declaration.h>
 #include <language/backgroundparser/urlparselock.h>
+#include <editorintegrator.h>
+#include "duchain/declarationbuilder.h"
+#include <language/duchain/duchainutils.h>
 
 
 namespace Xml
@@ -53,10 +56,6 @@ ParseJob::~ParseJob()
 
 void ParseJob::run()
 {
-    /* NOTE
-     * Just a quicky to test files.
-     */
-    
     KDevelop::UrlParseLock urlLock(document());
 
     if ( !(minimumFeatures() & KDevelop::TopDUContext::ForceUpdate) ) {
@@ -76,9 +75,13 @@ void ParseJob::run()
         }
     }
 
-    kDebug() << "parsing" << document().str();
+    kDebug() << "Parsing:" << document().str();
 
+    //Tokenize
     ParseSession session;
+    if (!document().str().isEmpty()) {
+        session.setCurrentDocument(document().str());
+    }
     bool readFromDisk = !contentsAvailableFromEditor();
     if (readFromDisk) {
         session.readFile(document().str());
@@ -86,10 +89,72 @@ void ParseJob::run()
         session.setContents(contentsFromEditor());
     }
     StartAst *start=0;
-    session.parse(&start);
+    if (!session.parse(&start)) {
+        kDebug() << "Failed to parse:" << document().str();
+    }
+
+    //Build
+    kDebug() << "Building:" << document().str();
+    KDevelop::ReferencedTopDUContext top;
+    {
+        KDevelop::DUChainReadLocker lock(KDevelop::DUChain::lock());
+        top = KDevelop::DUChain::self()->chainForDocument(document());
+    }
+    if (top) {
+        kDebug() << "Re-compiling:" << document().str();
+        KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
+        top->clearImportedParentContexts();
+        if (top->parsingEnvironmentFile())
+            top->parsingEnvironmentFile()->clearModificationRevisions();
+        top->clearProblems();
+    } else {
+        kDebug() << "Compiling:" << document().str();
+    }
+
+    EditorIntegrator editor(&session);
+    DeclarationBuilder builder(&editor);
+    top = builder.build(document(), start, top);
+    setDuChain(top);
+
+    foreach(const KDevelop::ProblemPointer &p, session.problems()) {
+        KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
+        top->addProblem(p);
+    }
+    
+    cleanupSmartRevision();
+
+    {
+        KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
+
+        top->setFeatures(minimumFeatures());
+        KDevelop::ParsingEnvironmentFilePointer file = top->parsingEnvironmentFile();
+        QFileInfo fileInfo(document().str());
+        QDateTime lastModified = fileInfo.lastModified();
+        if (readFromDisk) {
+            file->setModificationRevision(KDevelop::ModificationRevision(lastModified));
+        } else {
+            file->setModificationRevision(KDevelop::ModificationRevision(lastModified, revisionToken()));
+        }
+        KDevelop::DUChain::self()->updateContextEnvironment( top->topContext(), file.data() );
+    }
+
+    cleanupSmartRevision();
 }
 
-LanguageSupport* ParseJob::xml() const
+
+void ParseJob::visit(KDevelop::Declaration* d)
+{
+    if (!d) return;
+    kDebug() << d->qualifiedIdentifier().toString();
+    if (d->internalContext()) {
+        foreach(KDevelop::Declaration *d1 , d->internalContext()->localDeclarations()) {
+            visit(d1);
+        }
+    }
+}
+
+
+LanguageSupport* ParseJob::sgml() const
 {
     return LanguageSupport::self();
 }

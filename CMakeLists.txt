@@ -9,13 +9,22 @@ set(KDE_MIN_VERSION "4.2.0")
 
 set(KDE4_BUILD_TESTS "ON" CACHE "BOOL" "Enable building of tests" FORCE )
 
+#find_package(Qt4 4.6.2 REQUIRED)
+
 find_package(KDE4 4.2.0 REQUIRED)
 
 find_package(KDevPlatform 0.9.95 REQUIRED)
 
 include ( KDE4Defaults )
 
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DKDE_DEFAULT_DEBUG_AREA=0)
+add_definitions (
+    ${QT_DEFINITIONS}
+    ${KDE4_DEFINITIONS}
+    -DKDE_DEFAULT_DEBUG_AREA=0
+    -fno-inline
+    -fno-default-inline
+    -ggdb3
+)
 
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${KDEVPLATFORM_INCLUDE_DIR} )
 
@@ -33,3 +42,4 @@ add_subdirectory(formatter)
 add_subdirectory(validator)
 
 add_subdirectory(language)
+

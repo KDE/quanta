@@ -24,12 +24,16 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 #include "parsesession.h"
-#include "sgmllexer.h"
+#include "sgmltokenizer.h"
 #include "kdev-pg-memory-pool.h"
 #include "kdev-pg-token-stream.h"
 
 #include <QFile>
 #include <QTextCodec>
+
+#include <KDE/KMimeType>
+
+#include <KDE/KDebug>
 
 namespace Xml
 {
@@ -97,7 +101,6 @@ Parser* ParseSession::createParser()
     parser->setMemoryPool(m_pool);
     parser->setDebug(m_debug);
     parser->setCurrentDocument(m_currentDocument);
-
     parser->tokenize(m_contents);
     return parser;
 }

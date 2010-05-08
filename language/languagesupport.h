@@ -37,7 +37,6 @@ class LanguageSupport : public KDevelop::IPlugin, public KDevelop::ILanguageSupp
 public:
     explicit LanguageSupport(QObject *parent, const QVariantList& args = QVariantList());
 
-    /*Name Of the Language*/
     QString name() const;
 
     virtual KDevelop::ParseJob *createParseJob(const KUrl &url);
@@ -45,8 +44,8 @@ public:
     static LanguageSupport* self();
 
     virtual KDevelop::SimpleRange specialLanguageObjectRange(const KUrl& url, const KDevelop::SimpleCursor& position);
-    virtual QWidget* specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position);
 
+    virtual QWidget* specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position);
 private:
     static LanguageSupport* m_self;
 };

@@ -29,10 +29,10 @@ class ICatalogGroup;
 
 /** The catalog interface.
  *  The ICatalog implementation should contain all the logic to resolve an entry.
- *  ICatalogManager will iterate over all catalogs register when resolving.
+ *  ICatalogManager will iterate over all catalogs registered when resolving.
  *  The first matching entry will be returend. When reading an ICatalog ICatalogManager
  *  will first try and find a ICatalogReaderWriter which in return will create an
- *  an instance of the ICatalog.<br>
+ *  instance of the ICatalog.<br>
  *  There will probably be two implementations of this, OASIS XML Catalog and SGML Catalog.
  *  @note The catalog manager must always have ownership of this class.
  */

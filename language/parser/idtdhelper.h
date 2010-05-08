@@ -18,8 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef IDTDHELPER_H
 #define IDTDHELPER_H
 
+#include "parserexport.h"
+
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+
+#include <KDE/KMimeType>
 
 namespace Xml {
 
@@ -29,7 +33,7 @@ namespace Xml {
  *  It serves as a facade and abstraction for the lexer/parser.
  *  @todo Currently only have limited fuctionality, a DTD parser is needed.
  */
-class IDtdHelper {
+class KDEVSGMLPARSER_EXPORT IDtdHelper {
     public:
         virtual ~IDtdHelper();
         /** Factory method for dtd helpers.
@@ -42,7 +46,7 @@ class IDtdHelper {
         /** Return the default instance for a specific mime.
          *  @return A helper or NULL if none is found.
          */
-        static const IDtdHelper * instanceForMime(const QString &mime);
+        static const IDtdHelper * instanceForMime(KMimeType::Ptr mime);
 
         /** Return the default instance for a specific doctype name.
         *   @return A helper or 0 if none is found.

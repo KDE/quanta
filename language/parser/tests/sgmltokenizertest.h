@@ -15,31 +15,33 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MLLEXERTEST_H
-#define MLLEXERTEST_H
+#ifndef SGMLTOKENIZERTEST_H
+#define SGMLTOKENIZERTEST_H
 
 #include <QObject>
 
 namespace Xml
 {
 
-class TestSgmlLexer : public QObject
+class TestSgmlTokenizer : public QObject
 {
     Q_OBJECT
 
 public:
-    TestSgmlLexer();
+    TestSgmlTokenizer();
 
 private Q_SLOTS:
+    
     void testDoctype();
     void testElementName();
-    void testStringRefList();
     void testReadUntill();
     void testReadUntillAny();
     void testReadWhileAny();
-    void testLexer();
-    void testLexerForFun();
+    void testSgmlTokenizer();
+    void testDTDTokenizer();
+    void testDTDEntity();
+    void testTokenizerForFun();
 };
 }
 
-#endif
+#endif //SGMLTOKENIZERTEST_H

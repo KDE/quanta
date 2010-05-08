@@ -20,7 +20,8 @@ if(KDEVPGQT_FOUND)
     )
     kdevpgqt_generate(_kdevpgList sgml NAMESPACE Xml DEBUG_VISITOR
         "${CMAKE_CURRENT_SOURCE_DIR}/sgml.g"
-        "${CMAKE_CURRENT_SOURCE_DIR}/sgmllexer.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/sgmltokenizer.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/dtdtokenizer.h"
     )
     set( parser_SRCS
        ${_kdevpgList}
@@ -39,10 +40,11 @@ endif(KDEVPGQT_FOUND)
 
 
 set(parser_STAT_SRCS
-    sgmllexer.cpp
+    tokenizer.cpp
+    sgmltokenizer.cpp
+    dtdtokenizer.cpp
     parsesession.cpp
     editorintegrator.cpp
-    stringreflist.cpp
     idtdhelper.cpp
     )
 
@@ -52,23 +54,9 @@ target_link_libraries( kdevsgmlparser
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDE4_KTEXTEDITOR_LIBS}
-    ${KDE4_KDEUI_LIBS}   
+    ${KDE4_KDEUI_LIBS}
 )
 install(TARGETS kdevsgmlparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
-
-### next target
-set(parsertest_SRCS tests/parsertest.cpp)
-kde4_add_unit_test(parsertest ${parsertest_SRCS})
-target_link_libraries(parsertest kdevsgmlparser ${QT_QTTEST_LIBRARY})
-
-### next target
-set(sgmllexertest_SRCS tests/sgmllexertest.cpp stringreflist.cpp)
-kde4_add_unit_test(sgmllexertest ${sgmllexertest_SRCS})
-target_link_libraries(sgmllexertest kdevsgmlparser ${QT_QTTEST_LIBRARY})
-
-### next target
-kde4_add_executable( ml-parser main.cpp ${parser_SRCS} ${parser_STAT_SRCS} )
-target_link_libraries(ml-parser ${QT_QTCORE_LIBRARY} ${KDEVPLATFORM_LANGUAGE_LIBRARIES})
 
 #Does not work?
 add_custom_target( copy-generated
@@ -90,3 +78,16 @@ add_custom_target( copy-generated
     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/sgmldebugvisitor.h"
 )
 
+### next target
+kde4_add_executable(sgmlparser tests/main.cpp ${parser_SRCS} ${parser_STAT_SRCS} )
+target_link_libraries(sgmlparser ${QT_QTCORE_LIBRARY} ${KDEVPLATFORM_LANGUAGE_LIBRARIES})
+
+### next target
+set(parsertest_SRCS tests/parsertest.cpp)
+kde4_add_unit_test(sgmlparsertest ${parsertest_SRCS})
+target_link_libraries(sgmlparsertest kdevsgmlparser ${QT_QTTEST_LIBRARY})
+
+### next target
+set(sgmltokenizertest_SRCS tests/sgmltokenizertest.cpp)
+kde4_add_unit_test(sgmltokenizertest ${sgmltokenizertest_SRCS})
+target_link_libraries(sgmltokenizertest kdevsgmlparser ${QT_QTTEST_LIBRARY})
