@@ -412,14 +412,21 @@ namespace KDevelop
 
     topen=ENTITY whites
     (
-        PERCENT whites name=text whites
+        PERCENT whites name=text maybeWhites
         (
             PUBLIC maybeWhites QUOTE publicId=text QUOTE maybeWhites (QUOTE systemId=text QUOTE| 0)
             | SYSTEM maybeWhites QUOTE systemId=text QUOTE
             | QUOTE (value=text | 0) QUOTE
             | dtdUnknownEntity (QUOTE (value=text | 0) QUOTE| 0)
         )
-        | type=text maybeWhites QUOTE (value=text | 0) QUOTE
+        | 
+        ( 
+            name=text maybeWhites 
+            (
+                type=text maybeWhites (QUOTE (value=text | 0) QUOTE | 0)
+                | QUOTE (value=text | 0) QUOTE
+            )
+        )
     )
     maybeWhites
     ( tclose=GT | 0 [: reportProblem(Error, "Unclosed element"); :] )
