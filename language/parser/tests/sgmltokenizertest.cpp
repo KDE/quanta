@@ -299,6 +299,19 @@ void TestSgmlTokenizer::testDTDTokenizer()
     tokens10.append(Parser::Token_CPAREN);
     tokens10.append(Parser::Token_GT);
     tests.insert("<!ELEMENT name1 ((name2|name3)*,(name4,name5*))>",  tokens10);
+    
+    
+    QList<Parser::TokenType> tokens11;
+    tokens11.append(Parser::Token_ATTLIST);
+    tokens11.append(Parser::Token_WHITE);
+    tokens11.append(Parser::Token_TEXT);
+    tokens11.append(Parser::Token_WHITE);
+    tokens11.append(Parser::Token_PERCENT);
+    tokens11.append(Parser::Token_TEXT);
+    tokens11.append(Parser::Token_SEMICOLON);
+    tokens11.append(Parser::Token_GT);
+    tests.insert("<!ATTLIST TITLE %i18n;>",  tokens11);
+    
 
     foreach(QString key, tests.keys()) {
         DTDTokenizer tokenizer(NULL, key);

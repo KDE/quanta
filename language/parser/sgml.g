@@ -432,7 +432,7 @@ namespace KDevelop
     ( tclose=GT | 0 [: reportProblem(Error, "Unclosed element"); :] )
 ->  dtdEntity ;;
 
-    PERCENT name=text SEMICOLON
+    PERCENT name=text ( SEMICOLON | 0 )
 ->  dtdEntityInclude ;;
 
     topen=ELEMENT whites
@@ -470,9 +470,9 @@ namespace KDevelop
         member variable child: AstNode*;
     ];;
 
-    COND_START
-    maybeWhites (condition=text | dtdUnknownEntity) maybeWhites OBRACKET maybeWhites (#children=dtdChild maybeWhites)* maybeWhites CBRACKET
-    COND_END
+    topen=COND_START
+    maybeWhites (condition=text | dtdUnknownEntity) maybeWhites copen=OBRACKET maybeWhites (#children=dtdChild maybeWhites)* maybeWhites cclose=CBRACKET
+    tclose=COND_END
 ->  dtdCondition ;;
 
     topen=DOCTYPE maybeWhites
@@ -480,7 +480,7 @@ namespace KDevelop
     (PUBLIC maybeWhites QUOTE publicId=maybeText QUOTE maybeWhites (QUOTE systemId=maybeText QUOTE | 0) | 0)
     (SYSTEM maybeWhites QUOTE systemId=maybeText QUOTE | 0)
     maybeWhites
-    ( OBRACKET maybeWhites (#children=dtdChild maybeWhites)* maybeWhites CBRACKET | 0 )
+    ( copen=OBRACKET maybeWhites (#children=dtdChild maybeWhites)* maybeWhites cclose=CBRACKET | 0 )
     maybeWhites
     ( tclose=GT | 0 [: reportProblem(Error, "Unclosed element"); :] )
 ->  dtdDoctype ;;

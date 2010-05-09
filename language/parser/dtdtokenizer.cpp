@@ -250,10 +250,12 @@ int DTDTokenizer::nextTokenKind()
         //NOTE Found in loose.dtd the following: <!ATTLIST TITLE %i18n>
         cursor+=1;
         READ_UNTIL_ANY(" \r\n\t|[]>()<\"'?*+,>%", IgnoreNone);
-        QString str(cursor-1, readLength);
-        QString entity = str.mid(1,str.length()-1);
+        QString str(cursor, readLength);
+        QString entity = str.mid(0,readLength);
+        kDebug() << "str" << str;
+        kDebug() << "ent" << entity;
         if (str.endsWith(';'))
-            entity = str.mid(1,str.length()-2);
+            entity = str.mid(0,readLength-1);
         if (!m_entities.contains(entity)) {
             kDebug() << "No entity for name:" << entity;
             DEFAULT_RETURN(Parser::Token_PERCENT, 1)
