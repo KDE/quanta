@@ -440,7 +440,7 @@ void TestSgmlTokenizer::testSgmlTokenizer()
         int token;
         int count = 0;
         while((token = tokenizer.nextTokenKind()) != Parser::Token_EOF) {
-        //    kDebug() << key.mid(tokenizer.tokenBegin(), tokenizer.tokenEnd() - tokenizer.tokenBegin());
+            kDebug() << key.mid(tokenizer.tokenBegin(), tokenizer.tokenEnd() - tokenizer.tokenBegin() + 1);
             if(token != tests[key].at(count)) {
                 QStringRef tokeStr(&key, tokenizer.tokenBegin(), tokenizer.tokenEnd() - tokenizer.tokenBegin() + 1);
                 QString fail("In [%1] EXPECTED '%2' GOT '%3' TOKEN '%4' AT '%5:%6'");

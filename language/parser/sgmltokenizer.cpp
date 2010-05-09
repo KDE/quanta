@@ -100,25 +100,6 @@ int SgmlTokenizer::nextTokenKind() {
     int l = condStart - cursor;\
     DEFAULT_RETURN(Parser::Token_TEXT, l)
 
-    //Try to reuse DTDTokenizer
-    if (!m_states.empty()) {
-        if (m_states.top().state == DTDContent) {
-            if (!m_dtdTokenizer) {
-                kDebug() << "No DTD tokenizer defined";
-                POP_STATE
-                return Parser::Token_EOF;
-            }
-            int token = m_dtdTokenizer->nextTokenKind();
-            m_tokenBegin = m_states.top().begin - m_contentData + m_dtdTokenizer->tokenBegin();
-            m_tokenEnd = m_states.top().begin - m_contentData + m_dtdTokenizer->tokenEnd();
-            if (token != Parser::Token_EOF) {
-                return token;
-            }
-            POP_STATE
-            return nextTokenKind();
-        }
-    }
-
     const QChar *start = m_contentData;
     const QChar *end = m_contentData + m_contentLength;
 
@@ -247,109 +228,25 @@ int SgmlTokenizer::nextTokenKind() {
         }
 
         case(DTD): {
-            switch (cursor->unicode()) {
-            case('['): {
-                //TODO Whatch for <!-- ] --> or -- ] --
-                READ_UNTIL("]", IgnoreNone)
-                m_curpos += readLength;
-                PUSH_STATE(DTDContent, cursor);
-                if (m_dtdTokenizer)
-                    delete m_dtdTokenizer;
-                m_dtdTokenizer = new DTDTokenizer(NULL, cursor, readLength);
-                return nextTokenKind();
-            }
-            case('"'): {
-                m_tokenEndString = "\"";
-                PUSH_STATE(Quote, cursor)
-                DEFAULT_RETURN(Parser::Token_QUOTE, 1)
-            }
-            case('\''): {
-                m_tokenEndString = "\'";
-                PUSH_STATE(Quote, cursor)
-                DEFAULT_RETURN(Parser::Token_QUOTE, 1)
-            }
-            case(' '): {
-                DEFAULT_RETURN(Parser::Token_WHITE, 1)
-            }
-            case('\r'): {
-                DEFAULT_RETURN(Parser::Token_WHITE, 1)
-            }
-            case('\n'): {
-                createNewline(m_tokenBegin);
-                DEFAULT_RETURN(Parser::Token_WHITE, 1)
-            }
-            case('\t'): {
-                DEFAULT_RETURN(Parser::Token_WHITE, 1)
-            }
-            case('>'): {
-                //QStringRef ref(&m_content, m_states.top().begin - start, cursor - m_states.top().begin + 1);
-                QString str(m_states.top().begin, cursor - m_states.top().begin + 1);
-                QString name, publicId, systemId;
-                doctype(str, name, publicId, systemId);
-                const IDtdHelper * helper = IDtdHelper::instance(publicId, systemId);
-                if (!helper)
-                    helper = IDtdHelper::instanceForName(name);
-                if (!helper) {
-                    kDebug() << "Failed to get a DTD instance for DOCTYPE:" << name
-                    << "PublicId:" << publicId
-                    << "SystemId:" << systemId;
-                }
-                if(helper)
-                    setDtdHelper(helper);
+            if (!m_dtdTokenizer) {
+                kDebug() << "No DTD tokenizer defined";
                 POP_STATE
-                DEFAULT_RETURN(Parser::Token_GT, 1)
+                return Parser::Token_EOF;
             }
-            case('-'): {
-                //Skip comments in DTD
-                if ((cursor+1)->unicode() == '-') {
-                    cursor+=2;
-                    READ_UNTIL("--", IgnoreNone)
-                    m_curpos += readLength+2;
-                    return nextTokenKind();
-                }
-                if ((cursor+1)->isSpace()) {
-                    DEFAULT_RETURN(Parser::Token_HYPHEN, 1)
-                }
+            int token = m_dtdTokenizer->nextTokenKind();
+            m_tokenBegin = m_states.top().begin - m_contentData + m_dtdTokenizer->tokenBegin();
+            m_tokenEnd = m_states.top().begin - m_contentData + m_dtdTokenizer->tokenEnd();
+            m_curpos = m_tokenEnd+1;
+            if(m_dtdTokenizer->currentState() == 0) {
+                POP_STATE
+                return token;
             }
-            case('<'): {
-                READ_WHILE_ANY("<![--", IgnoreNone);
-                //QStringRef ref(&m_content, cursor - start, readLength);
-                //QString str = ref.toString();
-                QString str(cursor, readLength);
-                //Skip comments in DTD
-                if (str.startsWith("<!--")) {
-                    READ_UNTIL("-->", IgnoreNone)
-                    m_curpos += readLength;
-                    return nextTokenKind();
-                }
-
-                //TODO serious problem
-                //We could pop all states and start from scratch, or just pop the top.
-                QStringRef seq(&m_content, m_states.top().begin - start, cursor - start + readLength);
-                kDebug() << "Bad escape sequence! " << seq.toString();
-                DEFAULT_RETURN(Parser::Token_EOF, 1)
+            if (token != Parser::Token_EOF) {
+                return token;
             }
-            default: {
-            } break;
-            }
-
-            READ_UNTIL_ANY(" \r\n\t[]()<>%*+?;#|'\"", IgnoreNone);
-            QStringRef ref(&m_content, cursor - start, readLength);
-            QString str = ref.toString().toUpper();
-            if (str == "PUBLIC") {
-                DEFAULT_RETURN(Parser::Token_PUBLIC, readLength)
-            } else if (str == "SYSTEM") {
-                DEFAULT_RETURN(Parser::Token_SYSTEM, readLength)
-            }
-
-            DEFAULT_RETURN(Parser::Token_TEXT, readLength)
+            POP_STATE
+            return nextTokenKind();
         }
-
-        default: {
-            //TODO what now?
-            kDebug() << "Unknown lexer state: " << m_states.top().state;
-            m_states.clear();
-        } break;
         }
     }
 
@@ -423,7 +320,10 @@ int SgmlTokenizer::nextTokenKind() {
             QString str = ref.toString().toUpper();
             if (str == "<!DOCTYPE") {
                 PUSH_STATE(DTD, cursor)
-                DEFAULT_RETURN(Parser::Token_DOCTYPE, readLength)
+                if (m_dtdTokenizer)
+                    delete m_dtdTokenizer;
+                m_dtdTokenizer = new DTDTokenizer(m_tokenStream, cursor, m_contentLength- (cursor - m_contentData));
+                return nextTokenKind();
             }
             kDebug() << "Unknown escape: " << ref.toString();
             DEFAULT_RETURN(Parser::Token_EOF, readLength)

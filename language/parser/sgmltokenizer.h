@@ -51,7 +51,6 @@ public:
         Tag, //all tags opening and closing, etc
         Quote, //used by DTD not sgml
         DTD, //ended by >
-        DTDContent, //ended by ]
         Processing, //ended by ?>
         PHP, //ended by ?>
         Source, //ended by %>

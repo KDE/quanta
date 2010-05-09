@@ -56,6 +56,8 @@ public:
     virtual qint64 tokenEnd() const;
 
 public:
+    
+    int currentState() const;
 
     enum ReadFlag {IgnoreNone = 0, IgnoreWhites = 1, IgnoreCase = 2};
 

@@ -55,6 +55,14 @@ Tokenizer::~Tokenizer()
 
 }
 
+int Tokenizer::currentState() const
+{
+    if(m_states.size() > 0)
+        return m_states.top().state;
+    return 0;
+}
+
+
 void Tokenizer::setDtdHelper(const IDtdHelper* helper)
 {
     m_dtdHelper = helper;
