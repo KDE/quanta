@@ -76,8 +76,7 @@ public:
 
     void textChanged ( KTextEditor::Document *document ) {
         Q_UNUSED ( document );
-        xmlDocument->notifyContentChanged();
-        //This should happen for all views.
+        setStatus ( document, false );
         xmlDocument->parse();
     }
 

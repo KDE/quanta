@@ -252,8 +252,6 @@ int DTDTokenizer::nextTokenKind()
         READ_UNTIL_ANY(" \r\n\t|[]>()<\"'?*+,>%", IgnoreNone);
         QString str(cursor, readLength);
         QString entity = str.mid(0,readLength);
-        kDebug() << "str" << str;
-        kDebug() << "ent" << entity;
         if (str.endsWith(';'))
             entity = str.mid(0,readLength-1);
         if (!m_entities.contains(entity)) {
@@ -303,22 +301,6 @@ int DTDTokenizer::nextTokenKind()
                     m_entities.insert(m_entityName, TokenizePart(m_entityContentStart, m_entityContentEnd + 1, 0));
                 }
             }
-            /* TODO could cause recursion if IDtdHelper launches a parsejob
-            if (m_states.top().state == DOCTYPE) {
-                QString str(m_states.top().begin, cursor - m_states.top().begin + 1);
-                QString name, publicId, systemId;
-                doctype(str, name, publicId, systemId);
-                m_dtdHelper = IDtdHelper::instance(publicId, systemId);
-                if (!m_dtdHelper)
-                    m_dtdHelper = IDtdHelper::instanceForName(name);
-                if (!m_dtdHelper) {
-                    kDebug() << "Failed to get a DTD instance for DOCTYPE:" << name
-                    << "PublicId:" << publicId
-                    << "SystemId:" << systemId;
-                    m_dtdHelper = IDtdHelper::instanceForMime("text/xml");
-                }
-            }
-            */
         }
         POP_STATE
         DEFAULT_RETURN(Parser::Token_GT, 1)

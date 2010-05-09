@@ -218,7 +218,7 @@ const Xml::IDtdHelper* IDtdHelper::instanceForName(const QString& name)
     }
     
     if(name.trimmed().toLower() == "xml") {
-        return html4LooseHelper;
+        return xmlHelper;
     }
     
     return 0;

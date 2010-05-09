@@ -89,7 +89,6 @@ namespace KDevelop
 
 %parserclass (private declaration)
 [:
-    bool LAChoice(int i);
     QString m_contents;
     bool m_debug;
     QString m_currentDocument;
@@ -99,6 +98,7 @@ namespace KDevelop
     QString tagName(const ElementCloseTagAst *ast) const;
     QStack<ElementTagAst *> m_stack;
     KMimeType::Ptr m_mime;
+    bool LAChoice(int &i);
 :]
 
 
@@ -340,36 +340,12 @@ namespace KDevelop
         | name=text 
         | dtdUnknownEntity
         | ?[:{
-            //TODO needs a recursive fuction
             int i=1;
             bool isChoice = false;
             while(++i < 9999 
                 && LA(i).kind != Token_CPAREN 
                 && LA(i).kind != Token_COMMA
-                && ({if(LA(i).kind == Token_OPAREN)
-                    while(++i < 9999 
-                        && LA(i).kind != Token_CPAREN 
-                        && ({if(LA(i).kind == Token_OPAREN)
-                            while(++i < 9999 
-                                && LA(i).kind != Token_CPAREN 
-                                && ({if(LA(i).kind == Token_OPAREN)
-                                    while(++i < 9999 
-                                    && LA(i).kind != Token_CPAREN
-                                    && ({if(LA(i).kind == Token_OPAREN)
-                                            while(++i < 9999 
-                                            && LA(i).kind != Token_CPAREN 
-                                            && LA(i).kind != Token_EOF);
-                                        true;
-                                        })
-                                    && LA(i).kind != Token_EOF);
-                                    true;
-                                    })
-                                && LA(i).kind != Token_EOF);
-                            true;
-                            }) 
-                        && LA(i).kind != Token_EOF);
-                   true;
-                   })
+                && ({if(LA(i).kind == Token_OPAREN && LAChoice(i)); true;})
                 && LA(i).kind != Token_EOF)
                 if(LA(i).kind == Token_VBAR){ isChoice = true; break;}
                 isChoice;
@@ -653,6 +629,14 @@ void Parser::setCurrentDocument(QString url)
 
 void Parser::setMime(KMimeType::Ptr mime) {
     m_mime = mime;
+}
+
+bool Parser::LAChoice(int &i) {
+    while(++i < 9999 
+        && LA(i).kind != Token_CPAREN
+        && ({if(LA(i).kind == Token_OPAREN && LAChoice(i)); true;})
+        && LA(i).kind != Token_EOF);
+    return true;
 }
 
 } // end of namespace Xml

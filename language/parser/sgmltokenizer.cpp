@@ -160,7 +160,6 @@ int SgmlTokenizer::nextTokenKind() {
             }
             case('\''): {
                 cursor++;
-                kDebug() << "Cursor:" << cursor->toAscii();
                 m_tokenBegin+=1;
                 READ_UNTIL_ANY("'", IgnoreNone)
                 m_curpos+=readLength+2;
@@ -237,15 +236,24 @@ int SgmlTokenizer::nextTokenKind() {
             m_tokenBegin = m_states.top().begin - m_contentData + m_dtdTokenizer->tokenBegin();
             m_tokenEnd = m_states.top().begin - m_contentData + m_dtdTokenizer->tokenEnd();
             m_curpos = m_tokenEnd+1;
-            if(m_dtdTokenizer->currentState() == 0) {
+            if(m_dtdTokenizer->currentState() == 0 || token == Parser::Token_EOF) {
+                QString str(m_states.top().begin, m_contentData + m_curpos - m_states.top().begin + 1);
+                QString name, publicId, systemId;
+                doctype(str, name, publicId, systemId);
+                const IDtdHelper * helper = IDtdHelper::instance(publicId, systemId);
+                if (!helper)
+                    helper = IDtdHelper::instanceForName(name);
+                if (!helper) {
+                    kDebug() << "Failed to get a DTD instance for DOCTYPE:" << name
+                    << "PublicId:" << publicId
+                    << "SystemId:" << systemId;
+                }
+                if(helper)
+                    setDtdHelper(helper);
                 POP_STATE
                 return token;
             }
-            if (token != Parser::Token_EOF) {
-                return token;
-            }
-            POP_STATE
-            return nextTokenKind();
+            return token;
         }
         }
     }
