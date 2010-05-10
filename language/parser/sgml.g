@@ -209,7 +209,8 @@ namespace KDevelop
     | element=dtdElement
     | element=dtdCondition
     | element=dtdEntityInclude
-    | element=error
+    | element=dtdNotation
+    | element=error  --Not used
     | maybeWhites --needed for dtdtokenizer
 ->  element [
         member variable element: AstNode*;
@@ -260,7 +261,7 @@ namespace KDevelop
     topen=LT maybeWhites
     (?  [: LA(2).kind == Token_COLON :] (ns=text COLON name=text)
         | (name=text)
-        | 0 [: reportProblem(Error, "Expected tag name"); :]
+        | 0 [: reportProblem(Error, "Expected element name"); :]
     ) maybeWhites
     #attributes=attribute @ whites
     (
@@ -274,7 +275,7 @@ namespace KDevelop
     topen=CLOSE maybeWhites
     (?  [: LA(2).kind == Token_COLON :] (ns=text COLON name=text)
         | (name=text)
-        | 0 [: reportProblem(Error, "Expected tag name"); :]
+        | 0 [: reportProblem(Error, "Expected element name"); :]
     ) maybeWhites
     (
         tclose=GT [:
@@ -380,6 +381,7 @@ namespace KDevelop
     (
         (name=text | dtdUnknownEntity)
         | OPAREN maybeWhites #elements=dtdEnumList @ dtdChoiceSep maybeWhites CPAREN
+        | 0 [: reportProblem(Error, "Expected element name or list"); :]
     )
     whites
     (#attributes=dtdAtt maybeWhites)*
@@ -388,12 +390,13 @@ namespace KDevelop
 
     topen=ENTITY whites
     (
-        PERCENT whites name=text maybeWhites
+        PERCENT maybeWhites (name=text | 0 [: reportProblem(Error, "Expected entity name"); :]) maybeWhites
         (
             PUBLIC maybeWhites QUOTE publicId=text QUOTE maybeWhites (QUOTE systemId=text QUOTE| 0)
             | SYSTEM maybeWhites QUOTE systemId=text QUOTE
             | QUOTE (value=text | 0) QUOTE
             | dtdUnknownEntity (QUOTE (value=text | 0) QUOTE| 0)
+            | 0 [: reportProblem(Error, "Expected one of PUBLIC, SYSTEM or value"); :]
         )
         | 
         ( 
@@ -401,12 +404,26 @@ namespace KDevelop
             (
                 type=text maybeWhites (QUOTE (value=text | 0) QUOTE | 0)
                 | QUOTE (value=text | 0) QUOTE
+                | 0 [: reportProblem(Error, "Expected type or value"); :]
             )
         )
+        | 0 [: reportProblem(Error, "Expected entity name"); :]
     )
     maybeWhites
     ( tclose=GT | 0 [: reportProblem(Error, "Unclosed element"); :] )
 ->  dtdEntity ;;
+
+
+    topen=NOTATION maybeWhites
+    name=text maybeWhites
+    (
+        PUBLIC maybeWhites QUOTE publicId=text QUOTE maybeWhites (QUOTE systemId=text QUOTE| 0)
+        | SYSTEM maybeWhites QUOTE systemId=text QUOTE
+        | 0 [: reportProblem(Error, "Expected PUBLIC or SYSTEM"); :]
+    )
+    maybeWhites
+    ( tclose=GT | 0 [: reportProblem(Error, "Unclosed element"); :] )
+->  dtdNotation ;;
 
     PERCENT name=text ( SEMICOLON | 0 )
 ->  dtdEntityInclude ;;
@@ -415,6 +432,7 @@ namespace KDevelop
     (
         (name=text | dtdUnknownEntity)
         | OPAREN maybeWhites #elements=dtdEnumList @ dtdChoiceSep maybeWhites CPAREN
+        | 0 [: reportProblem(Error, "Expected element name or list"); :]
     )
     maybeWhites
     ((openTag=HYPHEN | openTag=OPT) whites (closeTag=HYPHEN | closeTag=OPT) | dtdUnknownEntity | 0)
@@ -442,6 +460,8 @@ namespace KDevelop
     | child=dtdElement
     | child=dtdCondition
     | child=dtdEntityInclude
+    | child=dtdNotation
+    | child=error --Not used
 ->  dtdChild [
         member variable child: AstNode*;
     ];;

@@ -1,19 +1,19 @@
-/*
-Copyright (C) 2010  Ruan Strydom <ruan@jcell.co.za>
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/*****************************************************************************
+ * Copyright (c) 2010 Ruan Strydom <rm3dom@gmail.com>                        *
+ *                                                                           *
+ * This program is free software; you can redistribute it and/or modify      *
+ * it under the terms of the GNU General Public License as published by      *
+ * the Free Software Foundation; either version 3 of the License, or         *
+ * (at your option) any later version.                                       *
+ *                                                                           *
+ * This program is distributed in the hope that it will be useful,           *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of            *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
+ * GNU General Public License for more details.                              *
+ *                                                                           *
+ * You should have received a copy of the GNU General Public License         *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
+ *****************************************************************************/
 
 #include "contextbuilder.h"
 
@@ -94,6 +94,35 @@ void ContextBuilder::visitElementTag(ElementTagAst* node)
     closeContext();
 }
 
+void ContextBuilder::visitDtdCondition(DtdConditionAst* node)
+{
+    KDevelop::SimpleRange range;
+    EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
+    range.start = e->findPosition(node->copen, EditorIntegrator::BackEdge);
+    range.end = e->findPosition(node->cclose, EditorIntegrator::FrontEdge);
+    KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString("CONDITION")));
+    openContext(node, range,
+                KDevelop::DUContext::Other,
+                id);
+    DefaultVisitor::visitDtdCondition(node);
+    closeContext();
+}
+
+void ContextBuilder::visitDtdDoctype(DtdDoctypeAst* node)
+{
+    KDevelop::SimpleRange range;
+    EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
+    range.start = e->findPosition(node->copen, EditorIntegrator::BackEdge);
+    range.end = e->findPosition(node->cclose, EditorIntegrator::FrontEdge);
+    KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString("DOCTYPE")));
+    openContext(node, range,
+                KDevelop::DUContext::Other,
+                id);
+    DefaultVisitor::visitDtdDoctype(node);
+    closeContext();
+}
+
+
 KDevelop::SimpleCursor ContextBuilder::findElementChildrenReach(ElementTagAst* node)
 {
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
@@ -102,7 +131,7 @@ KDevelop::SimpleCursor ContextBuilder::findElementChildrenReach(ElementTagAst* n
         //if(ast->element)
         //    kDebug() << ast->element->kind;
         if(ast->element && ast->element->kind == AstNode::ElementCloseTagKind)
-            return e->findPosition(ast->startToken, EditorIntegrator::FrontEdge);
+            return e->findPosition(ast->endToken, EditorIntegrator::BackEdge);
     }
     return e->findPosition(node->endToken, EditorIntegrator::BackEdge);
 }

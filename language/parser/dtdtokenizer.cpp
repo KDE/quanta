@@ -1,19 +1,19 @@
-/*
-Copyright (C) 2010  Ruan Strydom <ruan@jcell.co.za>
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/*****************************************************************************
+ * Copyright (c) 2010 Ruan Strydom <rm3dom@gmail.com>                        *
+ *                                                                           *
+ * This program is free software; you can redistribute it and/or modify      *
+ * it under the terms of the GNU General Public License as published by      *
+ * the Free Software Foundation; either version 2 of the License, or         *
+ * (at your option) any later version.                                       *
+ *                                                                           *
+ * This program is distributed in the hope that it will be useful,           *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of            *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
+ * GNU General Public License for more details.                              *
+ *                                                                           *
+ * You should have received a copy of the GNU General Public License         *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
+ *****************************************************************************/
 
 #include "dtdtokenizer.h"
 
@@ -369,7 +369,7 @@ int DTDTokenizer::nextTokenKind()
 
     READ_UNTIL_ANY(" \r\n\t|[]>()<\"'?*+,;%#\\", IgnoreNone);
     if (m_states.size() > 0) {
-        if (m_states.top().state == DOCTYPE || m_states.top().state == ENTITY) {
+        if (m_states.top().state == DOCTYPE || m_states.top().state == ENTITY || m_states.top().state == NOTATION) {
             if (m_states.top().tokens.contains(Parser::Token_TEXT)) {
                 QString str = QString(cursor, readLength).toUpper();
                 if (str == "PUBLIC") {

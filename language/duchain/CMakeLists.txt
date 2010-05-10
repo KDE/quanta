@@ -26,6 +26,7 @@ set( duchain_SRCS
     #elementdeclaration.cpp
     declarationbuilder.cpp
     contextbuilder.cpp
+    includebuilder.cpp
     navigation/navigationwidget.cpp
 )
 
