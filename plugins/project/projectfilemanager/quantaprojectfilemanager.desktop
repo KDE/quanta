@@ -1,8 +1,18 @@
 [Desktop Entry]
 Type=Service
 Name=Quanta Project Importer
+Name[es]=Importador de proyectos de Quanta
+Name[nds]=Projektimporterer för Quanta
+Name[pt]=Importação de Projectos do Quanta
+Name[sv]=Import av Quanta-projekt
+Name[uk]=Імпорт проектів Quanta
 Name[x-test]=xxQuanta Project Importerxx
 Comment=Allow KDevelop to manage Quanta projects
+Comment[es]=Permitir que KDevelop gestione los proyectos
+Comment[nds]=Pleeg vun Quanta-Projekten mit KDevelop
+Comment[pt]=Permite ao KDevelop gerir os projectos do Quanta
+Comment[sv]=Låt KDevelop hantera Quanta-projekt
+Comment[uk]=Надає змогу програмі KDevelop керувати проектами Quanta
 Comment[x-test]=xxAllow KDevelop to manage Quanta projectsxx
 Icon=gear
 X-KDE-ServiceTypes=KDevelop/Plugin

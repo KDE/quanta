@@ -1,6 +1,11 @@
 [Desktop Entry]
 Icon=
 Name=KDevelop Project Interface
+Name[es]=Interfaz de proyectos KDevelop
+Name[nds]=Projektkoppelsteed för KDevelop
+Name[pt]=Interface para Projectos do KDevelop
+Name[sv]=KDevelop-projektgränssnitt
+Name[uk]=Інтерфейс проекту KDevelop
 Name[x-test]=xxKDevelop Project Interfacexx
 Type=ServiceType
 X-KDE-Derived=KDevelop/Plugin

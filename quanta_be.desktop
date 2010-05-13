@@ -1,6 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Quanta Plus BE
+Name[es]=Quanta Plus BE
+Name[nds]=Quanta Plus BE
+Name[pt]=Quanta Plus BE
+Name[sv]=Quanta plus BE
+Name[uk]=Quanta Plus BE
 Name[x-test]=xxQuanta Plus BExx
 Exec=quanta_be
 Icon=quanta_be
@@ -8,5 +13,10 @@ Type=Application
 MimeType=text/html
 DocPath=quanta/index.html
 Comment=Web Development Environment
+Comment[es]=Entorno de desarrollo web
+Comment[nds]=Nett-Entwickelnümgeven
+Comment[pt]=Ambiente de Desenvolvimento na Web
+Comment[sv]=Webbutvecklingsmiljö
+Comment[uk]=Середовище для веб-розробки
 Comment[x-test]=xxWeb Development Environmentxx
 Categories=Qt;KDE;Development
