@@ -19,6 +19,6 @@ X-KDE-ServiceTypes=KDevelop/Plugin
 X-KDE-Library=quantaprojectfilemanager
 X-KDE-PluginInfo-Name=QuantaProjectFileManager
 X-KDevelop-FileManager=None
-X-KDevelop-Version=9
+X-KDevelop-Version=10
 X-KDevelop-Interfaces=org.kdevelop.IProjectFileManager
 X-KDevelop-IRequired=org.kdevelop.QuantaCoreIf

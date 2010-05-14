@@ -35,6 +35,6 @@ X-KDevelop-Args=
 X-KDevelop-Scope=Project
 X-KDE-Library=libkdevprojecttree
 X-KDE-PluginInfo-Name=KDevProjectTree
-X-KDevelop-Version=9
+X-KDevelop-Version=10
 X-KDevelop-Properties=Quanta,Quanta-ProjectTree
 X-KDevelop-IRequired=org.kdevelop.QuantaCoreIf
