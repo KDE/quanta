@@ -11,33 +11,19 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-#Don't error out if the FindXXX are missing for these two
-find_package(KDevelop-PG-Qt QUIET)
+find_package(KDevelop-PG-Qt REQUIRED)
 
-if(KDEVPGQT_FOUND)
-    include_directories(
-        ${KDEVPGQT_INCLUDE_DIR}
-    )
-    kdevpgqt_generate(_kdevpgList sgml NAMESPACE Xml DEBUG_VISITOR
-        "${CMAKE_CURRENT_SOURCE_DIR}/sgml.g"
-        "${CMAKE_CURRENT_SOURCE_DIR}/sgmltokenizer.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/dtdtokenizer.h"
-    )
-    set( parser_SRCS
-       ${_kdevpgList}
-    )
-else(KDEVPGQT_FOUND)
-    include_directories(
-        ${CMAKE_CURRENT_SOURCE_DIR}/generated
-        ${CMAKE_CURRENT_SOURCE_DIR}/generated/kdevelop-pg-qt
-    )
-    message(STATUS "Assuming existence of generated parser files")
-    set(parser_SRCS
-        generated/sgmlparser.cpp
-        generated/sgmlvisitor.cpp
-        generated/sgmldefaultvisitor.cpp )
-endif(KDEVPGQT_FOUND)
-
+include_directories(
+    ${KDEVPGQT_INCLUDE_DIR}
+)
+kdevpgqt_generate(_kdevpgList sgml NAMESPACE Xml DEBUG_VISITOR
+    "${CMAKE_CURRENT_SOURCE_DIR}/sgml.g"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sgmltokenizer.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dtdtokenizer.h"
+)
+set( parser_SRCS
+    ${_kdevpgList}
+)
 
 set(parser_STAT_SRCS
     tokenizer.cpp
@@ -57,26 +43,6 @@ target_link_libraries( kdevsgmlparser
     ${KDE4_KDEUI_LIBS}
 )
 install(TARGETS kdevsgmlparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
-
-#Does not work?
-add_custom_target( copy-generated
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/sgmlparser.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/generated/sgmlparser.cpp"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/sgmlparser.h" "${CMAKE_CURRENT_SOURCE_DIR}/generated/sgmlparser.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/sgmlast.h" "${CMAKE_CURRENT_SOURCE_DIR}/generated/sgmlast.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/sgmlvisitor.h" "${CMAKE_CURRENT_SOURCE_DIR}/generated/sgmlvisitor.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/sgmlvisitor.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/generated/sgmlvisitor.cpp"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/sgmldefaultvisitor.h" "${CMAKE_CURRENT_SOURCE_DIR}/generated/sgmldefaultvisitor.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/sgmldefaultvisitor.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/generated/sgmldefaultvisitor.cpp"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/sgmldebugvisitor.h" "${CMAKE_CURRENT_SOURCE_DIR}/generated/sgmldebugvisitor.h"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/sgmlast.h"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/sgmlparser.h"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/sgmlparser.cpp"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/sgmlvisitor.h"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/sgmlvisitor.cpp"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/sgmldefaultvisitor.h"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/sgmldefaultvisitor.cpp"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/sgmldebugvisitor.h"
-)
 
 ### next target
 kde4_add_executable(sgmlparser tests/main.cpp ${parser_SRCS} ${parser_STAT_SRCS} )

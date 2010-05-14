@@ -8,18 +8,11 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-find_package(KDevelop-PG-Qt QUIET)
+find_package(KDevelop-PG-Qt REQUIRED)
 
-if(KDEVPGQT_FOUND)
-    include_directories(
-        ${KDEVPGQT_INCLUDE_DIR}
-    )
-else(KDEVPGQT_FOUND)
-        include_directories(
-            ${xml_BINARY_DIR}/language/parser/generated
-            ${xml_BINARY_DIR}/language/parser/generated/kdevelop-pg-qt
-        )
-endif(KDEVPGQT_FOUND)
+include_directories(
+    ${KDEVPGQT_INCLUDE_DIR}
+)
 
 
 set( duchain_SRCS

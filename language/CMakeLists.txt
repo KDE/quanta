@@ -12,20 +12,12 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/parser
 )
 
-#Don't error out if the FindXXX are missing for these two
-find_package(KDevelop-PG-Qt QUIET)
+find_package(KDevelop-PG-Qt REQUIRED)
 
-if(KDEVPGQT_FOUND)
-    include_directories(
-        ${CMAKE_CURRENT_BINARY_DIR}/parser
-        ${KDEVPGQT_INCLUDE_DIR}
-    )
-else(KDEVPGQT_FOUND)
-    include_directories(
-        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated
-        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/kdevelop-pg-qt
-    )
-endif(KDEVPGQT_FOUND)
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}/parser
+    ${KDEVPGQT_INCLUDE_DIR}
+)
 
 set(kdevsgmllanguagesupport_PART_SRCS
     languagesupport.cpp
