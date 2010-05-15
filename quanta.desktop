@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Quanta Plus
+Name[cs]=Quanta Plus
 Name[es]=Quanta Plus
 Name[nds]=Quanta Plus
 Name[pt]=Quanta Plus
@@ -13,6 +14,7 @@ Type=Application
 MimeType=text/html
 DocPath=quanta/index.html
 GenericName=Web Development Environment
+GenericName[cs]=Webové vývojové prostředí
 GenericName[es]=Entorno de desarrollo web
 GenericName[nds]=Nett-Entwickelnümgeven
 GenericName[pt]=Ambiente de Desenvolvimento Web
@@ -20,6 +22,7 @@ GenericName[sv]=Webbutvecklingsmiljö
 GenericName[uk]=Середовище для веб-розробки
 GenericName[x-test]=xxWeb Development Environmentxx
 Comment=Web Development Environment
+Comment[cs]=Webové vývojové prostředí
 Comment[es]=Entorno de desarrollo web
 Comment[nds]=Nett-Entwickelnümgeven
 Comment[pt]=Ambiente de Desenvolvimento na Web

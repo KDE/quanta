@@ -13,6 +13,7 @@ Type=Application
 MimeType=text/html
 DocPath=quanta/index.html
 Comment=Web Development Environment
+Comment[cs]=Webové vývojové prostředí
 Comment[es]=Entorno de desarrollo web
 Comment[nds]=Nett-Entwickelnümgeven
 Comment[pt]=Ambiente de Desenvolvimento na Web

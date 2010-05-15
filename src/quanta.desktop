@@ -12,6 +12,7 @@ GenericName[x-test]=xxIDE for Web Developmentxx
 Icon=quanta
 MimeType=application/x-kdevelop;application/x-php;text/css;application/docbook+xml;text/html;application/xml;
 Name=Quanta Plus
+Name[cs]=Quanta Plus
 Name[es]=Quanta Plus
 Name[nds]=Quanta Plus
 Name[pt]=Quanta Plus
