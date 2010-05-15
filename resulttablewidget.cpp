@@ -19,12 +19,13 @@
 
 #include "resulttablewidget.h"
 
-#include <QTextDocument>
+#include <qtextdocument.h>
 #include <QSqlQueryModel>
 #include <QSqlError>
 
 #include <KDebug>
 #include <KComponentData>
+#include "kcomponentdata.h"
 #include <KSettings/Dispatcher>
 
 #include <interfaces/icore.h>
@@ -33,6 +34,8 @@
 
 #include "connections/connectionsmodel.h"
 #include "ui_results.h"
+
+#include <QXmlFormatter>
 
 namespace Sql {
 
