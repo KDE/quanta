@@ -14,31 +14,8 @@ set(CMAKE_MODULE_PATH ${quanta_SOURCE_DIR}/cmake/ ${CMAKE_MODULE_PATH} )
 set(QUANTA_DATA_INSTALL_DIR ${DATA_INSTALL_DIR}/quanta CACHE STRING "The Quanta data dir")
 add_definitions ( -DKDE_DEFAULT_DEBUG_AREA=24000 )
 
-if( extragear-sdk_SOURCE_DIR )
-    if( ${extragear-sdk_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR}  )
-        set( KDEVPLATFORM_FOUND TRUE )
-        include_directories( ${CMAKE_SOURCE_DIR}/kdevplatform ${CMAKE_SOURCE_DIR}/kdevplatform/plugins )
-        set( KDEVPLATFORM_INTERFACES_LIBRARIES kdevplatforminterfaces )
-        set( KDEVPLATFORM_SHELL_LIBRARIES kdevplatformshell )
-        set( KDEVPLATFORM_TESTS_LIBRARIES kdevplatformtests )
-        set( KDEVPLATFORM_UTIL_LIBRARIES kdevplatformutil )
-        set( KDEVPLATFORM_PROJECT_LIBRARIES kdevplatformproject )
-        set( KDEVPLATFORM_OUTPUTVIEW_LIBRARIES kdevplatformoutputview )
-        set( KDEVPLATFORM_LANGUAGE_LIBRARIES kdevplatformlanguage )
-        set( KDEVPLATFORM_VCS_LIBRARIES kdevplatformvcs )
-        set( KDEVPLATFORM_DEBUGGER_LIBRARIES kdevplatformdebugger )
-        set( KDEVPLATFORM_SUBLIME_LIBRARIES sublime )
-        include( ${CMAKE_SOURCE_DIR}/kdevplatform/cmake/modules/KDevPlatformMacros.cmake )
-
-    endif( ${extragear-sdk_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR}  )
-endif( extragear-sdk_SOURCE_DIR )
-
-if( NOT KDEVPLATFORM_FOUND )
-
-    find_package(KDevPlatform 0.9.97 REQUIRED)
-    include_directories(${KDEVPLATFORM_INCLUDE_DIR})
-
-endif( NOT KDEVPLATFORM_FOUND )
+find_package(KDevPlatform 0.9.97 REQUIRED)
+include_directories(${KDEVPLATFORM_INCLUDE_DIR})
 
 add_subdirectory(lib)
 add_subdirectory(src)
