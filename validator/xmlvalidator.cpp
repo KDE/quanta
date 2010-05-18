@@ -47,7 +47,6 @@ xmlParserInputPtr catalogManagerEntityLoader(const char *URL, const char *ID, xm
         resolved = ICatalogManager::self()->resolveUri(URL);
     if(resolved.isEmpty())
         resolved = URL;
-    //TODO This can lock down the ui as it is not run in a seperate process.
     resolved = IDocumentCacheManager::self()->cachedUrl(resolved);
     debug() << "Resolved" << URL << ID << " to " << resolved;
     if(resolved.isEmpty()) {

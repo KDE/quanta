@@ -21,7 +21,7 @@
 [:
 #include "sgmltokenizer.h"
 #include "dtdtokenizer.h"
-#include "idtdhelper.h"
+#include "dtdhelper.h"
 
 #include <QtCore/QString>
 #include <QtCore/QList>
@@ -93,7 +93,7 @@ namespace KDevelop
     bool m_debug;
     QString m_currentDocument;
     QList<KDevelop::ProblemPointer> m_problems;
-    const IDtdHelper *m_dtdHelper;
+    DtdHelper m_dtdHelper;
     QString tagName(const ElementTagAst *ast) const;
     QString tagName(const ElementCloseTagAst *ast) const;
     QStack<ElementTagAst *> m_stack;
@@ -265,7 +265,7 @@ namespace KDevelop
     ) maybeWhites
     #attributes=attribute @ whites
     (
-        tclose=CLOSE [: while(m_dtdHelper && !m_stack.empty() && !m_dtdHelper->hasChild(tagName(m_stack.top()), tagName(*yynode))) m_stack.pop(); :]
+        tclose=CLOSE [: while(!m_stack.empty() && !m_dtdHelper.hasChild(tagName(m_stack.top()), tagName(*yynode))) m_stack.pop(); :]
         | tclose=GT [: m_stack.push(*yynode); :] (#children=element [: if(m_stack.empty() || m_stack.top() != *yynode) break; :])*
         | 0 [: reportProblem(Error, "Unclosed element"); :]
     )
@@ -322,19 +322,26 @@ namespace KDevelop
     QUOTE | 0
 ->  dtdMaybeQuote ;;
 
+
     (VBAR | AMP) maybeWhites 
 ->  dtdChoiceSep ;;
+
 
     (COMMA | AMP) maybeWhites
 ->  dtdSequenceSep ;;
 
+
     dtdEntityInclude [: reportProblem(Warning, "Entity reference can not be resolved"); :]
 ->  dtdUnknownEntity ;;
 
+
     NUMBER type=text maybeWhites
     | (name=text | dtdUnknownEntity) maybeWhites
-->  dtdEnumList ;;
+->  dtdEnumItem ;;
 
+    NUMBER type=text maybeWhites
+    | (name=text | dtdUnknownEntity) maybeWhites
+-> dtdElementIncludeItem ;;
 
     (
         NUMBER type=text
@@ -350,16 +357,17 @@ namespace KDevelop
                 && LA(i).kind != Token_EOF)
                 if(LA(i).kind == Token_VBAR){ isChoice = true; break;}
                 isChoice;
-        }:] OPAREN maybeWhites #choice=dtdElementList @ dtdChoiceSep maybeWhites CPAREN
-        | OPAREN maybeWhites maybeWhites #sequence=dtdElementList @ dtdSequenceSep maybeWhites CPAREN
+        }:] copen=OPAREN maybeWhites #choice=dtdElementList @ dtdChoiceSep maybeWhites cclose=CPAREN
+        | copen=OPAREN maybeWhites maybeWhites #sequence=dtdElementList @ dtdSequenceSep maybeWhites cclose=CPAREN
     )
     ( cardinality=QUESTION | cardinality=ASTERISK | cardinality=PLUS | 0 )
     maybeWhites
 ->  dtdElementList ;;
 
+
     name=text whites
     (
-        OPAREN maybeWhites #enum=dtdEnumList @ dtdChoiceSep maybeWhites CPAREN maybeWhites
+        OPAREN maybeWhites #enum=dtdEnumItem @ dtdChoiceSep maybeWhites CPAREN maybeWhites
         ( 
             NUMBER useage=text maybeWhites (QUOTE (defaultValue=text | 0) QUOTE | 0)
             | QUOTE (defaultValue=text | 0) QUOTE
@@ -377,16 +385,18 @@ namespace KDevelop
     ) 
 ->  dtdAtt ;;
 
+
     topen=ATTLIST whites
     (
         (name=text | dtdUnknownEntity)
-        | OPAREN maybeWhites #elements=dtdEnumList @ dtdChoiceSep maybeWhites CPAREN
+        | OPAREN maybeWhites #elements=dtdEnumItem @ dtdChoiceSep maybeWhites CPAREN
         | 0 [: reportProblem(Error, "Expected element name or list"); :]
     )
     whites
     (#attributes=dtdAtt maybeWhites)*
     ( tclose=GT | 0 [: reportProblem(Error, "Unclosed element"); :] )
 ->  dtdAttlist ;;
+
 
     topen=ENTITY whites
     (
@@ -431,22 +441,34 @@ namespace KDevelop
     topen=ELEMENT whites
     (
         (name=text | dtdUnknownEntity)
-        | OPAREN maybeWhites #elements=dtdEnumList @ dtdChoiceSep maybeWhites CPAREN
+        | OPAREN maybeWhites #elements=dtdEnumItem @ dtdChoiceSep maybeWhites CPAREN
         | 0 [: reportProblem(Error, "Expected element name or list"); :]
     )
     maybeWhites
     ((openTag=HYPHEN | openTag=OPT) whites (closeTag=HYPHEN | closeTag=OPT) | dtdUnknownEntity | 0)
     maybeWhites
     (
-        #children=dtdElementList
+        content=text 
+        | dtdUnknownEntity
+        | ?[:{
+            int i=1;
+            bool isChoice = false;
+            while(++i < 9999 
+                && LA(i).kind != Token_CPAREN 
+                && LA(i).kind != Token_COMMA
+                && ({if(LA(i).kind == Token_OPAREN && LAChoice(i)); true;})
+                && LA(i).kind != Token_EOF)
+                if(LA(i).kind == Token_VBAR){ isChoice = true; break;}
+                isChoice;
+        }:] copen=OPAREN maybeWhites #choice=dtdElementList @ dtdChoiceSep maybeWhites cclose=CPAREN
+        | copen=OPAREN maybeWhites maybeWhites #sequence=dtdElementList @ dtdSequenceSep maybeWhites cclose=CPAREN
     )
+    ( cardinality=QUESTION | cardinality=ASTERISK | cardinality=PLUS | 0 )
     maybeWhites
     (
-        PLUS OPAREN maybeWhites #include=dtdEnumList @ dtdChoiceSep maybeWhites CPAREN
-        | 0
-    )
-    (
-        HYPHEN OPAREN maybeWhites #exclude=dtdEnumList @ dtdChoiceSep maybeWhites CPAREN
+        PLUS OPAREN maybeWhites #include=dtdElementIncludeItem @ dtdChoiceSep maybeWhites CPAREN
+        | HYPHEN OPAREN maybeWhites #exclude=dtdEnumItem @ dtdChoiceSep maybeWhites CPAREN
+        | dtdUnknownEntity
         | 0
     )
     maybeWhites
@@ -476,7 +498,7 @@ namespace KDevelop
     (PUBLIC maybeWhites QUOTE publicId=maybeText QUOTE maybeWhites (QUOTE systemId=maybeText QUOTE | 0) | 0)
     (SYSTEM maybeWhites QUOTE systemId=maybeText QUOTE | 0)
     maybeWhites
-    ( copen=OBRACKET maybeWhites (#children=dtdChild maybeWhites)* maybeWhites cclose=CBRACKET | 0 )
+    ( copen=OBRACKET maybeWhites (#children=dtdChild maybeWhites)* maybeWhites cclose=CBRACKET | 0)
     maybeWhites
     ( tclose=GT | 0 [: reportProblem(Error, "Unclosed element"); :] )
 ->  dtdDoctype ;;
@@ -508,12 +530,15 @@ void Parser::tokenize(const QString& contents)
         
         mime = KMimeType::findByUrl(m_currentDocument);
     }
-    if(!mime.isNull() && mime->is("application/xml-dtd"))
+    if((!mime.isNull() && mime->is("application/xml-dtd"))
+        || m_currentDocument.toLower().endsWith(".mod")
+        || m_currentDocument.toLower().endsWith(".ent"))
         tokenizer = new DTDTokenizer(tokenStream, contents);
     else
         tokenizer = new SgmlTokenizer(tokenStream, contents);
 
-    tokenizer->setDtdHelper(IDtdHelper::instanceForMime(mime));
+    tokenizer->setCurrentDocument(m_currentDocument);
+    tokenizer->setDtdHelper(DtdHelper::instanceForMime(mime));
 
     int kind = Parser::Token_EOF;
 

@@ -34,10 +34,13 @@ namespace Xml
 {
 class ParseSession;
 class EditorIntegrator;
-
+class ElementDeclaration;
 
 typedef KDevelop::AbstractDeclarationBuilder<AstNode, ElementAst, ContextBuilder> DeclarationBuilderBase;
 
+/** Builder for XML SGML and DTD
+ *  @see XsdDeclarationBuilder
+ */
 class KDEVSGMLDUCHAIN_EXPORT DeclarationBuilder : public DeclarationBuilderBase
 {
 public:
@@ -45,11 +48,13 @@ public:
     ~DeclarationBuilder();
 
     virtual void visitElementTag(ElementTagAst* node);
+    virtual void visitAttribute(AttributeAst* node);
     virtual void visitDtdDoctype(DtdDoctypeAst* node);
     virtual void visitDtdElement(DtdElementAst* node);
-    //virtual void visitDtdAttlist(DtdAttlistAst* node);
-    //virtual void visitDtdEntity(DtdEntityAst *node);
-    //virtual void visitDtdEntityInclude(DtdEntityIncludeAst* node);
+    virtual void visitDtdElementList(DtdElementListAst* node);
+    virtual void visitDtdElementIncludeItem(DtdElementIncludeItemAst* node);
+    virtual void visitDtdEntity(DtdEntityAst* node);
+    virtual void visitDtdEntityInclude(DtdEntityIncludeAst* node);
     virtual void visitElementPHP(ElementPHPAst* node);
     virtual void visitElementPCDATA(ElementPCDATAAst* node);
     virtual void visitElementCDATA(ElementCDATAAst* node);
@@ -57,11 +62,18 @@ public:
     virtual void visitElementProcessing(ElementProcessingAst* node);
     virtual void visitElementSource(ElementSourceAst* node);
     virtual void closeDeclaration();
+
+protected:
     virtual KDevelop::QualifiedIdentifier identifierForNode( ElementTagAst* node );
-    QString tokenText(AstNode *node) const;
-    QString tokenText(qint64 begin, qint64 end) const;
-    QString tagName(const ElementTagAst *ast) const;
-    QString tagName(const ElementCloseTagAst *ast) const;
+    ElementDeclaration* createClassInstanceDeclaration(const QString &identifier,
+                                        const KDevelop::SimpleRange &range,
+                                        const QString &name = QString(),
+                                        const QString &nameSpacePrefix = QString());
+
+    KDevelop::Declaration *createImportDeclaration(const QString &identifier,
+                                                   const KDevelop::SimpleRange &range,
+                                                   const KUrl &url);
+    QHash<QString, QString> m_dtdElementExclude;
 };
 
 }

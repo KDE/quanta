@@ -32,6 +32,7 @@
 #include "parsesession.h"
 #include "editorintegrator.h"
 #include "sgmlast.h"
+#include <xmlcatalog/cataloghelper.h>
 
 using namespace Xml;
 
@@ -94,31 +95,136 @@ void ContextBuilder::visitElementTag(ElementTagAst* node)
     closeContext();
 }
 
+void ContextBuilder::visitAttribute(AttributeAst* node)
+{
+    Xml::DefaultVisitor::visitAttribute(node);
+    EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
+    KDevelop::SimpleRange range;
+    range.start = e->findPosition(node->startToken, EditorIntegrator::FrontEdge);
+    range.end = e->findPosition(node->endToken, EditorIntegrator::BackEdge);
+    IncludeIdentifier incid;
+    if (node->ns && node->value && nodeText(node->ns) == "xmlns") {
+        incid.uri = KDevelop::IndexedString(nodeText(node->value));
+    } else if (node->name && node->value && nodeText(node->name) == "xmlns") {
+        incid.uri = KDevelop::IndexedString(nodeText(node->value));
+    } else if (node->name && node->value && nodeText(node->name) == "schemaLocation") {
+        QStringList values = nodeText(node->value).split(QRegExp("\\s+"));
+        for (int i = 0; i < values.length() && values.length()%2==0; i+=2) {
+            incid.systemId = KDevelop::IndexedString(values[i+1]);
+            incid.uri = KDevelop::IndexedString(values[i]);
+        }
+    } else if (node->name && node->value && nodeText(node->name) == "noNamespaceSchemaLocation") {
+        incid.systemId = KDevelop::IndexedString(nodeText(node->value));
+    }
+    if (!incid.isNull()) {
+        KUrl url = CatalogHelper::resolve(QString(),
+                                          incid.systemId.str(),
+                                          incid.uri.str(),
+                                          QString(),
+                                          KMimeType::Ptr(),
+                                          this->editor()->currentUrl().toUrl());
+        if ( url.isValid() ) {
+            KDevelop::DUChainWriteLocker lock;
+            KDevelop::TopDUContext* includedCtx = KDevelop::DUChain::self()->chainForDocument(url);
+            if (includedCtx) {
+                currentContext()->topContext()->addImportedParentContext(includedCtx);
+                currentContext()->topContext()->parsingEnvironmentFile()->addModificationRevisions(includedCtx->parsingEnvironmentFile()->allModificationRevisions());
+            }
+        }
+    }
+}
+
 void ContextBuilder::visitDtdCondition(DtdConditionAst* node)
 {
+    /*
     KDevelop::SimpleRange range;
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
-    range.start = e->findPosition(node->copen, EditorIntegrator::BackEdge);
-    range.end = e->findPosition(node->cclose, EditorIntegrator::FrontEdge);
-    KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString("CONDITION")));
-    openContext(node, range,
-                KDevelop::DUContext::Other,
-                id);
+    if (node->childrenSequence) {
+        range.start = e->findPosition(node->copen, EditorIntegrator::BackEdge);
+        range.end = e->findPosition(node->cclose, EditorIntegrator::FrontEdge);
+        KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString("CONDITION")));
+        openContext(node, range,
+                    KDevelop::DUContext::Other,
+                    id);
+        DefaultVisitor::visitDtdCondition(node);
+        closeContext();
+    } else {
+        DefaultVisitor::visitDtdCondition(node);
+    }
+    */
     DefaultVisitor::visitDtdCondition(node);
-    closeContext();
 }
 
 void ContextBuilder::visitDtdDoctype(DtdDoctypeAst* node)
 {
     KDevelop::SimpleRange range;
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
-    range.start = e->findPosition(node->copen, EditorIntegrator::BackEdge);
-    range.end = e->findPosition(node->cclose, EditorIntegrator::FrontEdge);
-    KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString("DOCTYPE")));
+    if (node->childrenSequence) {
+        range.start = e->findPosition(node->copen, EditorIntegrator::BackEdge);
+        range.end = e->findPosition(node->cclose, EditorIntegrator::FrontEdge);
+        KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(nodeText(node->name))));
+        openContext(node, range,
+                    KDevelop::DUContext::Other,
+                    id);
+        DefaultVisitor::visitDtdDoctype(node);
+        closeContext();
+    } else {
+        DefaultVisitor::visitDtdDoctype(node);
+        QString publicId = nodeText(node->publicId);
+        QString systemId = nodeText(node->systemId);
+        QString doctype = nodeText(node->name);
+        KUrl url = CatalogHelper::resolve(publicId, systemId, QString(), doctype, KMimeType::Ptr(), this->editor()->currentUrl().toUrl());
+        if ( url.isValid() ) {
+            KDevelop::DUChainWriteLocker lock;
+            KDevelop::TopDUContext* includedCtx = KDevelop::DUChain::self()->chainForDocument(url);
+            if (includedCtx) {
+                currentContext()->topContext()->addImportedParentContext(includedCtx);
+                currentContext()->topContext()->parsingEnvironmentFile()->addModificationRevisions(includedCtx->parsingEnvironmentFile()->allModificationRevisions());
+            }
+        }
+    }
+}
+
+void ContextBuilder::visitDtdEntityInclude(DtdEntityIncludeAst* node)
+{
+    DefaultVisitor::visitDtdEntityInclude(node);
+    QString entity;
+    if (node->name) {
+        entity = nodeText(node->name);
+    }
+    EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
+    KDevelop::SimpleRange range;
+    range.start = e->findPosition(node->startToken, EditorIntegrator::FrontEdge);
+    range.end = e->findPosition(node->endToken, EditorIntegrator::BackEdge);
+    if (!entity.isEmpty() && m_entities.contains(entity)) {
+        IncludeIdentifier incid = m_entities.value(entity);
+        QString publicId = incid.publicId.str();
+        QString systemId = incid.systemId.str();
+        KUrl url = CatalogHelper::resolve(publicId, systemId, QString(), QString(), KMimeType::Ptr(), this->editor()->currentUrl().toUrl());
+        if ( url.isValid() ) {
+            KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(nodeText(node->name))));
+            KDevelop::DUChainWriteLocker lock;
+            KDevelop::TopDUContext* includedCtx = KDevelop::DUChain::self()->chainForDocument(url);
+            if (includedCtx) {
+                currentContext()->topContext()->addImportedParentContext(includedCtx);
+                currentContext()->topContext()->parsingEnvironmentFile()->addModificationRevisions(includedCtx->parsingEnvironmentFile()->allModificationRevisions());
+            }
+        }
+    }
+}
+
+
+void ContextBuilder::visitDtdElement(DtdElementAst* node)
+{
+    KDevelop::SimpleRange range;
+    EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
+    range.start = e->findPosition(node->topen , EditorIntegrator::FrontEdge);
+    range.end = e->findPosition(node->tclose, EditorIntegrator::BackEdge);
     openContext(node, range,
                 KDevelop::DUContext::Other,
-                id);
-    DefaultVisitor::visitDtdDoctype(node);
+                m_dtdElementId);
+    //We do not want to visit the dtd element twice so we call visitDtdElementList directly
+    DefaultVisitor::visitDtdElement(node);
     closeContext();
 }
 
@@ -126,14 +232,19 @@ void ContextBuilder::visitDtdDoctype(DtdDoctypeAst* node)
 KDevelop::SimpleCursor ContextBuilder::findElementChildrenReach(ElementTagAst* node)
 {
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
-    if(node->childrenSequence) {
+    if (node->childrenSequence) {
         ElementAst *ast = node->childrenSequence->back()->element;
-        //if(ast->element)
-        //    kDebug() << ast->element->kind;
-        if(ast->element && ast->element->kind == AstNode::ElementCloseTagKind)
+        if (ast->element && ast->element->kind == AstNode::ElementCloseTagKind)
             return e->findPosition(ast->endToken, EditorIntegrator::BackEdge);
     }
     return e->findPosition(node->endToken, EditorIntegrator::BackEdge);
+}
+
+QString ContextBuilder::nodeText(AstNode *node) const
+{
+    if (!node) return QString();
+    EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
+    return tokenText(e->parseSession()->tokenStream()->token(node->startToken).begin, e->parseSession()->tokenStream()->token(node->endToken).end);
 }
 
 QString ContextBuilder::tokenText(qint64 begin, qint64 end) const
@@ -147,8 +258,8 @@ QString ContextBuilder::tagName(const ElementTagAst *ast) const
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
     if (ast->ns && ast->name)
         return tokenText(e->parseSession()->tokenStream()->token(ast->ns->startToken).begin, e->parseSession()->tokenStream()->token(ast->ns->endToken).end) +
-        ":" +
-        tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
+               ":" +
+               tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
     if (ast->name)
         return tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
     return QString();
@@ -160,11 +271,22 @@ QString ContextBuilder::tagName(const ElementCloseTagAst *ast) const
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
     if (ast->ns && ast->name)
         return tokenText(e->parseSession()->tokenStream()->token(ast->ns->startToken).begin, e->parseSession()->tokenStream()->token(ast->ns->endToken).end) +
-        ":" +
-        tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
+               ":" +
+               tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
     if (ast->name)
         return tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
     return QString();
 }
 
+void ContextBuilder::reportProblem(KDevelop::ProblemData::Severity , AstNode* ast, const QString& message)
+{
+    EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
+    KDevelop::Problem *p = new KDevelop::Problem();
+    p->setSource(KDevelop::ProblemData::Parser);
+    p->setSeverity(KDevelop::ProblemData::Error);
+    p->setDescription(message);
+    KDevelop::SimpleRange range = e->findRange(ast);
+    p->setFinalLocation(KDevelop::DocumentRange(e->currentUrl().str(), KTextEditor::Range(range.start.line, range.start.column, range.end.line, range.end.column)));
+    m_problems << KDevelop::ProblemPointer(p);
+}
 

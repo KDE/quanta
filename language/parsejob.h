@@ -26,6 +26,8 @@
 #include <ktexteditor/range.h>
 #include <language/interfaces/iproblem.h>
 
+#include "duchain/includebuilder.h"
+
 namespace Xml
 {
 class AstNode;
@@ -42,10 +44,16 @@ public:
     virtual ~ParseJob();
 
     LanguageSupport* sgml() const;
+
 protected:
     virtual void run();
     void visit(KDevelop::Declaration *);
-
+    void parseInclude(const IncludeBuilder::IncludeIdentifier &include, KDevelop::ReferencedTopDUContext top);
+    
+    //Keep a list of already parsed files
+    //Because the include builder runs before the contexts been created we need to
+    //take care of recursion
+    QHash<QString, QString> m_includes;
 };
 
 }

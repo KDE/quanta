@@ -31,29 +31,31 @@ set(parser_STAT_SRCS
     dtdtokenizer.cpp
     parsesession.cpp
     editorintegrator.cpp
-    idtdhelper.cpp
+    dtdhelper.cpp
     )
 
 ### next target
 kde4_add_library( kdevsgmlparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
 target_link_libraries( kdevsgmlparser
     ${KDE4_KDECORE_LIBS}
+    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDE4_KTEXTEDITOR_LIBS}
     ${KDE4_KDEUI_LIBS}
+    kdevxmlcatalog
 )
 install(TARGETS kdevsgmlparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ### next target
 kde4_add_executable(sgmlparser tests/main.cpp ${parser_SRCS} ${parser_STAT_SRCS} )
-target_link_libraries(sgmlparser ${QT_QTCORE_LIBRARY} ${KDEVPLATFORM_LANGUAGE_LIBRARIES})
+target_link_libraries(sgmlparser ${QT_QTCORE_LIBRARY} ${KDEVPLATFORM_LANGUAGE_LIBRARIES} kdevxmlcatalog)
 
 ### next target
 set(parsertest_SRCS tests/parsertest.cpp)
 kde4_add_unit_test(sgmlparsertest ${parsertest_SRCS})
-target_link_libraries(sgmlparsertest kdevsgmlparser ${QT_QTTEST_LIBRARY})
+target_link_libraries(sgmlparsertest kdevsgmlparser ${QT_QTTEST_LIBRARY} kdevxmlcatalog)
 
 ### next target
 set(sgmltokenizertest_SRCS tests/sgmltokenizertest.cpp)
 kde4_add_unit_test(sgmltokenizertest ${sgmltokenizertest_SRCS})
-target_link_libraries(sgmltokenizertest kdevsgmlparser ${QT_QTTEST_LIBRARY})
+target_link_libraries(sgmltokenizertest kdevsgmlparser ${QT_QTTEST_LIBRARY} kdevxmlcatalog)

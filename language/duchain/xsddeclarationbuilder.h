@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2009 Ruan Strydom <rm3dom@gmail.com>                        *
+ * Copyright (c) 2010 Ruan Strydom <rm3dom@gmail.com>                        *
  *                                                                           *
  * This program is free software; you can redistribute it and/or modify      *
  * it under the terms of the GNU General Public License as published by      *
@@ -15,35 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#include "idocumentcachemanager.h"
-#include "documentcachemanager.h"
+#ifndef XSDDECLARATIONBUILDER_H
+#define XSDDECLARATIONBUILDER_H
 
-#include <QtGui/QApplication>
+#include "duchainexport.h"
 
-#include <KDE/KGlobal>
-#include <KDE/KComponentData>
-#include <KDE/KStandardDirs>
+#include "xsdcontextbuilder.h"
 
-IDocumentCacheManager * IDocumentCacheManager::instance = new DocumentCacheManager();
+#include <language/duchain/builders/abstractdeclarationbuilder.h>
 
-
-IDocumentCacheManager::IDocumentCacheManager() : QObject(QApplication::instance())
+namespace KDvelop
 {
-    Q_ASSERT(instance == 0);
-    instance = this;
+class Declaration;
+class QualifiedIdentifier;
 }
 
-IDocumentCacheManager::~IDocumentCacheManager()
+namespace Xml
 {
-    instance = 0;
+class ParseSession;
+class EditorIntegrator;
+class ElementDeclaration;
+
+typedef KDevelop::AbstractDeclarationBuilder<AstNode, ElementAst, XsdContextBuilder> XsdDeclarationBuilderBase;
+
+/** Builder for XSD
+ *  @see DeclarationBuilder
+ */
+class KDEVSGMLDUCHAIN_EXPORT XsdDeclarationBuilder : public XsdDeclarationBuilderBase
+{
+public:
+    XsdDeclarationBuilder(KDevelop::EditorIntegrator* editor);
+    ~XsdDeclarationBuilder();
+};
 }
 
-IDocumentCacheManager* IDocumentCacheManager::self()
-{
-    return instance;
-}
+#endif //XSDDECLARATIONBUILDER_H
 
-QString IDocumentCacheManager::getCacheDirectory() const
-{
-    return KGlobal::mainComponent().dirs()->saveLocation( "data", "kdevxmlcatalog/cache", true );
-}

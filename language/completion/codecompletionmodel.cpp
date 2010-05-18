@@ -17,4 +17,42 @@
 
 #include "codecompletionmodel.h"
 
+using namespace Xml;
+
+CodeCompletionModel::CodeCompletionModel(QObject* parent): CodeCompletionModel2(parent)
+{
+
+}
+
+CodeCompletionModel::~CodeCompletionModel()
+{
+
+}
+
+void CodeCompletionModel::completionInvoked(KTextEditor::View* view, const KTextEditor::Range& range, KTextEditor::CodeCompletionModel::InvocationType invocationType)
+{
+    KTextEditor::CodeCompletionModel::completionInvoked(view, range, invocationType);
+}
+
+KTextEditor::Range CodeCompletionModel::completionRange(KTextEditor::View* view, const KTextEditor::Cursor& position)
+{
+    return KTextEditor::CodeCompletionModelControllerInterface::completionRange(view, position);
+}
+
+QVariant CodeCompletionModel::data(const QModelIndex& index, int role) const
+{
+    return QVariant();
+}
+
+void CodeCompletionModel::executeCompletionItem2(KTextEditor::Document* document, const KTextEditor::Range& word, const QModelIndex& index) const
+{
+    KTextEditor::CodeCompletionModel2::executeCompletionItem2(document, word, index);
+}
+
+bool CodeCompletionModel::shouldAbortCompletion(KTextEditor::View* view, const KTextEditor::SmartRange& range, const QString& currentCompletion)
+{
+    return KTextEditor::CodeCompletionModelControllerInterface::shouldAbortCompletion(view, range, currentCompletion);
+}
+
+
 #include "codecompletionmodel.moc"

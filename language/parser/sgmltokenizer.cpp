@@ -19,7 +19,7 @@
 
 #include "sgmlparser.h"
 
-#include "idtdhelper.h"
+#include "dtdhelper.h"
 
 #include "dtdtokenizer.h"
 
@@ -198,18 +198,18 @@ int SgmlTokenizer::nextTokenKind() {
             }
             case('>'): {
                 //SGML hacks
-                if (m_dtdHelper
+                if (!m_dtdHelper.isNull()
                         && m_states.top().begin
                         && (m_states.top().begin + 1)->unicode() != '/') {
                     //QStringRef ref(&m_content, m_states.top().begin - start, cursor - m_states.top().begin + 1);
                     QString str(m_states.top().begin, cursor - m_states.top().begin + 1);
                     QString name = elementName(str);
-                    if (m_dtdHelper->cdataElement(name)) {
+                    if (m_dtdHelper.cdataElement(name)) {
                         m_tokenEndString = QString("</%1>").arg(name);
                         POP_STATE //Have to pop before push else it has no effect
                         PUSH_STATE(Cdata, cursor + 1);
                         DEFAULT_RETURN(Parser::Token_GT, 1)
-                    } else if (m_dtdHelper->emptyElement(name)) {
+                    } else if (m_dtdHelper.emptyElement(name)) {
                         POP_STATE
                         DEFAULT_RETURN(Parser::Token_CLOSE, 1)
                     }
@@ -240,15 +240,13 @@ int SgmlTokenizer::nextTokenKind() {
                 QString str(m_states.top().begin, m_contentData + m_curpos - m_states.top().begin + 1);
                 QString name, publicId, systemId;
                 doctype(str, name, publicId, systemId);
-                const IDtdHelper * helper = IDtdHelper::instance(publicId, systemId);
-                if (!helper)
-                    helper = IDtdHelper::instanceForName(name);
-                if (!helper) {
+                DtdHelper helper = DtdHelper::instance(publicId, systemId, QString(), name, KMimeType::Ptr(), currentDocument());
+                if (helper.isNull()) {
                     kDebug() << "Failed to get a DTD instance for DOCTYPE:" << name
                     << "PublicId:" << publicId
                     << "SystemId:" << systemId;
                 }
-                if(helper)
+                if(!helper.isNull())
                     setDtdHelper(helper);
                 POP_STATE
                 return token;
@@ -274,12 +272,12 @@ int SgmlTokenizer::nextTokenKind() {
             READ_WHILE_ANY("<![PCDATApcdata[", IgnoreNone);
             QStringRef ref(&m_content, condStart - start, condLength);
             QString str = ref.toString().toUpper();
-            if (str == "<![CDATA[") {
+            if (str.startsWith("<![CDATA[")) {
                 READ_UNTIL("]]>", IgnoreNone);
                 DEFAULT_RETURN(Parser::Token_CDATA, readLength)
             }
 
-            if (str == "<![PCDATA[") {
+            if (str.startsWith("<![PCDATA[")) {
                 READ_UNTIL("]]>", IgnoreNone);
                 DEFAULT_RETURN(Parser::Token_PCDATA, readLength)
             }
@@ -294,15 +292,15 @@ int SgmlTokenizer::nextTokenKind() {
             QStringRef ref(&m_content, condStart - start, condLength);
             QString str = removeWhites(ref.toString().toLower());
             if (str.endsWith('?') && str.length() > 2)str.remove(str.size()-1, 1); //ie <?xml?> or <??>
-            if (str == "<?php") {
+            if (str.startsWith("<?php")) {
                 READ_UNTIL("?>", IgnoreNone);
                 DEFAULT_RETURN(Parser::Token_PHP, readLength)
             }
-            if (str == "<?xml") {
+            if (str.startsWith("<?xml")) {
                 READ_UNTIL("?>", IgnoreNone);
                 DEFAULT_RETURN(Parser::Token_PROC, readLength)
             }
-            if (str == "<?=") {
+            if (str.startsWith("<?=")) {
                 READ_UNTIL("?>", IgnoreNone);
                 DEFAULT_RETURN(Parser::Token_PHP, readLength)
             }

@@ -16,10 +16,12 @@ include_directories(
 
 
 set( duchain_SRCS
-    #elementdeclaration.cpp
+    elementdeclaration.cpp
     declarationbuilder.cpp
     contextbuilder.cpp
     includebuilder.cpp
+    xsdcontextbuilder.cpp
+    xsddeclarationbuilder.cpp
     navigation/navigationwidget.cpp
 )
 
@@ -33,6 +35,7 @@ target_link_libraries(kdevsgmlduchain
     ${KDEVPLATFORM_SHELL_LIBRARIES}
     ${KDEVPLATFORM_PROJECT_LIBRARIES}
     kdevsgmlparser
+    kdevxmlcatalog
 )
 
 install(TARGETS kdevsgmlduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
@@ -50,6 +53,7 @@ target_link_libraries(duchaintest
     ${KDEVPLATFORM_PROJECT_LIBRARIES}
     kdevsgmlduchain
     kdevsgmlparser
+    kdevxmlcatalog
 )
 
 get_property(inc_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)

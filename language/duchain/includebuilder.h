@@ -15,63 +15,56 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#ifndef XML_CONTEXTBUILDER_H
-#define XML_CONTEXTBUILDER_H
+
+#ifndef INCLUDEBUILDER_H
+#define INCLUDEBUILDER_H
+
+#include <QMap>
+#include <language/duchain/indexedstring.h>
 
 #include "duchainexport.h"
-
 #include "sgmldebugvisitor.h"
-
-#include <language/duchain/builders/abstractcontextbuilder.h>
 #include "abstractbuilder.h"
 
 namespace Xml
 {
 class EditorIntegrator;
-class ParseSession;
 
-typedef KDevelop::AbstractContextBuilder<AstNode, ElementAst> ContextBuilderBase;
-
-/** Builder for XML SGML and DTD
- *  @see XsdContextBuilder
+/** Extracts includes and namespaces from documents.
+ *  This should happen before running the rest of the builders
+ *  as they need the namespsces and top contexts if there are any.
  */
-class KDEVSGMLDUCHAIN_EXPORT ContextBuilder: public ContextBuilderBase, public AbstractBuilder
+class KDEVSGMLDUCHAIN_EXPORT IncludeBuilder : public AbstractBuilder
 {
-
 public:
-    ContextBuilder();
-
-    virtual ~ContextBuilder();
-
-protected:
-    virtual void startVisiting(AstNode* node);
-    virtual void visitElementTag(ElementTagAst* node);
-    virtual void visitAttribute(AttributeAst* node);
-    virtual void visitDtdCondition(DtdConditionAst* node);
-    virtual void visitDtdDoctype(DtdDoctypeAst* node);
-    virtual void visitDtdElement(DtdElementAst* node);
-    virtual void visitDtdEntityInclude(DtdEntityIncludeAst* node);
-    virtual KDevelop::DUContext* contextFromNode(AstNode* node);
-    virtual KTextEditor::Range editorFindRange(AstNode* fromNode, AstNode* toNode);
-    virtual KDevelop::QualifiedIdentifier identifierForNode(ElementAst* node);
-    virtual void setContextOnNode(AstNode* node, KDevelop::DUContext* context);
-    virtual KDevelop::TopDUContext* newTopContext(const KDevelop::SimpleRange& range, KDevelop::ParsingEnvironmentFile* file = 0);
-    virtual KDevelop::SimpleCursor findElementChildrenReach(ElementTagAst* node);
-
-    QString nodeText(AstNode *node) const;
-    QString tokenText(qint64 begin, qint64 end) const;
-    QString tagName(const ElementTagAst *ast) const;
-    QString tagName(const ElementCloseTagAst *ast) const;
     
-    void setStdElementId(const KDevelop::QualifiedIdentifier & id) {
-        m_dtdElementId = id;
+    IncludeBuilder(EditorIntegrator* editor);
+    
+    QMap<Xml::AstNode*, IncludeIdentifier> includes();
+    
+    void build(const KDevelop::IndexedString &document, AstNode* ast);
+    
+    EditorIntegrator* editor() const {
+        return m_editor;
     }
-    
-    KDevelop::QualifiedIdentifier m_dtdElementId;
-    
+protected:
+    /** Finds dtd imports. */
+    virtual void visitDtdDoctype(DtdDoctypeAst* node);
+    /** Find external references */
+    virtual void visitDtdEntity(DtdEntityAst* node);
+    /** Finds dtd entity imports. */
+    virtual void visitDtdEntityInclude(DtdEntityIncludeAst* node);
+    /** Finds namespace imports. */
+    virtual void visitAttribute(AttributeAst* node);
+private:
+    QString tokenText(qint64 begin, qint64 end) const;
+    QString nodeText(AstNode *node) const;
     virtual void reportProblem(KDevelop::ProblemData::Severity, AstNode* ast, const QString& message);
-
+    EditorIntegrator* m_editor;
+    QMap<Xml::AstNode*, IncludeIdentifier> m_includes;
+    KDevelop::IndexedString m_document;
 };
+
 }
 
-#endif
+#endif // INCLUDEBUILDER_H

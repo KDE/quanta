@@ -29,6 +29,9 @@
  *  The first matching entry will be returend. When reading an ICatalog ICatalogManager
  *  will first try and find a ICatalogReaderWriter which in return will create an
  *  an instance of the ICatalog.<br>
+ *  @note ICatalogManager does not resolve doctype or mime types ie &lt;!DOCTYPE html&gt;.
+ *  @note To get the default DTD for doctype's or mimes ie html use CatalogHelper.
+ *  @see CatalogHelper
  */
 class KDEVXMLCATALOG_EXPORT ICatalogManager : public QObject {
   Q_OBJECT

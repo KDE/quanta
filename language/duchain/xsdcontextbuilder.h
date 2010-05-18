@@ -15,37 +15,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#ifndef CODECOMPLETIONMODEL_H
-#define CODECOMPLETIONMODEL_H
+#ifndef XSDCONTEXTBUILDER_H
+#define XSDCONTEXTBUILDER_H
 
-#include "completionexport.h"
+#include "duchainexport.h"
 
-#include <KTextEditor/CodeCompletionModel>
-#include <KTextEditor/CodeCompletionModelControllerInterface>
-#include <language/codecompletion/codecompletionmodel.h>
-#include <language/codecompletion/codecompletionworker.h>
+#include "sgmldebugvisitor.h"
 
-namespace Xml {
+#include <language/duchain/builders/abstractcontextbuilder.h>
+#include "abstractbuilder.h"
 
-    class KDEVSGMLCOMPLETION_EXPORT CodeCompletionModel  : public KTextEditor::CodeCompletionModel2, public KTextEditor::CodeCompletionModelControllerInterface
+namespace Xml
 {
-    Q_OBJECT
-    Q_INTERFACES(KTextEditor::CodeCompletionModelControllerInterface)
+class EditorIntegrator;
+class ParseSession;
+
+typedef KDevelop::AbstractContextBuilder<AstNode, ElementTagAst> XsdContextBuilderBase;
+
+/** Builder for XSD
+ *  @see ContextBuilder
+ */
+class KDEVSGMLDUCHAIN_EXPORT XsdContextBuilder: public XsdContextBuilderBase, public AbstractBuilder
+{
 public:
-    CodeCompletionModel(QObject *parent);
-    virtual ~CodeCompletionModel();
-    
-    virtual void completionInvoked(KTextEditor::View* view, const KTextEditor::Range& range, InvocationType invocationType);
+    XsdContextBuilder();
 
-    virtual QVariant data(const QModelIndex & index, int role) const;
-
-    virtual KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position);
-    
-    virtual bool shouldAbortCompletion(KTextEditor::View* view, const KTextEditor::SmartRange& range, const QString &currentCompletion);
-
-    virtual void executeCompletionItem2(KTextEditor::Document* document, const KTextEditor::Range& word, const QModelIndex& index) const;
+    virtual ~XsdContextBuilder();
+    virtual KDevelop::DUContext* contextFromNode(AstNode* node);
+    virtual KTextEditor::Range editorFindRange(AstNode* fromNode, AstNode* toNode);
+    virtual KDevelop::QualifiedIdentifier identifierForNode(ElementTagAst* node);
+    virtual void setContextOnNode(AstNode* node, KDevelop::DUContext* context);
+    virtual void startVisiting(AstNode* node);
+    virtual KDevelop::TopDUContext* newTopContext(const KDevelop::SimpleRange& range, KDevelop::ParsingEnvironmentFile* file = 0);
+protected:
+    virtual void reportProblem(KDevelop::ProblemData::Severity, AstNode* ast, const QString& message);
 };
 
 }
 
-#endif // CODECOMPLETIONMODEL_H
+#endif // XSDCONTEXTBUILDER_H
+

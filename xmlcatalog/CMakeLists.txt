@@ -4,7 +4,9 @@
 set(KDEVXMLCATALOG_LIB_VERSION 1.0.0)
 set(KDEVXMLCATALOG_LIB_SOVERSION 1)
 
-set(kdevxmlcatalog_LIB_SRCS documentcachemanager.cpp
+set(kdevxmlcatalog_LIB_SRCS
+    cataloghelper.cpp
+    documentcachemanager.cpp
     idocumentcachemanager.cpp
     catalogmanager.cpp
     icataloggroup.cpp
@@ -38,10 +40,22 @@ install(FILES
     icataloggroup.h
     icatalogreaderwriter.h
     icatalogmanager.h
+    cataloghelper.h
     parameterized.h
     idocumentcachemanager.h
+    publicid.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/kdevplatform/xmlcatalog
     COMPONENT Devel
+)
+
+install(FILES 
+    catalogs/config.xml
+    catalogs/KDE.xml 
+    catalogs/kcfg.dtd
+    catalogs/kpartgui.dtd
+    catalogs/HTML.xml
+    catalogs/XML.xml
+    DESTINATION ${DATA_INSTALL_DIR}/kdevxmlcatalog/catalogs
 )
 
 add_subdirectory(tests)

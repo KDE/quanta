@@ -194,6 +194,7 @@ void XmlCatalogDialog::itemSelected(const QModelIndex& index)
         d->removeBtn->setEnabled(true);
     }
 
+    //TODO need a property for system catalog so that system catalogs may not be removed.
     if (n->catalog())
         d->removeBtn->setEnabled(true);
 
@@ -283,10 +284,12 @@ void XmlCatalogDialog::updateItem()
         KDevelop::ICore::self()->runController()->registerJob(job);
     }
     
-    d->catalogTree->setModel(0);
-    ICatalogManager::self()->removeCatalog(file);
-    ICatalogManager::self()->addCatalog(file);
-    update();
+    if(!catalog->parameter(ICatalogManager::ParameterReadonly).toBool()) {
+        d->catalogTree->setModel(0);
+        ICatalogManager::self()->removeCatalog(file);
+        ICatalogManager::self()->addCatalog(file);
+        update();
+    }
 }
 
 void XmlCatalogDialog::slotAddEntry()
@@ -337,7 +340,7 @@ void XmlCatalogDialog::update()
         delete d->model;
     d->model = new XmlCatalogModel();
     d->catalogTree->setModel(d->model);
-    d->catalogTree->expandToDepth(1);
+    //d->catalogTree->expandToDepth(1);
     d->catalogTree->resizeColumnToContents(0);
 }
 

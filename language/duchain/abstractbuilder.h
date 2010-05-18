@@ -15,37 +15,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#ifndef CODECOMPLETIONMODEL_H
-#define CODECOMPLETIONMODEL_H
+#ifndef ABSTRACTBUILDER_H
+#define ABSTRACTBUILDER_H
 
-#include "completionexport.h"
+#include "duchainexport.h"
 
-#include <KTextEditor/CodeCompletionModel>
-#include <KTextEditor/CodeCompletionModelControllerInterface>
-#include <language/codecompletion/codecompletionmodel.h>
-#include <language/codecompletion/codecompletionworker.h>
+#include "sgmldebugvisitor.h"
 
-namespace Xml {
-
-    class KDEVSGMLCOMPLETION_EXPORT CodeCompletionModel  : public KTextEditor::CodeCompletionModel2, public KTextEditor::CodeCompletionModelControllerInterface
+namespace Xml
 {
-    Q_OBJECT
-    Q_INTERFACES(KTextEditor::CodeCompletionModelControllerInterface)
+class KDEVSGMLDUCHAIN_EXPORT AbstractBuilder: public DefaultVisitor
+{
 public:
-    CodeCompletionModel(QObject *parent);
-    virtual ~CodeCompletionModel();
+    typedef struct IncludeIdentifier {
+        KDevelop::IndexedString doctype;    /*ie html*/
+        KDevelop::IndexedString publicId;   /*ie urn*/
+        KDevelop::IndexedString systemId;   /*ie uri*/
+        KDevelop::IndexedString uri;        /*ie namespaces uri*/
+        KDevelop::IndexedString prefix;     /*associated xml ns prefix*/
+        bool isNull() {
+            return doctype.isEmpty()
+                && publicId.isEmpty()
+                && systemId.isEmpty()
+                && uri.isEmpty()
+                && prefix.isEmpty();
+        }
+    } IncludeIdentifier;
     
-    virtual void completionInvoked(KTextEditor::View* view, const KTextEditor::Range& range, InvocationType invocationType);
+    AbstractBuilder() {}
+    ~AbstractBuilder() {}
 
-    virtual QVariant data(const QModelIndex & index, int role) const;
+    virtual QList<KDevelop::ProblemPointer> problems() {
+        return m_problems;
+    }
 
-    virtual KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position);
-    
-    virtual bool shouldAbortCompletion(KTextEditor::View* view, const KTextEditor::SmartRange& range, const QString &currentCompletion);
-
-    virtual void executeCompletionItem2(KTextEditor::Document* document, const KTextEditor::Range& word, const QModelIndex& index) const;
+protected:
+    virtual void reportProblem(KDevelop::ProblemData::Severity, AstNode* ast, const QString& message) = 0;
+    QList<KDevelop::ProblemPointer> m_problems;
+    QMap<QString, IncludeIdentifier> m_entities;
 };
-
 }
 
-#endif // CODECOMPLETIONMODEL_H
+#endif //ABSTRACTBUILDER_H

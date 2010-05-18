@@ -107,11 +107,14 @@ QString DocumentCacheManager::cachedUrl(const QString& url, KIO::JobFlags flags)
     QString localUrl = getLocalUrl(url);
     if (QFile::exists(localUrl))
         return localUrl;
-    //KIO::CopyJob *job = KIO::copy(url, localUrl, flags);
-    //job->setUiDelegate(0);
-    //if (job->exec())
-    if(KIO::NetAccess::file_copy(url, localUrl, QApplication::activeWindow()))
+    KIO::CopyJob *job = KIO::copy(url, localUrl, flags);
+    job->setUiDelegate(0);
+    job->moveToThread(DocumentCacheManager::self()->thread());
+    if (job->exec()) {
         return localUrl;
+    }
+    //if(KIO::NetAccess::file_copy(url, localUrl, QApplication::activeWindow()))
+    //    return localUrl;
     return QString::null;
 }
 
@@ -141,11 +144,14 @@ QString DocumentCacheManager::updateCache(const QString& url, KIO::JobFlags flag
 
     QString localUrl = getLocalUrl(url);
     QFile::remove(localUrl);
-    //KIO::CopyJob *job = KIO::copy(url, localUrl, flags);
-    //job->setUiDelegate(0);
-    //if (job->exec())
-    if(KIO::NetAccess::file_copy(url, localUrl, QApplication::activeWindow()))
+    KIO::CopyJob *job = KIO::copy(url, localUrl, flags);
+    job->setUiDelegate(0);
+    job->moveToThread(DocumentCacheManager::self()->thread());
+    if (job->exec()) {
         return localUrl;
+    }
+    //if(KIO::NetAccess::file_copy(url, localUrl, QApplication::activeWindow()))
+    //    return localUrl;
     return QString::null;
 }
 

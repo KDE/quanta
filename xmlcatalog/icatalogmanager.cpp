@@ -30,7 +30,7 @@
 const QString ICatalogManager::ParameterFile = "catalog.manager.file";
 const QString ICatalogManager::ParameterReadonly = "catalog.manager.readonly";
 
-ICatalogManager * ICatalogManager::instance = 0;
+ICatalogManager * ICatalogManager::instance = new CatalogManager();
 
 ICatalogManager::ICatalogManager() : QObject(QApplication::instance()) {
     Q_ASSERT(instance == 0);
@@ -42,14 +42,13 @@ ICatalogManager::~ICatalogManager() {
 }
 
 ICatalogManager* ICatalogManager::self() {
-    if (instance == 0)
-        new CatalogManager();
     return instance;
 }
 
 QString ICatalogManager::catalogDirectory() const {
-    return KGlobal::mainComponent().dirs()->saveLocation( "data", KGlobal::mainComponent().componentName()+"/xmlcatalog", true );
+    return KGlobal::mainComponent().dirs()->saveLocation( "data", "kdevxmlcatalog", true );
 }
+
 
 #include "icatalogmanager.moc"
 

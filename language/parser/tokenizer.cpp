@@ -22,7 +22,7 @@
 #include <KDE/KMimeType>
 #include <KDE/KDebug>
 
-#include "idtdhelper.h"
+#include "dtdhelper.h"
 
 
 using namespace Xml;
@@ -43,7 +43,7 @@ void Tokenizer::init(TokenStream* tokenstream, const QChar* content, qint64 cont
     m_tokenEnd = 0;
     m_tokenBegin = 0;
     m_curpos = 0;
-    setDtdHelper(IDtdHelper::instanceForName("xml"));
+    setDtdHelper(DtdHelper::instanceForName("xml"));
     m_contentData = content;
     m_contentLength = contentLength;
     m_enlc = 0;
@@ -63,12 +63,9 @@ int Tokenizer::currentState() const
 }
 
 
-void Tokenizer::setDtdHelper(const IDtdHelper* helper)
+void Tokenizer::setDtdHelper(DtdHelper helper)
 {
     m_dtdHelper = helper;
-    if (!m_dtdHelper) {
-        m_dtdHelper = IDtdHelper::instanceForName("xml");
-    }
 }
 
 
@@ -168,7 +165,7 @@ QString Tokenizer::elementName(const QString& token) const
 {
     static QRegExp exp("<[ \\t>/\\?!%&]*([^ \\t></?!%&]+[:])?([^ \\t></?!%&]+).*");
     if (exp.exactMatch(QString(token).replace(QChar('\n'), QChar(' ')).replace(QChar('\r'), QChar(' '))))
-        return exp.cap(2).toUpper();
+        return exp.cap(2);
     kDebug() << "Element name match failed!";
     return QString::null;
 }

@@ -68,16 +68,16 @@ void TestSgmlTokenizer::testElementName()
 
     SgmlTokenizer tokenizer(NULL,"");
     QString tagName = tokenizer.elementName("<ns:tagName attrib='value'/>");
-    if(tagName != "TAGNAME") {
+    if(tagName != "tagName") {
          QFAIL(QString("EXPECTED 'TAGNAME' GOT '%1'").arg(tagName).toAscii().constData());
     }
     tagName = tokenizer.elementName("</\r\n\t ns:tagName >");
-    if(tagName != "TAGNAME") {
-         QFAIL(QString("EXPECTED 'TAGNAME' GOT '%1'").arg(tagName).toAscii().constData());
+    if(tagName != "tagName") {
+         QFAIL(QString("EXPECTED 'tagName' GOT '%1'").arg(tagName).toAscii().constData());
     }
     tagName = tokenizer.elementName("</tagName>");
-    if(tagName != "TAGNAME") {
-         QFAIL(QString("EXPECTED 'TAGNAME' GOT '%1'").arg(tagName).toAscii().constData());
+    if(tagName != "tagName") {
+         QFAIL(QString("EXPECTED 'tagName' GOT '%1'").arg(tagName).toAscii().constData());
     }
 }
 
@@ -372,7 +372,7 @@ void TestSgmlTokenizer::testSgmlTokenizer()
 
     QList<Parser::TokenType> tokens3;
     tokens3.append(Parser::Token_CDATA);
-    tests.insert("<![CDATA[ ]]>", tokens3);
+    tests.insert("<![CDATA[ sdsd ]]>", tokens3);
 
     QList<Parser::TokenType> tokens4;
     tokens4.append(Parser::Token_PHP);

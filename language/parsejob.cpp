@@ -39,6 +39,12 @@
 #include <editorintegrator.h>
 #include "duchain/declarationbuilder.h"
 #include <language/duchain/duchainutils.h>
+#include "duchain/includebuilder.h"
+#include <xmlcatalog/icatalogmanager.h>
+#include <xmlcatalog/catalogmanager.h>
+#include <xmlcatalog/cataloghelper.h>
+#include <xmlcatalog/idocumentcachemanager.h>
+#include "duchain/xsddeclarationbuilder.h"
 
 
 namespace Xml
@@ -71,11 +77,14 @@ void ParseJob::run()
         }
         if (!needsUpdate) {
             kDebug() << "Already up to date" << document().str();
+            cleanupSmartRevision();
             return;
         }
     }
 
     kDebug() << "Parsing:" << document().str();
+    //Dont include yourself
+    m_includes.insert(document().str(), QString::null);
 
     //Tokenize
     ParseSession session;
@@ -110,18 +119,33 @@ void ParseJob::run()
     } else {
         kDebug() << "Compiling:" << document().str();
     }
+    
+    QList<KDevelop::ProblemPointer> problems;
+    problems.append(session.problems());
 
     EditorIntegrator editor(&session);
-    DeclarationBuilder builder(&editor);
-    top = builder.build(document(), start, top);
+    IncludeBuilder includeBuilder(&editor);
+    includeBuilder.build(document(), start);
+    problems.append(includeBuilder.problems());
+    foreach(const IncludeBuilder::IncludeIdentifier &inc, includeBuilder.includes().values()) {
+        parseInclude(inc, top);
+    }
+    
+    //if(KMimeType::findByUrl(document().toUrl())->is("application/xsd")) {
+    //    XsdDeclarationBuilder builder(&editor);
+    //    top = builder.build(document(), start, top);
+    //    problems.append(builder.problems());
+    //} else {
+        DeclarationBuilder builder(&editor);
+        top = builder.build(document(), start, top);
+        problems.append(builder.problems());
+    //}
     setDuChain(top);
 
-    foreach(const KDevelop::ProblemPointer &p, session.problems()) {
+    foreach(const KDevelop::ProblemPointer &p, problems) {
         KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
         top->addProblem(p);
     }
-    
-    cleanupSmartRevision();
 
     {
         KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
@@ -139,6 +163,19 @@ void ParseJob::run()
     }
 
     cleanupSmartRevision();
+/*
+    {
+        KDevelop::DUChainReadLocker loc;
+        foreach(KDevelop::Declaration *d1 , top->localDeclarations()) {
+            visit(d1);
+        }
+        foreach(KDevelop::DUContext::Import c1, top->importedParentContexts()) {
+            foreach(KDevelop::Declaration *d1 , c1.indexedContext().context()->localDeclarations()) {
+                visit(d1);
+            }
+        }
+    }
+*/
 }
 
 
@@ -150,7 +187,33 @@ void ParseJob::visit(KDevelop::Declaration* d)
         foreach(KDevelop::Declaration *d1 , d->internalContext()->localDeclarations()) {
             visit(d1);
         }
+        foreach(KDevelop::DUContext::Import c1, d->internalContext()->importedParentContexts()) {
+            foreach(KDevelop::Declaration *d1 , c1.indexedContext().context()->localDeclarations()) {
+                visit(d1);
+            }
+        }
     }
+}
+
+void ParseJob::parseInclude(const IncludeBuilder::IncludeIdentifier &include, KDevelop::ReferencedTopDUContext top)
+{
+    KUrl url = CatalogHelper::resolve(include.publicId.str(),
+                                      include.systemId.str(),
+                                      include.uri.str(),
+                                      include.doctype.str(),
+                                      KMimeType::Ptr(),
+                                      document().toUrl());
+    if (!url.isValid())
+        return;
+
+    if(m_includes.contains(url.pathOrUrl()))
+        return;
+    
+    m_includes.insert(url.pathOrUrl(), QString::null);
+    
+    ParseJob job(url);
+    job.m_includes = m_includes;
+    job.run();
 }
 
 

@@ -1,0 +1,6 @@
+<?xml version='1.0'?>
+<catalogs>
+  <catalog file="HTML.xml"/>
+  <catalog file="XML.xml"/>
+  <catalog file="KDE.xml"/>
+</catalogs>

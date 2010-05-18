@@ -24,48 +24,87 @@
 
 namespace Xml {
 
+template <typename EnumT, typename BaseEnumT>
+class KDEVSGMLDUCHAIN_EXPORT InheritEnum
+{
+public:
+  InheritEnum() {}
+  InheritEnum(EnumT e)
+    : enum_(e)
+  {}
+
+  InheritEnum(BaseEnumT e)
+    : baseEnum_(e)
+  {}
+
+  explicit InheritEnum( int val )
+    : enum_(static_cast<EnumT>(val))
+  {}
+
+  operator EnumT() const { return enum_; }
+private:
+  // Note - the value is declared as a union mainly for as a debugging aid. If 
+
+  // the union is undesired and you have other methods of debugging, change it
+
+  // to either of EnumT and do a cast for the constructor that accepts BaseEnumT.
+
+  union
+  { 
+    EnumT enum_;
+    BaseEnumT baseEnum_;
+  };
+};
+    
 class KDEVSGMLDUCHAIN_EXPORT ElementDeclarationData : public KDevelop::ClassDeclarationData
 {
 public:
-    ElementDeclarationData()
-            : KDevelop::ClassDeclarationData() {}
+    
+    ElementDeclarationData();
 
-    ElementDeclarationData(const ElementDeclarationData& rhs)
-            : KDevelop::ClassDeclarationData(rhs)
-    {
-        nameSpace = rhs.nameSpace;
-        name = rhs.name;
-    }
+    ElementDeclarationData(const ElementDeclarationData& rhs);
 
     ~ElementDeclarationData() {}
+    
+    
 
     KDevelop::IndexedString name;
-    KDevelop::IndexedString nameSpace;
+    KDevelop::IndexedString contentType;
+    bool openTagRequired;
+    bool closeTagRequired;
 };
 
 
 class KDEVSGMLDUCHAIN_EXPORT ElementDeclaration : public KDevelop::ClassDeclaration
 {
 public:
+    
     ElementDeclaration(const ElementDeclaration &rhs);
     ElementDeclaration(const KDevelop::SimpleRange &range, KDevelop::DUContext *context);
-    ElementDeclaration(ElementDeclaration &data);
-    ElementDeclaration(ElementDeclaration &data, const KDevelop::SimpleRange &range, KDevelop::DUContext *context);
+    ElementDeclaration(ElementDeclarationData &data);
+    ElementDeclaration(ElementDeclarationData &data, const KDevelop::SimpleRange &range, KDevelop::DUContext *context);
     ~ElementDeclaration();
     
     virtual QString toString() const;
     
-    void setNameSpace(const QString &ns);
-    QString nameSpace();
-    
     void setName(const QString &n);
     QString name();
-    
+
+    void setContentType(const QString &ct);
+    QString contentType();
+
+    bool openTagRequired();
+    void setOpenTagRequired(bool required);
+
+    bool closeTagRequired();
+    void setCloseTagRequired(bool required);
+
     enum {
-        Identity = 86
+        Identity = 87
     };
     
 private:
+    virtual KDevelop::Declaration* clonePrivate () const;
     DUCHAIN_DECLARE_DATA(ElementDeclaration)
 };
 

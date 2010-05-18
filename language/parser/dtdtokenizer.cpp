@@ -361,6 +361,12 @@ int DTDTokenizer::nextTokenKind()
             kDebug() << "Unknown escape:" << str;
             DEFAULT_RETURN(Parser::Token_ERROR, readLength)
         }
+        //Skip processing in DTD
+        if ((cursor+1)->unicode() == '?') {
+                READ_UNTIL("?>", IgnoreNone)
+                m_parts.top().curpos += readLength;
+                return nextTokenKind();
+        }
         break;
     }
     default: {

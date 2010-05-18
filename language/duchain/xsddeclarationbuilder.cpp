@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2009 Ruan Strydom <rm3dom@gmail.com>                        *
+ * Copyright (c) 2010 Ruan Strydom <rm3dom@gmail.com>                        *
  *                                                                           *
  * This program is free software; you can redistribute it and/or modify      *
  * it under the terms of the GNU General Public License as published by      *
@@ -15,35 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#include "idocumentcachemanager.h"
-#include "documentcachemanager.h"
+#include "xsddeclarationbuilder.h"
 
-#include <QtGui/QApplication>
+#include "editorintegrator.h"
+#include "parsesession.h"
 
-#include <KDE/KGlobal>
-#include <KDE/KComponentData>
-#include <KDE/KStandardDirs>
+#include <language/duchain/classdeclaration.h>
+#include "elementdeclaration.h"
+#include <xmlcatalog/cataloghelper.h>
 
-IDocumentCacheManager * IDocumentCacheManager::instance = new DocumentCacheManager();
+using namespace Xml;
 
-
-IDocumentCacheManager::IDocumentCacheManager() : QObject(QApplication::instance())
+XsdDeclarationBuilder::XsdDeclarationBuilder(KDevelop::EditorIntegrator* editor): XsdDeclarationBuilderBase()
 {
-    Q_ASSERT(instance == 0);
-    instance = this;
+    setEditor(editor, false);
 }
 
-IDocumentCacheManager::~IDocumentCacheManager()
-{
-    instance = 0;
-}
 
-IDocumentCacheManager* IDocumentCacheManager::self()
-{
-    return instance;
-}
-
-QString IDocumentCacheManager::getCacheDirectory() const
-{
-    return KGlobal::mainComponent().dirs()->saveLocation( "data", "kdevxmlcatalog/cache", true );
-}
+XsdDeclarationBuilder::~XsdDeclarationBuilder() {}

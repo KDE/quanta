@@ -31,9 +31,9 @@ public:
     virtual QString resolveUri(const QString& uri) const;
     virtual QString resolve ( const QString& publicId, const QString& systemId ) const;
 
-    virtual QList< ICatalog* > catalogs() const {return m_ctlg;}
+    virtual QList< ICatalog* > catalogs() const;
 
-    virtual bool addCatalog ( const QString& file );
+    virtual bool addCatalog ( const QString& file);
 
     virtual bool removeCatalog ( const QString& file );
 
@@ -46,8 +46,13 @@ public slots:
     virtual bool save() const;
     virtual bool load();
 protected:
+    virtual bool addCatalog (QList<ICatalog *> &ctlg, const QString& file, bool readOnly);
+    virtual bool loadUserCatalogs();
+    virtual void createUserCatalog();
+    virtual bool loadSystemCatalogs();
     QList<ICatalogReaderWriter *> m_rw;
     QList<ICatalog *> m_ctlg;
+    QList<ICatalog *> m_sysctlg;
 };
 
 #endif // CATALOGMANAGER_H

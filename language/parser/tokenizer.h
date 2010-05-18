@@ -20,6 +20,8 @@
 
 #include "parserexport.h"
 
+#include "dtdhelper.h"
+
 #include <QtCore/QStack>
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
@@ -38,7 +40,7 @@ class Token : public KDevPG::Token {};
 
 class TokenStream : public KDevPG::TokenStreamBase<Token> {};
 
-class IDtdHelper;
+class DtdHelper;
 
 /** Abstract Tokenizer
  *  @see SgmlTokenizer
@@ -87,10 +89,23 @@ public:
      *  or the helper set.
      * @return The current DTD helper.
      */
-    const IDtdHelper * dtdHelper() {return m_dtdHelper;}
+    DtdHelper dtdHelper() {return m_dtdHelper;}
     
-    void setDtdHelper(const IDtdHelper * helper);
-    
+    void setDtdHelper(DtdHelper helper);
+
+    /** Sets the url of the current document.
+     *  @see m_document
+     */
+    void setCurrentDocument(const QString &url) {
+        m_document = url;
+    }
+
+    /** Returns the url of the current document.
+     *  @see m_document
+     */
+    QString currentDocument() const {
+        return m_document;
+    }
 protected:
     explicit Tokenizer(TokenStream* tokenstream, const QString &content);
     explicit Tokenizer(TokenStream* tokenstream, const QChar* content, qint64 contentLength);
@@ -126,11 +141,18 @@ protected:
     /** The state the lexer is in. */
     QStack<TokenizerState> m_states;
     
-    const IDtdHelper *m_dtdHelper;
+    DtdHelper m_dtdHelper;
     
     TokenStream* m_tokenStream;
 
     bool m_processEndline;
+
+    /** The current doument being tokenized.
+     *  To successfully tokenize SGML we need to know the DTD being used.
+     *  We use XMLCatalog to resolve the DTD but if the url is relative,
+     *  it must be made absolute.
+     */
+    QString m_document;
 private:
     void init(TokenStream* tokenstream, const QChar* content, qint64 contentLength);
     int m_enlc;

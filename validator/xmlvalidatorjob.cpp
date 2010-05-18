@@ -57,7 +57,7 @@ void XmlValidatorJob::start()
 {
     if(m_documentUrl.isEmpty()) {
         m_result = Failed;
-        m_errors.append("No document to validate");
+        m_errors.append(i18n("No document to validate"));
         setError(m_result);
         emitResult();
         return;

@@ -2,6 +2,7 @@
 
 add_subdirectory(parser)
 add_subdirectory(duchain)
+add_subdirectory(completion)
 
 include_directories(
     ${KDEVPLATFORM_INCLUDE_DIR}
@@ -33,6 +34,8 @@ target_link_libraries(kdevsgmllanguagesupport
     ${KDE4_KTEXTEDITOR_LIBS}
     kdevsgmlparser
     kdevsgmlduchain
+    kdevsgmlcompletion
+    kdevxmlcatalog
 )
 
 install(TARGETS kdevsgmllanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})

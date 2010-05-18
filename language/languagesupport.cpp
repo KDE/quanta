@@ -34,6 +34,7 @@
 #include "duchain/navigation/navigationwidget.h"
 #include <language/duchain/duchainutils.h>
 #include <language/duchain/use.h>
+#include "completion/codecompletionmodel.h"
 
 K_PLUGIN_FACTORY(KDevXmlSupportFactory, registerPlugin<Xml::LanguageSupport>();)
 K_EXPORT_PLUGIN(KDevXmlSupportFactory(KAboutData("kdevsgmlsupport","kdevsgml", ki18n("Markup Language Support"), "0.1",
@@ -49,6 +50,9 @@ LanguageSupport::LanguageSupport(QObject* parent, const QVariantList& args) :
         KDevelop::ILanguageSupport()
 {
     m_self = this;
+    
+    CodeCompletionModel* ccModel = new CodeCompletionModel(this);
+    new KDevelop::CodeCompletion(this, ccModel, name());
 }
 
 QString LanguageSupport::name() const
