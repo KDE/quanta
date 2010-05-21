@@ -6,7 +6,7 @@ include_directories(
 )
 
 set(xmlcompletion_SRCS
-    codecompletionmodel.cpp
+    sgmlcodecompletionmodel.cpp
 )
 
 
@@ -19,6 +19,7 @@ target_link_libraries(kdevsgmlcompletion
     ${KDEVPLATFORM_PROJECT_LIBRARIES}
     ${KDE4_KIO_LIBS}
     kdevsgmlparser
+    kdevsgmlduchain
  )
 
 install(TARGETS kdevsgmlcompletion DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})

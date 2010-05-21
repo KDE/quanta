@@ -57,7 +57,6 @@ private:
     QHash<QString, struct TokenizePart> m_entities;
     QStack<struct TokenizePart> m_parts;
     QString m_tokenEndString;
-    const DtdHelper *m_dtdHelper;
     const QChar *m_entityContentStart;
     const QChar *m_entityContentEnd;
     QString m_entityName;

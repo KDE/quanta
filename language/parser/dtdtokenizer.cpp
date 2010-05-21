@@ -52,40 +52,6 @@ void DTDTokenizer::init(DTDTokenizer::State initialState)
 DTDTokenizer::~DTDTokenizer() {}
 
 /*
-int tokenForStr(const QString &str) {
-    static QHash<QString, int> tokens = ( {
-        static QHash<QString, int> tokens;
-        tokens.insert("ANY", Parser::Token_ANY);
-        //tokens.insert("REQUIRED", Parser::Token_REQUIRED);
-        //tokens.insert("IMPLIED", Parser::Token_IMPLIED);
-        tokens.insert("EMPTY", Parser::Token_EMPTY);
-        tokens.insert("FIXED", Parser::Token_FIXED);
-        //tokens.insert("CDATA", Parser::Token_CDATA);
-        //tokens.insert("PCDATA", Parser::Token_PCDATA);
-        //tokens.insert("ID", Parser::Token_ID);
-        //tokens.insert("NUMBER", Parser::Token_NUMBER);
-        //tokens.insert("NDATA", Parser::Token_NDATA);
-        //tokens.insert("SDATA", Parser::Token_SDATA);
-        //tokens.insert("IDREFS", Parser::Token_IDREFS);
-        //tokens.insert("IDREF", Parser::Token_IDREF);
-        //tokens.insert("NMTOKEN", Parser::Token_NMTOKEN);
-        //tokens.insert("NAME", Parser::Token_NMTOKEN);
-        //tokens.insert("PUBLIC", Parser::Token_PUBLIC);
-        //tokens.insert("SYSTEM", Parser::Token_SYSTEM);
-        tokens;
-    });
-    if (str.startsWith('#')) {
-        if (!tokens.contains(str.right(str.length()-1)))
-            return -1;
-        return tokens.value(str.right(str.length()-1));
-    }
-    if (!tokens.contains(str))
-        return -1;
-    return tokens.value(str);
-}
-*/
-
-/*
  * This uses three stacks:
  * <ul>
  * <li>states: to keep track of the current state.</li>
@@ -394,35 +360,7 @@ int DTDTokenizer::nextTokenKind()
             }
         }
     }
-    /*
-    if (m_states.top().state == ELEMENT) {
-        if (m_states.top().tokens.contains(Parser::Token_TEXT)
-                && (!m_states.top().tokens.contains(Parser::Token_OPAREN)
-                    || m_states.top().tokens.contains(Parser::Token_CPAREN)
-                    || m_states.top().tokens.contains(Parser::Token_OPT)
-                    || m_states.top().tokens.contains(Parser::Token_HYPHEN))) {
-            QString str = QString(cursor, readLength).toUpper();
-            int token = tokenForStr(str);
-            if (token > 0) {
-                DEFAULT_RETURN(token, readLength)
-            }
-        }
-    }
-    */
     DEFAULT_RETURN(Parser::Token_TEXT, readLength)
 }
 
-/*
-void DTDTokenizer::getEntityContent(const QString &token, QString& name, int& contentStart, int& contentEnd) const
-{
-    static QRegExp exp("^<!\\s*entity\\s+[%]\\s+([^ \\r\\n\\t]+)\\s+([\"'][^\"']*[\"']).*",
-                       Qt::CaseInsensitive);
-    if (exp.exactMatch(token)) {
-        name = exp.cap(1);
-        QString content = exp.cap(2);
-        contentStart = token.indexOf(content) + 1;
-        contentEnd = contentStart + content.length() - 3;
-    }
-}
-*/
 

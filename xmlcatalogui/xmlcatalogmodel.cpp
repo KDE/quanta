@@ -27,6 +27,7 @@
 #include <xmlcatalog/icatalogentry.h>
 #include <xmlcatalog/icataloggroup.h>
 #include <xmlcatalog/icatalogmanager.h>
+#include <KDE/KUrl>
 
 XmlCatalogModelNode::XmlCatalogModelNode(XmlCatalogModelNode* parent, int row) : m_parent(parent), m_row(row) {}
 
@@ -98,16 +99,18 @@ public:
     }
 
     virtual ~XmlCatalogModelCatalog() {
-        
         for ( int i = 0; i < children.size(); i++)
             delete children[i];
     }
 
     QString name() const {
-        QString mode = i18n("Read only");
-        if (!m_catalog->parameter(ICatalogManager::ParameterReadonly).toBool())
-            mode = i18n("Writable");
-        return QString("Catalog [%1]").arg(mode);
+        QString mode ="";
+        if (m_catalog->parameter(ICatalogManager::ParameterReadonly).toBool())
+            mode = i18n("[read-only]");
+        KUrl url = m_catalog->parameter(ICatalogManager::ParameterFile).toString();
+        QString fileName = url.fileName();
+        fileName = fileName.mid(0, fileName.lastIndexOf('.'));
+        return QString("%1 %2").arg(fileName, mode);
     }
 
     QString info() const {

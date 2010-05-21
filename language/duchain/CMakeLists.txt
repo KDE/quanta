@@ -61,3 +61,9 @@ get_property(ln_dirs DIRECTORY PROPERTY LINK_DIRECTORIES)
 message(STATUS "include_directories: ${inc_dirs}")
 message(STATUS "link_directories: ${ln_dirs}")
 
+install(FILES
+    elementdeclaration.h
+    duchainexport.h
+    DESTINATION ${INCLUDE_INSTALL_DIR}/kdevsgmlduchain
+    COMPONENT Devel
+)

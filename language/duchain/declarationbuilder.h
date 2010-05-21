@@ -53,6 +53,7 @@ public:
     virtual void visitDtdElement(DtdElementAst* node);
     virtual void visitDtdElementList(DtdElementListAst* node);
     virtual void visitDtdElementIncludeItem(DtdElementIncludeItemAst* node);
+    virtual void visitDtdAttlist(DtdAttlistAst* node);
     virtual void visitDtdEntity(DtdEntityAst* node);
     virtual void visitDtdEntityInclude(DtdEntityIncludeAst* node);
     virtual void visitElementPHP(ElementPHPAst* node);
@@ -74,6 +75,11 @@ protected:
                                                    const KDevelop::SimpleRange &range,
                                                    const KUrl &url);
     QHash<QString, QString> m_dtdElementExclude;
+
+    /** Keeps a list of defined elements
+     *  Used in visitDtdAttlist.
+     */
+    QHash<QString, ElementDeclaration*> m_dtdElements;
 };
 
 }

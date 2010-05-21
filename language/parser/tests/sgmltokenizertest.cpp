@@ -460,16 +460,9 @@ void TestSgmlTokenizer::testTokenizerForFun()
 {
     
     {
-        QString text = "<!DOCTYPE html><?php var test=\"test\" ?>\n\
-    <head>\n\
-            <script type=\"text/javascript\">\n\
-                var test = 1 < 2 ? \"1\" : \"2\";\n\
-            </script>\n\
-            <style>\n\
-              body {\
-                  background-color: #fff;\
-              }\
-            </style>\n\
+        QString text = "<!DOCTYPE html>\n\
+        <head>\n\
+            <meta>\n\
         </head>";
         SgmlTokenizer tokenizer(NULL, text);
         int token;

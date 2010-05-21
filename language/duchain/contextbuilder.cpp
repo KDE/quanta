@@ -56,6 +56,7 @@ KDevelop::TopDUContext* ContextBuilder::newTopContext(const KDevelop::SimpleRang
 
 KDevelop::DUContext* ContextBuilder::contextFromNode(AstNode* node)
 {
+    Q_UNUSED(node);
     return 0;
 }
 
@@ -66,11 +67,14 @@ KTextEditor::Range ContextBuilder::editorFindRange(AstNode* fromNode, AstNode* t
 
 KDevelop::QualifiedIdentifier ContextBuilder::identifierForNode(ElementAst* node)
 {
+    Q_UNUSED(node);
     return KDevelop::QualifiedIdentifier();
 }
 
 void ContextBuilder::setContextOnNode(AstNode* node, KDevelop::DUContext* context)
 {
+    Q_UNUSED(node);
+    Q_UNUSED(context);
     //node->ducontext = ctx;
 }
 
@@ -160,6 +164,7 @@ void ContextBuilder::visitDtdDoctype(DtdDoctypeAst* node)
     KDevelop::SimpleRange range;
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
     if (node->childrenSequence) {
+        /*
         range.start = e->findPosition(node->copen, EditorIntegrator::BackEdge);
         range.end = e->findPosition(node->cclose, EditorIntegrator::FrontEdge);
         KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(nodeText(node->name))));
@@ -168,6 +173,8 @@ void ContextBuilder::visitDtdDoctype(DtdDoctypeAst* node)
                     id);
         DefaultVisitor::visitDtdDoctype(node);
         closeContext();
+        */
+        DefaultVisitor::visitDtdDoctype(node);
     } else {
         DefaultVisitor::visitDtdDoctype(node);
         QString publicId = nodeText(node->publicId);

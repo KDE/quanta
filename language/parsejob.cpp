@@ -163,7 +163,7 @@ void ParseJob::run()
     }
 
     cleanupSmartRevision();
-/*
+    /*
     {
         KDevelop::DUChainReadLocker loc;
         foreach(KDevelop::Declaration *d1 , top->localDeclarations()) {
@@ -175,7 +175,7 @@ void ParseJob::run()
             }
         }
     }
-*/
+    */
 }
 
 
@@ -197,6 +197,8 @@ void ParseJob::visit(KDevelop::Declaration* d)
 
 void ParseJob::parseInclude(const IncludeBuilder::IncludeIdentifier &include, KDevelop::ReferencedTopDUContext top)
 {
+    Q_UNUSED(top);
+    
     KUrl url = CatalogHelper::resolve(include.publicId.str(),
                                       include.systemId.str(),
                                       include.uri.str(),

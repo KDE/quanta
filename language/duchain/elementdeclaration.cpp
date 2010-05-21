@@ -20,29 +20,37 @@
 
 namespace Xml {
 
+using namespace KDevelop;
+
 REGISTER_DUCHAIN_ITEM(ElementDeclaration);
+DEFINE_LIST_MEMBER_HASH(ElementDeclarationData, m_attributes, IndexedString);
 
 ElementDeclarationData::ElementDeclarationData()
 {
+    initializeAppendedLists();
     closeTagRequired = true;
-    openTagRequired = true;
 }
 
 ElementDeclarationData::ElementDeclarationData(const Xml::ElementDeclarationData& rhs): ClassDeclarationData(rhs)
 {
+    initializeAppendedLists();
+    copyListsFrom(rhs);
     closeTagRequired = rhs.closeTagRequired;
-    openTagRequired = rhs.openTagRequired;
     name = rhs.name;
     contentType = rhs.contentType;
 }
 
+ElementDeclarationData::~ElementDeclarationData()
+{
+    freeAppendedLists();
+}
 
 ElementDeclaration::ElementDeclaration(const ElementDeclaration& rhs): ClassDeclaration(rhs)
 {
     setSmartRange(rhs.smartRange(), DocumentRangeObject::DontOwn);
 }
 
-ElementDeclaration::ElementDeclaration(const KDevelop::SimpleRange& range, KDevelop::DUContext* context):
+ElementDeclaration::ElementDeclaration(const SimpleRange& range, DUContext* context):
         ClassDeclaration(*new ElementDeclarationData, range, context)
 {
     d_func_dynamic()->setClassId(this);
@@ -55,7 +63,7 @@ ElementDeclaration::ElementDeclaration(ElementDeclarationData& data): ClassDecla
     d_func_dynamic()->setClassId(this);
 }
 
-ElementDeclaration::ElementDeclaration(ElementDeclarationData& data, const KDevelop::SimpleRange& range, KDevelop::DUContext* context): ClassDeclaration(data, range, context)
+ElementDeclaration::ElementDeclaration(ElementDeclarationData& data, const SimpleRange& range, DUContext* context): ClassDeclaration(data, range, context)
 {
     d_func_dynamic()->setClassId(this);
 }
@@ -72,7 +80,7 @@ QString ElementDeclaration::name()
 
 void ElementDeclaration::setName(const QString& n)
 {
-    d_func_dynamic()->name = KDevelop::IndexedString(n);
+    d_func_dynamic()->name = IndexedString(n);
 }
 
 
@@ -86,19 +94,9 @@ bool ElementDeclaration::closeTagRequired()
     return d_func()->closeTagRequired;
 }
 
-void ElementDeclaration::setOpenTagRequired(bool required)
-{
-    d_func_dynamic()->openTagRequired = required;
-}
-
-bool ElementDeclaration::openTagRequired()
-{
-    return d_func()->openTagRequired;
-}
-
 void ElementDeclaration::setContentType(const QString& ct)
 {
-    d_func_dynamic()->contentType = KDevelop::IndexedString(ct);
+    d_func_dynamic()->contentType = IndexedString(ct);
 }
 
 QString ElementDeclaration::contentType()
@@ -106,12 +104,34 @@ QString ElementDeclaration::contentType()
     return d_func()->contentType.str();
 }
 
-QString Xml::ElementDeclaration::toString() const
+
+QString ElementDeclaration::toString() const
 {
-    return KDevelop::ClassDeclaration::toString();
+    return ClassDeclaration::toString();
 }
 
-KDevelop::Declaration* ElementDeclaration::clonePrivate() const
+
+void ElementDeclaration::addAttributes(const IndexedString& str)
+{
+    d_func_dynamic()->m_attributesList().append(str);
+}
+
+const IndexedString* ElementDeclaration::attributes() const
+{
+    return d_func()->m_attributes();
+}
+
+unsigned int ElementDeclaration::attributesSize() const
+{
+    return d_func()->m_attributesSize();
+}
+
+void ElementDeclaration::clearAttributes()
+{
+    d_func_dynamic()->m_attributesList().clear();
+}
+
+Declaration* ElementDeclaration::clonePrivate() const
 {
     return new ElementDeclaration(*this);
 }

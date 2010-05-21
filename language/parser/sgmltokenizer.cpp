@@ -206,10 +206,11 @@ int SgmlTokenizer::nextTokenKind() {
                     QString name = elementName(str);
                     if (m_dtdHelper.cdataElement(name)) {
                         m_tokenEndString = QString("</%1>").arg(name);
-                        POP_STATE //Have to pop before push else it has no effect
+                        POP_STATE
                         PUSH_STATE(Cdata, cursor + 1);
                         DEFAULT_RETURN(Parser::Token_GT, 1)
-                    } else if (m_dtdHelper.emptyElement(name)) {
+                    }
+                    if (m_dtdHelper.emptyElement(name)) {
                         POP_STATE
                         DEFAULT_RETURN(Parser::Token_CLOSE, 1)
                     }

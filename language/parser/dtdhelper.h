@@ -31,23 +31,23 @@ class KDEVSGMLPARSER_EXPORT AbstractDtdHelper {
 public:
     virtual ~AbstractDtdHelper(){}
     /** <!ELEMENT ... - O  .. >
-    *  @todo Needs a the parent list to correctly identify.
+    *  @todo Needs a parent list to correctly identify.
     */
     virtual bool closeOptional(const QString &elementName) const = 0;
     
     /** <!ELEMENT ... EMPTY>
-    *  @todo Needs a the parent list to correctly identify.
+    *  @todo Needs a parent list to correctly identify.
     */
     virtual bool emptyElement(const QString &elementName) const = 0;
     
     /** <!ELEMENT ... CDATA>
-    *  @todo Needs a the parent list to correctly identify.
+    *  @todo Needs a parent list to correctly identify.
     */
     virtual bool cdataElement(const QString &elementName) const = 0;
     
     /** The children this element is allowed to have.
     *  This is used if element close is optional, and it is not empty.
-    *  @todo Needs a the parent list to correctly identify.
+    *  @todo Needs a parent list to correctly identify.
     */
     virtual bool hasChild(const QString &elementName, const QString &child) const = 0;
     
@@ -84,22 +84,22 @@ class KDEVSGMLPARSER_EXPORT DtdHelper : public AbstractDtdHelper {
                                         const KUrl &path = KUrl());
 
         /** Return the default instance for a specific mime.
-         *  @return A helper or NULL if none is found.
+         *  @return A helper or null if none is found.
          */
         static DtdHelper instanceForMime(KMimeType::Ptr mime);
 
         /** Return the default instance for a specific doctype name.
-        *   @return A helper or 0 if none is found.
+        *   @return A helper or null if none is found.
         */
         static DtdHelper instanceForName(const QString &name);
 
         inline bool closeOptional(const QString &elementName) const  {
-            if(d){return d->cdataElement(elementName);}
+            if(d){return d->closeOptional(elementName);}
             return false;
         }
 
         inline bool emptyElement(const QString &elementName) const  {
-            if(d){return d->cdataElement(elementName);}
+            if(d){return d->emptyElement(elementName);}
             return false;
         }
 

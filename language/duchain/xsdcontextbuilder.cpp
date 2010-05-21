@@ -57,6 +57,7 @@ KDevelop::TopDUContext* XsdContextBuilder::newTopContext(const KDevelop::SimpleR
 
 KDevelop::DUContext* XsdContextBuilder::contextFromNode(AstNode* node)
 {
+    Q_UNUSED(node);
     return 0;
 }
 
@@ -67,11 +68,14 @@ KTextEditor::Range XsdContextBuilder::editorFindRange(AstNode* fromNode, AstNode
 
 KDevelop::QualifiedIdentifier XsdContextBuilder::identifierForNode(ElementTagAst* node)
 {
+    Q_UNUSED(node);
     return KDevelop::QualifiedIdentifier();
 }
 
 void XsdContextBuilder::setContextOnNode(AstNode* node, KDevelop::DUContext* context)
 {
+    Q_UNUSED(node);
+    Q_UNUSED(context);
     //node->ducontext = ctx;
 }
 

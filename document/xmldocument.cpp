@@ -110,7 +110,7 @@ public:
     void setStatus ( KTextEditor::Document* document, bool dirty ) {
         QIcon statusIcon;
 
-        if ( document->isModified() )
+        if ( document->isModified() ) {
             if ( dirty ) {
                 state = IDocument::DirtyAndModified;
                 statusIcon = KIcon ( "edit-delete" );
@@ -118,14 +118,15 @@ public:
                 state = IDocument::Modified;
                 statusIcon = KIcon ( "document-save" );
             }
-        else
+            xmlDocument->notifyContentChanged();
+        } else {
             if ( dirty ) {
                 state = IDocument::Dirty;
                 statusIcon = KIcon ( "document-revert" );
             } else {
                 state = IDocument::Clean;
             }
-
+        }
         xmlDocument->notifyStateChanged();
         ICore::self()->uiController()->controller()->setStatusIcon ( xmlDocument, statusIcon );
     }

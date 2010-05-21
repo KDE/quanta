@@ -17,24 +17,25 @@
 
 #include "languagesupport.h"
 
-#include <kpluginfactory.h>
-#include <kpluginloader.h>
-#include <kaboutdata.h>
+#include "completion/sgmlcodecompletionmodel.h"
+#include "parsejob.h"
+
+#include <KDE/KPluginFactory>
+#include <KDE/KPluginLoader>
+#include <KDE/KAboutData>
 #include <KTextEditor/Document>
 
 #include <language/codecompletion/codecompletion.h>
-#include <interfaces/idocument.h>
-#include <interfaces/icore.h>
-#include <interfaces/idocumentcontroller.h>
+#include <language/duchain/duchainutils.h>
+#include <language/duchain/use.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/declaration.h>
-
-#include "parsejob.h"
+#include <interfaces/idocument.h>
+#include <interfaces/icore.h>
+#include <interfaces/idocumentcontroller.h>
 #include "duchain/navigation/navigationwidget.h"
-#include <language/duchain/duchainutils.h>
-#include <language/duchain/use.h>
-#include "completion/codecompletionmodel.h"
+
 
 K_PLUGIN_FACTORY(KDevXmlSupportFactory, registerPlugin<Xml::LanguageSupport>();)
 K_EXPORT_PLUGIN(KDevXmlSupportFactory(KAboutData("kdevsgmlsupport","kdevsgml", ki18n("Markup Language Support"), "0.1",
@@ -49,9 +50,9 @@ LanguageSupport::LanguageSupport(QObject* parent, const QVariantList& args) :
         KDevelop::IPlugin(KDevXmlSupportFactory::componentData(), parent),
         KDevelop::ILanguageSupport()
 {
+    Q_UNUSED(args);
     m_self = this;
-    
-    CodeCompletionModel* ccModel = new CodeCompletionModel(this);
+    SgmlCodeCompletionModel* ccModel = new SgmlCodeCompletionModel(this);
     new KDevelop::CodeCompletion(this, ccModel, name());
 }
 

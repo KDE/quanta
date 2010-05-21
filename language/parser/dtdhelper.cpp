@@ -175,7 +175,7 @@ protected:
         QHash<QString, char> ret;
         QStringList list = str.split("|");
         foreach(QString s, list) {
-            ret.insert(s.trimmed(), 0);
+            ret.insert(s.trimmed().toUpper(), 0);
         }
         return ret;
     }
@@ -308,6 +308,7 @@ DtdHelper DtdHelper::instanceForMime(KMimeType::Ptr mime)
 {
     if (!mime || !mime->isValid())
         return DtdHelper();
+    
     if (mime->is("application/xml")
             || mime->is("text/xml")
             || mime->is("application/xslt+xml")
@@ -320,16 +321,18 @@ DtdHelper DtdHelper::instanceForMime(KMimeType::Ptr mime)
         return xmlHelper;
     }
 
-    if(mime->is("text/html"));
+    if(mime->is("text/html")) {
         return html4LooseHelper;
+    }
 
     return DtdHelper();
 }
 
 DtdHelper DtdHelper::instanceForName(const QString& name)
 {
-    if(name.trimmed().toLower() == "html");
+    if(name.trimmed().toLower() == "html") {
         return html4LooseHelper;
+    }
 
     if (name.trimmed().toLower() == "xml") {
         return xmlHelper;

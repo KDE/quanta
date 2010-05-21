@@ -44,6 +44,7 @@ ElementDeclaration* DeclarationBuilder::createClassInstanceDeclaration(const QSt
         const QString &name,
         const QString &nameSpacePrefix)
 {
+    Q_UNUSED(nameSpacePrefix);
     KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(identifier.toUtf8())));
     KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
     ElementDeclaration* dec = openDefinition<ElementDeclaration>(id, range);
@@ -152,16 +153,18 @@ void DeclarationBuilder::visitDtdElement(DtdElementAst* node)
             ElementDeclaration* dec = openDefinition<ElementDeclaration>(id, range);
             dec->setKind(KDevelop::Declaration::Type);
             dec->clearBaseClasses();
+            dec->clearAttributes();
             dec->setClassType(KDevelop::ClassDeclarationData::Class);
             if (node->content) {
                 dec->setContentType(nodeText(node->content));
             }
-            if (e->tokenToString(node->openTag) == "O") {
-                dec->setOpenTagRequired(false);
-            }
+            //if (e->tokenToString(node->openTag) == "O") {
+            //    dec->setOpenTagRequired(false);
+            //}
             if (e->tokenToString(node->closeTag) == "O") {
                 dec->setCloseTagRequired(false);
             }
+            m_dtdElements.insert(name, dec);
         }
         //TODO visitDtdElementList: there should be a indication if its choice or sequence for now its just a list.
         setStdElementId(id);
@@ -216,6 +219,52 @@ void DeclarationBuilder::visitDtdElementIncludeItem(DtdElementIncludeItemAst* no
     }
 
     DeclarationBuilderBase::visitDtdElementIncludeItem(node);
+}
+
+void DeclarationBuilder::visitDtdAttlist(DtdAttlistAst* node)
+{
+    QStringList elements;
+    if(node->name)
+        elements << nodeText(node->name);
+    if(node->elementsSequence) {
+        const KDevPG::ListNode<DtdEnumItemAst*> *it = node->elementsSequence->front(), *end = it;
+        do
+        {
+            if (it->element) {
+                QString name;
+                if (it->element->name) {
+                    name = nodeText(it->element->name);
+                }
+                if (!name.isEmpty())
+                    elements << name;
+            }
+            it = it->next;
+        }
+        while (it != end);
+    }
+    foreach(QString elementName, elements ) {
+        if(!m_dtdElements.contains(elementName)) {
+            kDebug() << "Could not find element" << elementName;
+            continue; //TODO print warning
+        }
+        ElementDeclaration *dec = m_dtdElements.value(elementName);
+        KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
+        const KDevPG::ListNode<DtdAttAst*> *it = node->attributesSequence->front(), *end = it;
+        do
+        {
+            if (it->element) {
+                QString name;
+                if (it->element->name) {
+                    name = nodeText(it->element->name);
+                }
+                if (!name.isEmpty()) {
+                    dec->addAttributes(KDevelop::IndexedString(name));
+                }
+            }
+            it = it->next;
+        }
+        while (it != end);
+    }
 }
 
 void DeclarationBuilder::visitDtdEntity(DtdEntityAst* node)

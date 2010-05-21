@@ -53,10 +53,10 @@ XmlCatalogPlugin::~XmlCatalogPlugin() {
 }
 
 void XmlCatalogPlugin::slotShowDialog() {
-    static XmlCatalogDialog *w = ( {
+    static XmlCatalogDialog *w = ({
         XmlCatalogDialog *w = new XmlCatalogDialog ( ICore::self()->uiController()->activeMainWindow()->widget() );
         w;
-    } );
+    });
     w->show();
 }
 

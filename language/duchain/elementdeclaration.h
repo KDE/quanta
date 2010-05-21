@@ -20,69 +20,43 @@
 
 #include "duchainexport.h"
 #include <language/duchain/classdeclaration.h>
-#include <language/duchain/functiondeclaration.h>
+#include <language/duchain/declaration.h>
+#include <language/duchain/declarationdata.h>
 
 namespace Xml {
 
-template <typename EnumT, typename BaseEnumT>
-class KDEVSGMLDUCHAIN_EXPORT InheritEnum
+using namespace KDevelop;
+
+KDEVSGMLDUCHAIN_EXPORT DECLARE_LIST_MEMBER_HASH(ElementDeclarationData, m_attributes, IndexedString)
+
+class KDEVSGMLDUCHAIN_EXPORT ElementDeclarationData : public ClassDeclarationData
 {
 public:
-  InheritEnum() {}
-  InheritEnum(EnumT e)
-    : enum_(e)
-  {}
 
-  InheritEnum(BaseEnumT e)
-    : baseEnum_(e)
-  {}
-
-  explicit InheritEnum( int val )
-    : enum_(static_cast<EnumT>(val))
-  {}
-
-  operator EnumT() const { return enum_; }
-private:
-  // Note - the value is declared as a union mainly for as a debugging aid. If 
-
-  // the union is undesired and you have other methods of debugging, change it
-
-  // to either of EnumT and do a cast for the constructor that accepts BaseEnumT.
-
-  union
-  { 
-    EnumT enum_;
-    BaseEnumT baseEnum_;
-  };
-};
-    
-class KDEVSGMLDUCHAIN_EXPORT ElementDeclarationData : public KDevelop::ClassDeclarationData
-{
-public:
-    
     ElementDeclarationData();
 
     ElementDeclarationData(const ElementDeclarationData& rhs);
 
-    ~ElementDeclarationData() {}
-    
-    
+    ~ElementDeclarationData();
 
-    KDevelop::IndexedString name;
-    KDevelop::IndexedString contentType;
-    bool openTagRequired;
+    IndexedString name;
+    IndexedString contentType;
     bool closeTagRequired;
+    
+    START_APPENDED_LISTS_BASE(ElementDeclarationData, ClassDeclarationData);
+    APPENDED_LIST_FIRST(ElementDeclarationData, IndexedString, m_attributes);
+    END_APPENDED_LISTS(ElementDeclarationData, m_attributes);
 };
 
 
-class KDEVSGMLDUCHAIN_EXPORT ElementDeclaration : public KDevelop::ClassDeclaration
+class KDEVSGMLDUCHAIN_EXPORT ElementDeclaration : public ClassDeclaration
 {
 public:
     
     ElementDeclaration(const ElementDeclaration &rhs);
-    ElementDeclaration(const KDevelop::SimpleRange &range, KDevelop::DUContext *context);
+    ElementDeclaration(const SimpleRange &range, DUContext *context);
     ElementDeclaration(ElementDeclarationData &data);
-    ElementDeclaration(ElementDeclarationData &data, const KDevelop::SimpleRange &range, KDevelop::DUContext *context);
+    ElementDeclaration(ElementDeclarationData &data, const SimpleRange &range, DUContext *context);
     ~ElementDeclaration();
     
     virtual QString toString() const;
@@ -93,18 +67,20 @@ public:
     void setContentType(const QString &ct);
     QString contentType();
 
-    bool openTagRequired();
-    void setOpenTagRequired(bool required);
-
     bool closeTagRequired();
     void setCloseTagRequired(bool required);
+
+    virtual const IndexedString* attributes() const;
+    virtual unsigned int attributesSize() const;
+    virtual void addAttributes(const IndexedString& str);
+    virtual void clearAttributes();
 
     enum {
         Identity = 87
     };
     
 private:
-    virtual KDevelop::Declaration* clonePrivate () const;
+    virtual Declaration* clonePrivate () const;
     DUCHAIN_DECLARE_DATA(ElementDeclaration)
 };
 
