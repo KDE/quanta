@@ -54,9 +54,14 @@ public:
   QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore);
 
   ~QuantaDoc();
-  /** Code completion was requested by the user. */
+  /** Code completion was requested by the user.
+   *
+   * FIXME: port to proper KTextEditor
+   */
   void codeCompletionRequested();
-  /** Bring up the code completion tooltip. */
+  /** Bring up the code completion tooltip.
+   * FIXME: port to proper KTextEditor
+   */
   void codeCompletionHintRequested();
   const DTDStruct * mainDTEP() {return m_dtd;}
   void setMainDTEP(const DTDStruct* dtd) {m_dtd = dtd;}

@@ -11,8 +11,6 @@
             </Menu>
             <Separator/>
             <Action name="apply_source_indentation" />
-            <Action name="show_completion" />
-            <Action name="show_completion_hint" />
         </Menu>
         <Menu name="view" >
             <text>&amp;View</text>

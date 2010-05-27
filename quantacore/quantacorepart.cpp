@@ -127,16 +127,6 @@ void QuantaCorePart::initActions()
     actionCollection()->addAction("help_userlist", newAct );
   connect(newAct, SIGNAL(triggered(bool)), SLOT(slotHelpUserList()));
 
-    newAct  = new KAction(i18n("Complete Text"), this);
-    actionCollection()->addAction("show_completion", newAct );
-  newAct->setShortcut(KShortcut(Qt::CTRL + Qt::Key_Space));
-  connect(newAct, SIGNAL(triggered(bool)), SLOT(slotShowCompletion()));
-
-    newAct  = new KAction(i18n("Show Completion Hints"), this);
-    actionCollection()->addAction("show_completion_hint", newAct );
-  newAct->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Space));
-  connect(newAct, SIGNAL(triggered(bool)), SLOT(slotShowCompletionHint()));
-
     m_insertTagAction  = new KAction(i18n("Insert &Tag"), this);
     actionCollection()->addAction("insert_tag", m_insertTagAction );
   connect(m_insertTagAction, SIGNAL(triggered(bool)), SLOT(slotInsertTag()));

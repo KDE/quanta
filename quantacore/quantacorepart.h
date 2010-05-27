@@ -134,10 +134,6 @@ private slots:
 
   void slotGroupsParsed(const EditorSource *source, const ParseResult *parseResult);
 
-  void slotShowCompletion() const {if (m_activeQuantaDoc) m_activeQuantaDoc->codeCompletionRequested();};
-
-  void slotShowCompletionHint() const {if (m_activeQuantaDoc)    m_activeQuantaDoc->codeCompletionHintRequested();};
-  
   void slotHelpHomepage();
   void slotHelpUserList();
   
