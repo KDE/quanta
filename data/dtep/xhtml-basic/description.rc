@@ -1,49 +1,49 @@
 [General]
-Name = -//W3C//DTD XHTML Basic 1.0//EN
-NickName = XHTML Basic 1.0
-URL = http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd
-DoctypeString = html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"
-DefaultExtension = html
-Groups = Core, I18n
-NumOfPages = 1
-CaseSensitive = true
-Documentation = HTML
+Name=-//W3C//DTD XHTML Basic 1.0//EN
+NickName=XHTML Basic 1.0
+URL=http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd
+DoctypeString=html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"
+DefaultExtension=html
+Groups=Core, I18n
+NumOfPages=1
+CaseSensitive=true
+Documentation=HTML
 
 [Toolbars]
-Location = html
-Names = standard, style, tables, lists, forms, other
+Location=html
+Names=standard, style, tables, lists, forms, other
 
 [Page1]
-Title = Core and i18n
-Groups = Core, I18n
+Title=Core and i18n
+Groups=Core, I18n
 
 [Extra rules]
-BooleanAttributes = simple
-Single Tag Style = XML
-StructGroupsCount = 3
+BooleanAttributes=simple
+Single Tag Style=XML
+StructGroupsCount=3
 
 [Parsing rules]
-SpecialTags = script(language)
-MayContain = php, css
+SpecialTags=script(language)
+MayContain=php, css
 
 [StructGroup_1]
-Name = Images
-No_Name = No Images
-Icon = image
-Tag = img(src)
-HasFileName = true
+Name=Images
+No_Name=No Images
+Icon=image
+Tag=img(src)
+HasFileName=true
 
 [StructGroup_2]
-Name = Links (anchor)
-No_Name = No Links (anchor)
-Icon = www
-Tag = a(name,href)
-HasFileName = true
-FileNameRx = .*\\||#.*
+Name=Links (anchor)
+No_Name=No Links (anchor)
+Icon=www
+Tag=a(name,href)
+HasFileName=true
+FileNameRx=.*\\||#.*
 
 [StructGroup_3]
-Name = Resources (link)
-No_Name = No Links (link)
-Icon = www
-Tag = link(href)
-HasFileName = true
+Name=Resources (link)
+No_Name=No Links (link)
+Icon=www
+Tag=link(href)
+HasFileName=true

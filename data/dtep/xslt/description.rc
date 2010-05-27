@@ -1,13 +1,13 @@
 [General]
-Name = XSLT
-NickName = XSLT 1.0
-DefaultExtension = xslt
-NumOfPages = 0
-CaseSensitive = true
+Name=XSLT
+NickName=XSLT 1.0
+DefaultExtension=xslt
+NumOfPages=0
+CaseSensitive=true
 
 [Toolbars]
-Location = xsl
-Names = fonts
+Location=xsl
+Names=fonts
 
 [Extra rules]
 

@@ -1,75 +1,75 @@
 [General]
-Name = PHP
-DefaultExtension = php
-NumOfPages = 0
-CaseSensitive = true
-Family = 2
-Documentation = PHP
+Name=PHP
+DefaultExtension=php
+NumOfPages=0
+CaseSensitive=true
+Family=2
+Documentation=PHP
 
 [Extra tags]
-List = apache_lookup_uri
-DefaultAttrType = string
-apache_lookup_uri = filename
+List=apache_lookup_uri
+DefaultAttrType=string
+apache_lookup_uri=filename
 
 [Extra rules]
-StructGroupsCount = 5
-TagAutoCompleteAfter = @
-VariableGroupIndex = 2
-FunctionGroupIndex = 3
-ClassGroupIndex = 4
-ObjectGroupIndex = 5
-MemberAutoCompleteAfter = (?:\\.|->)$
+StructGroupsCount=5
+TagAutoCompleteAfter=@
+VariableGroupIndex=2
+FunctionGroupIndex=3
+ClassGroupIndex=4
+ObjectGroupIndex=5
+MemberAutoCompleteAfter=(?:\\.|->)$
 
 [Parsing rules]
-AreaBorders = <? ?>, <* *>, <% %>
-Tags = script(language)
-Comments = // EOL, /* */, # EOL
-StructKeywords = for,foreach,if,else,elseif,while,do,switch,declare,function,class
+AreaBorders=<? ?>, <* *>, <% %>
+Tags=script(language)
+Comments=// EOL, /* */, # EOL
+StructKeywords=for,foreach,if,else,elseif,while,do,switch,declare,function,class
 LocalScopeKeywords=function,class
-StructBeginStr = {
-StructEndStr = }
-StructRx = \\{|\\}
-MayContain = php
+StructBeginStr={
+StructEndStr=}
+StructRx=\\{|\\}
+MayContain=php
 
 [StructGroup_1]
-Name = Inclusions
-No_Name = No Inclusions
-Icon = attach
-DefinitionRx = ((?:include|require)(?:_once)?(?:\\s+(?:\\$\\w+\\s*)?|\\s*\\((?:\\s+|\\s*\\$\\w+\\s*)\\)\\s*);)
-DefinitionRx_Minimal = true
-HasFileName = true
-ParseFile = true
-New_FileNameRx_Not_Used = (?:include|require)(?:_once)?(\\s+(?:\\$\\w+\\s*)?|\\s*\\((?:\\s+|\\s*\\$\\w+\\s*)\\)\\s*);
-FileNameRx = (?:^include|^require|^include_once|^require_once|\\(|\\)|\\"|\\'|;$)
+Name=Inclusions
+No_Name=No Inclusions
+Icon=attach
+DefinitionRx=((?:include|require)(?:_once)?(?:\\s+(?:\\$\\w+\\s*)?|\\s*\\((?:\\s+|\\s*\\$\\w+\\s*)\\)\\s*);)
+DefinitionRx_Minimal=true
+HasFileName=true
+ParseFile=true
+New_FileNameRx_Not_Used=(?:include|require)(?:_once)?(\\s+(?:\\$\\w+\\s*)?|\\s*\\((?:\\s+|\\s*\\$\\w+\\s*)\\)\\s*);
+FileNameRx=(?:^include|^require|^include_once|^require_once|\\(|\\)|\\"|\\'|;$)
 
 [StructGroup_2]
-Name = Variables
-No_Name = No Variables
-Icon = abs
-DefinitionRx = \\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)
-UsageRx = \\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)
-AutoCompleteAfter = \\$+[a-zA-Z0-9_\\x7f-\\xff]*$
+Name=Variables
+No_Name=No Variables
+Icon=abs
+DefinitionRx=\\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)
+UsageRx=\\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)
+AutoCompleteAfter=\\$+[a-zA-Z0-9_\\x7f-\\xff]*$
 
 [StructGroup_3]
-Name = Functions
-No_Name = No Functions
-Icon = mini-modules
-DefinitionRx = \\bfunction[\\s]+([0-9a-zA-Z_\\x7f-\\xff]*[\\s]*(?:\\(.*\\)){0,1})
-AppendToTags = true
-ParentGroup = Classes
+Name=Functions
+No_Name=No Functions
+Icon=mini-modules
+DefinitionRx=\\bfunction[\\s]+([0-9a-zA-Z_\\x7f-\\xff]*[\\s]*(?:\\(.*\\)){0,1})
+AppendToTags=true
+ParentGroup=Classes
 
 [StructGroup_4]
-Name = Classes
-No_Name = No Classes
-Icon = classnew
-DefinitionRx = \\sclass[\\s]+([0-9a-zA-Z_\x7f-\xff]*)[\\s]*
-UsageRx = \\B\\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)$
-AutoCompleteAfter = \\bnew[\\s]+$
-RemoveFromAutoCompleteWord = \\bnew[\\s]*
+Name=Classes
+No_Name=No Classes
+Icon=classnew
+DefinitionRx=\\sclass[\\s]+([0-9a-zA-Z_\x7f-\xff]*)[\\s]*
+UsageRx=\\B\\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)$
+AutoCompleteAfter=\\bnew[\\s]+$
+RemoveFromAutoCompleteWord=\\bnew[\\s]*
 
 [StructGroup_5]
-Name = Objects
-No_Name = No Objects
-Icon = classnew
-DefinitionRx =\\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)[\\s]*=[\\s]*new[\\s]*[a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*[\\s]*;
-TypeRx = [\\s]*new[\\s]*([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)[\\s]*
+Name=Objects
+No_Name=No Objects
+Icon=classnew
+DefinitionRx=\\$+([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)[\\s]*=[\\s]*new[\\s]*[a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*[\\s]*;
+TypeRx=[\\s]*new[\\s]*([a-zA-Z0-9_\\x7f-\\xff]*[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)[\\s]*

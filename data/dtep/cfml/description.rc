@@ -1,20 +1,20 @@
 [General]
-Name = CFML
-Inherits = -//W3C//DTD XHTML 1.0 Strict//EN
-DefaultExtension = cfm
-NumOfPages = 0
-CaseSensitive = false
-Family = 1
+Name=CFML
+Inherits=-//W3C//DTD XHTML 1.0 Strict//EN
+DefaultExtension=cfm
+NumOfPages=0
+CaseSensitive=false
+Family=1
 
 [Toolbars]
-Location = cfml
-Names = standard, fonts, tables, lists, forms, cfml
+Location=cfml
+Names=standard, fonts, tables, lists, forms, cfml
 
 [Extra rules]
-BooleanAttributes = simple
-Single Tag Style = html
+BooleanAttributes=simple
+Single Tag Style=html
 
 [Parsing rules]
-AppendCommonRules = false
-Comments = <!--- --->
-MayContain = css, cffunct
+AppendCommonRules=false
+Comments=<!--- --->
+MayContain=css, cffunct

@@ -1,57 +1,57 @@
 [General]
-Name = -//W3C//DTD HTML 4.01//EN
-NickName = HTML 4.01 Strict
-URL = http://www.w3.org/TR/html4/strict.dtd
-DoctypeString = HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"
-DefaultExtension = html
-Groups = Core, I18n, Script
-NumOfPages = 2
-CaseSensitive = false
-Documentation = HTML
+Name=-//W3C//DTD HTML 4.01//EN
+NickName=HTML 4.01 Strict
+URL=http://www.w3.org/TR/html4/strict.dtd
+DoctypeString=HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"
+DefaultExtension=html
+Groups=Core, I18n, Script
+NumOfPages=2
+CaseSensitive=false
+Documentation=HTML
 
 
 [Toolbars]
-Location = html
-Names = standard, style, tables, lists, forms, other
+Location=html
+Names=standard, style, tables, lists, forms, other
 
 [Page1]
-Title = Core && i18n
-Groups = Core, I18n
+Title=Core && i18n
+Groups=Core, I18n
 
 [Page2]
-Title = Events
-Groups = Script
+Title=Events
+Groups=Script
 
 [Extra rules]
-BooleanAttributes = simple
-Single Tag Style = html
-StructGroupsCount = 3
+BooleanAttributes=simple
+Single Tag Style=html
+StructGroupsCount=3
 
 [Parsing rules]
-SpecialTags = script(language)
-MayContain = php, css
+SpecialTags=script(language)
+MayContain=php, css
 
 [StructGroup_1]
-Name = Images
-No_Name = No Images
-Icon = image
-Tag = img(src)
-HasFileName = true
+Name=Images
+No_Name=No Images
+Icon=image
+Tag=img(src)
+HasFileName=true
 
 [StructGroup_2]
-Name = Links (anchor)
-No_Name = No Links (anchor)
-Icon = www
-Tag = a(name,href)
-HasFileName = true
-FileNameRx = .*\\||#.*
+Name=Links (anchor)
+No_Name=No Links (anchor)
+Icon=www
+Tag=a(name,href)
+HasFileName=true
+FileNameRx=.*\\||#.*
 
 [StructGroup_3]
-Name = Resources (link)
-No_Name = No Links (link)
-Icon = www
-Tag = link(href)
-HasFileName = true
+Name=Resources (link)
+No_Name=No Links (link)
+Icon=www
+Tag=link(href)
+HasFileName=true
 
 
 

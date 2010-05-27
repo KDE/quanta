@@ -1,12 +1,12 @@
 [General]
-Name = Relax NG
-NickName = Relax NG 1.0
-DefaultExtension = rng
-NumOfPages = 0
-CaseSensitive = true
-Family = 1
+Name=Relax NG
+NickName=Relax NG 1.0
+DefaultExtension=rng
+NumOfPages=0
+CaseSensitive=true
+Family=1
 
 [Extra rules]
-Single Tag Style = XML
+Single Tag Style=XML
 
 [Parsing rules]

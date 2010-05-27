@@ -1,15 +1,15 @@
 [General]
-Name = CFFUNCT
-DefaultExtension = cfm
-NumOfPages = 0
-CaseSensitive = true
-Family = 2
+Name=CFFUNCT
+DefaultExtension=cfm
+NumOfPages=0
+CaseSensitive=true
+Family=2
 
 [Extra rules]
-TagAutoCompleteAfter = none
+TagAutoCompleteAfter=none
 
 [Parsing rules]
-AreaBorders = <cfscript> </cfscript>
-Tags = script(language)
-Comments = // EOL
-maycontain = cffunct
+AreaBorders=<cfscript> </cfscript>
+Tags=script(language)
+Comments=// EOL
+maycontain=cffunct

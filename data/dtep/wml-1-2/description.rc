@@ -1,57 +1,57 @@
 [General]
-Name = -//WAPFORUM//DTD WML 1.2//EN
-NickName = WML 1.2
-DefaultExtension = wml
-Groups = Core
-NumOfPages = 1
-CaseSensitive = true
+Name=-//WAPFORUM//DTD WML 1.2//EN
+NickName=WML 1.2
+DefaultExtension=wml
+Groups=Core
+NumOfPages=1
+CaseSensitive=true
 
 [Toolbars]
-Location = wml-1-2
-Names = deck, forms, table, tasks, text, misc
+Location=wml-1-2
+Names=deck, forms, table, tasks, text, misc
 
 [Page1]
-Title = Core Attributes
-Groups = Core
+Title=Core Attributes
+Groups=Core
 
 [Extra tags]
-List =!DOCTYPE, td, tr, small, big, u, i, strong, em, refresh, prev, head
+List=!DOCTYPE, td, tr, small, big, u, i, strong, em, refresh, prev, head
 
 small=xml:lang
-small_options = hasCore
+small_options=hasCore
 big=xml:lang
-big_options = hasCore
+big_options=hasCore
 u=xml:lang
-u_options = hasCore
+u_options=hasCore
 i=xml:lang
-i_options = hasCore
+i_options=hasCore
 strong=xml:lang
-strong_options = hasCore
+strong_options=hasCore
 em=xml:lang
-em_options = hasCore
+em_options=hasCore
 td=xml:lang
-td_options = hasCore
-tr_options = hasCore
-prev_options = hasCore
-refresh_options = hasCore
-head_options = hasCore
+td_options=hasCore
+tr_options=hasCore
+prev_options=hasCore
+refresh_options=hasCore
+head_options=hasCore
 
 [Extra rules]
-BooleanAttributes = simple
-Single Tag Style = XML
-StructGroupsCount = 2
+BooleanAttributes=simple
+Single Tag Style=XML
+StructGroupsCount=2
 
 [StructGroup_1]
-Name = Images
-No_Name = No Images
-Icon = image
-Tag = img(src)
-HasFileName = true
+Name=Images
+No_Name=No Images
+Icon=image
+Tag=img(src)
+HasFileName=true
 
 [StructGroup_2]
-Name = Links
-No_Name = No Links
-Icon = www
-Tag = a(title,href)
-HasFileName = true
-FileNameRx = .*\\||#.*
+Name=Links
+No_Name=No Links
+Icon=www
+Tag=a(title,href)
+HasFileName=true
+FileNameRx=.*\\||#.*

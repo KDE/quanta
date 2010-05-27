@@ -1,25 +1,25 @@
 [General]
-Name = DTD
-NickName = DTD
-DefaultExtension = dtd
-MimeTypes = text/dtd
-NumOfPages = 0
-CaseSensitive = true
-Family = 2
-TopLevel = false
+Name=DTD
+NickName=DTD
+DefaultExtension=dtd
+MimeTypes=text/dtd
+NumOfPages=0
+CaseSensitive=true
+Family=2
+TopLevel=false
 
 [Parsing rules]
-AreaBorders = <! >
-MayContain = dtd
+AreaBorders=<! >
+MayContain=dtd
 
 [Extra rules]
-StructGroupsCount = 1
-StructBeginStr = [
-StructEndStr = ]
-StructRx = \\[|\\]
+StructGroupsCount=1
+StructBeginStr=[
+StructEndStr=]
+StructRx=\\[|\\]
 
 [StructGroup_1]
-Name = Entities
-No_Name = No Entities Found
-DefinitionRx = ENTITY[\\s]+([\\w]+)[\\s]+
-AutoCompleteAfter = \\&
+Name=Entities
+No_Name=No Entities Found
+DefinitionRx=ENTITY[\\s]+([\\w]+)[\\s]+
+AutoCompleteAfter=\\&

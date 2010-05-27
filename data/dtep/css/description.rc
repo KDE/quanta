@@ -1,36 +1,36 @@
 [General]
-Name = text/css
-NickName = CSS
-DefaultExtension = css
-MimeTypes = text/css
-NumOfPages = 0
-CaseSensitive = true
-Family = 2
-TopLevel = true
+Name=text/css
+NickName=CSS
+DefaultExtension=css
+MimeTypes=text/css
+NumOfPages=0
+CaseSensitive=true
+Family=2
+TopLevel=true
 
 [Toolbars]
-Location = css
-Names = css
+Location=css
+Names=css
 
 [Extra rules]
-StructGroupsCount = 1
-MinusAllowedInWord = true
-TagAutoCompleteAfter = {
-AttributeAutoCompleteAfter = :
-AttributeSeparator = ,
-TagSeparator = ;
+StructGroupsCount=1
+MinusAllowedInWord=true
+TagAutoCompleteAfter={
+AttributeAutoCompleteAfter=:
+AttributeSeparator=,
+TagSeparator=;
 
 [Parsing rules]
-Tags = style(type[text/css])
-Comments = /* */
-StructKeywords =
-StructBeginStr = {
-StructEndStr = }
-StructRx = \\{|\\}
+Tags=style(type[text/css])
+Comments=/* */
+StructKeywords=
+StructBeginStr={
+StructEndStr=}
+StructRx=\\{|\\}
 
 
 [StructGroup_1]
-Name = Selectors
-No_Name = No Selectors Found
-DefinitionRx = \\s([\\d\\S\\w]+)\\b
-TagType = ScriptStructureBegin
+Name=Selectors
+No_Name=No Selectors Found
+DefinitionRx=\\s([\\d\\S\\w]+)\\b
+TagType=ScriptStructureBegin

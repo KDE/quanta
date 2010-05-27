@@ -1,23 +1,23 @@
 [General]
-Name = -//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN
-NickName = KDE Docbook XML 4.2
-URL = dtd/kdex.dtd
-DoctypeString = book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd"
-Inherits = -//KDE//DTD DocBook XML V4.1.2-Based Variant V1.0//EN
-DefaultExtension = docbook
-Groups = Core
-NumOfPages = 1
-CaseSensitive = true
+Name=-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN
+NickName=KDE Docbook XML 4.2
+URL=dtd/kdex.dtd
+DoctypeString=book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd"
+Inherits=-//KDE//DTD DocBook XML V4.1.2-Based Variant V1.0//EN
+DefaultExtension=docbook
+Groups=Core
+NumOfPages=1
+CaseSensitive=true
 
 [Toolbars]
-Location = kde-docbook
-Names = kde-docbook-standard, kde-docbook-list, kde-docbook-admonitions, kde-docbook-images, kde-docbook-tables, kde-docbook-uielements, kdexmltools
+Location=kde-docbook
+Names=kde-docbook-standard, kde-docbook-list, kde-docbook-admonitions, kde-docbook-images, kde-docbook-tables, kde-docbook-uielements, kdexmltools
 
 [Page1]
-Title = Core
-Groups = Core
+Title=Core
+Groups=Core
 
 [Extra rules]
-Single Tag Style = XML
+Single Tag Style=XML
 
 [Parsing rules]
