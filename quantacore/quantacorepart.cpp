@@ -413,7 +413,10 @@ void QuantaCorePart::slotChangeDTEP()
     int pos = -1;
     int defaultIndex = 0;
 
-    QString oldDtdName = m_activeQuantaDoc->mainDTEP()->name;
+    QString oldDtdName;
+    if (m_activeQuantaDoc->mainDTEP()) {
+      oldDtdName = m_activeQuantaDoc->mainDTEP()->name;
+    }
 //FIXME    QString defaultDocType = Project::ref()->defaultDTD();
     QString defaultDocType = Settings::self()->defaultDTEP();
     QStringList lst = DTDs::ref()->nickNameList(true);
@@ -423,7 +426,7 @@ void QuantaCorePart::slotChangeDTEP()
     for(int i = 0; i < lst.count(); ++i)
     {
       form.dtdCombo->addItem(lst[i]);
-      if (lst[i] == oldDtdNickName)
+      if (!oldDtdNickName.isEmpty() && lst[i] == oldDtdNickName)
         pos = i;
       if (lst[i] == defaultDtdNickName)
         defaultIndex = i;
@@ -433,7 +436,7 @@ void QuantaCorePart::slotChangeDTEP()
       pos = defaultIndex;
     form.dtdCombo->setCurrentIndex(pos);
     form.messageLabel->setText(i18n("Change the current DTD."));
-    form.currentDTD->setText(m_activeQuantaDoc->mainDTEP()->nickName);
+    form.currentDTD->setText(oldDtdNickName);
     //dlg->useClosestMatching->setShown(false);
     delete form.useClosestMatching;
     form.useClosestMatching = 0L;

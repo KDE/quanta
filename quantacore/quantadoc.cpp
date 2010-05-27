@@ -48,7 +48,7 @@
 
 
 QuantaDoc::QuantaDoc(KDevelop::IDocument *document, QuantaCorePart *qcore)
-  : EditorSource(document, qcore), m_qcore(qcore)
+  : EditorSource(document, qcore), m_qcore(qcore), m_dtd(0)
 {
   m_parseResult.model = 0L;
   m_parseResult.dtepList.clear();
