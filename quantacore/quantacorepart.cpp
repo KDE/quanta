@@ -145,10 +145,6 @@ void QuantaCorePart::initActions()
     m_insertTagAction  = new KAction(i18n("Insert &Tag"), this);
     actionCollection()->addAction("insert_tag", m_insertTagAction );
   connect(m_insertTagAction, SIGNAL(triggered(bool)), SLOT(slotInsertTag()));
-#ifdef __GNUC__
-#warning "kde4 port it"
-#endif
-//actionCollection()->addAction(KStandardAction::OpenNew,  "file_new", this, SLOT(slotOpenNew()));
 
     newAct  = new KAction(i18n("&Change the DTEP..."), this);
     actionCollection()->addAction("change_dtd", newAct );
@@ -418,21 +414,6 @@ void QuantaCorePart::contextMenu(KMenu *popup, const KDevelop::Context *context)
     popup->addSeparator();
     popup->addAction(m_insertTagAction);
   }*/
-}
-
-
-void QuantaCorePart::slotOpenNew()
-{
-  //FIXME: just a hack to have new empty documents with KDevelop platform
-  KTemporaryFile file;
-  file.setSuffix(i18n(".unsaved"));
-  file.open();
-  KUrl url = KUrl(file.fileName());
-  KDevelop::IDocument *doc = KDevelop::Core::self()->documentController()->openDocument(url);
-  if (doc)
-  {
-     doc->close();
-  }
 }
 
 void QuantaCorePart::slotChangeDTEP()

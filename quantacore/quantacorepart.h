@@ -141,7 +141,6 @@ private slots:
   void slotMakeDonation();
   void slotHelpHomepage();
   void slotHelpUserList();
-  void slotOpenNew();
   
   void slotInsertConfigWidget(const KDialog *dlg, QWidget *page, unsigned int pageNo);
   

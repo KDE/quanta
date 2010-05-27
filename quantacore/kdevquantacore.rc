@@ -1,9 +1,6 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
 <kpartgui version="2" name="quanta" >
     <MenuBar>
-      <Menu name="file" >
-        <Action name="file_new" group="new_merge"/>
-      </Menu>
       <Menu name="edit" >
             <text>&amp;Edit</text>
             <DefineGroup name="edit_paste_merge" />
