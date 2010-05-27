@@ -125,8 +125,9 @@ public:
    * @param col
    */
   void setCursorPosition(int line, int col);
-  
-  
+
+private slots:
+  void documentActivated(KDevelop::IDocument*);  
 
 protected:
   KDevelop::IDocument *m_ideDocument;

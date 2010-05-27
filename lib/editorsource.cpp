@@ -17,14 +17,18 @@
 #include <kdebug.h>
 
 #include <interfaces/idocument.h>
+#include <interfaces/icore.h>
+#include <interfaces/idocumentcontroller.h>
 
 EditorSource::EditorSource(KDevelop::IDocument *document, QObject *parent)
   : QObject(parent)
 {
   m_ideDocument = document;
   m_document = m_ideDocument->textDocument();
+  Q_ASSERT(m_document);
   m_view = m_document->activeView();
-
+  connect(KDevelop::ICore::self()->documentController(), SIGNAL(documentActivated(KDevelop::IDocument*)),
+          this, SLOT(documentActivated(KDevelop::IDocument*)));
 
   m_copyAction = m_document->action("edit_copy");
   m_cutAction = m_document->action("edit_cut");
@@ -34,6 +38,14 @@ EditorSource::EditorSource(KDevelop::IDocument *document, QObject *parent)
 
 EditorSource::~EditorSource()
 {
+}
+
+///TODO: this sucks, a proper "activeViewChanged" signal in KTextEditor::Document would be much nicer
+void EditorSource::documentActivated(KDevelop::IDocument* document)
+{
+  if ( document == m_ideDocument ) {
+    m_view = m_document->activeView();
+  }
 }
 
 /**
