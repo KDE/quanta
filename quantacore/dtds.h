@@ -89,7 +89,7 @@ public:
    */
   QString getDTDNickNameFromName(const QString& name)
   {
-    DTDStruct *dtd = m_dict->value(name);
+    DTDStruct *dtd = m_dict->value(name.toLower());
     if ( dtd )
       return dtd->nickName;
     else
