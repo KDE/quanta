@@ -14,7 +14,6 @@
 #include "autocompletionconfig.h"
 #include "environmentconfig.h"
 #include "extfileinfo.h"
-#include "ui_donationdialog.h"
 #include "dtds.h"
 #include "ui_dtdselectdialog.h"
 #include "parsermanager.h"
@@ -128,10 +127,6 @@ void QuantaCorePart::initActions()
     actionCollection()->addAction("help_userlist", newAct );
   connect(newAct, SIGNAL(triggered(bool)), SLOT(slotHelpUserList()));
 
-    newAct  = new KAction(i18n("Make &Donation"), this);
-    actionCollection()->addAction("help_donation", newAct );
-  connect(newAct, SIGNAL(triggered(bool)), SLOT(slotMakeDonation()));
-
     newAct  = new KAction(i18n("Complete Text"), this);
     actionCollection()->addAction("show_completion", newAct );
   newAct->setShortcut(KShortcut(Qt::CTRL + Qt::Key_Space));
@@ -235,20 +230,6 @@ void QuantaCorePart::slotInsertConfigWidget(const KDialog */*dlg*/, QWidget */*p
             break;
         }
 }*/
-}
-
-
-void QuantaCorePart::slotMakeDonation()
-{
-  KDialog dlg(KDevelop::Core::self()->uiController()->activeMainWindow());
-  dlg.setCaption( i18n("Support Quanta with Financial Donation") );
-  dlg.setButtons( KDialog::Close );
-  dlg.setDefaultButton( KDialog::Close );
-  QWidget *w = new QWidget(&dlg);
-  Ui::DonationDialog form;
-  form.setupUi(w);
-  dlg.setMainWidget(w);
-  dlg.exec();
 }
 
 void QuantaCorePart::slotHelpHomepage()

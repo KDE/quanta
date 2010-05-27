@@ -138,7 +138,6 @@ private slots:
 
   void slotShowCompletionHint() const {if (m_activeQuantaDoc)    m_activeQuantaDoc->codeCompletionHintRequested();};
   
-  void slotMakeDonation();
   void slotHelpHomepage();
   void slotHelpUserList();
   

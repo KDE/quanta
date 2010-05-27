@@ -59,7 +59,6 @@
             <text>&amp;Help</text>
             <Action name="help_homepage" />
             <Action name="help_userlist" />
-            <Action name="help_donation" />
             <Separator/>
         </Menu>
     </MenuBar>
