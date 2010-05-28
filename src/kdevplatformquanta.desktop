@@ -8,6 +8,7 @@ Name[pt_BR]=Interface para projetos do KDevelop
 Name[sv]=KDevelop-projektgränssnitt
 Name[uk]=Інтерфейс проекту KDevelop
 Name[x-test]=xxKDevelop Project Interfacexx
+Name[zh_CN]=KDevelop 项目接口
 Type=ServiceType
 X-KDE-Derived=KDevelop/Plugin
 X-KDE-ServiceType=KDevelop/Quanta
