@@ -42,6 +42,7 @@ IOASISCatalogDomNode::IOASISCatalogDomNode() {}
 
 OASISCatalogEntry::OASISCatalogEntry() {
     m_parent = 0;
+    m_deleted = false;
 }
 
 OASISCatalogEntry::~OASISCatalogEntry() {}
@@ -208,8 +209,34 @@ ICatalogEntry* OASISCatalogContainer::addUriEntry(const QString& uri,
     return entry;
 }
 
+ICatalogEntry* OASISCatalogContainer::addDoctypeEntry(const QString& doctype, const QString& url, const QHash< QString, QVariant >& parameters)
+{
+    OASISCatalogEntry *entry = new OASISCatalogEntry();
+    entry->m_parent = this;
+    entry->m_publicId = QString::null;
+    entry->m_systemId = QString::null;
+    entry->m_uri = QString::null;
+    entry->m_doctype = doctype;
+    entry->m_url = url;
+    foreach(QString key, parameters.keys()) {
+        entry->setParameter(key, parameters[key]);
+    }
+    m_entries.append(entry);
+    if (!element().isNull()) {
+        QDomElement e = element().ownerDocument().createElement("doctype");
+        if (!entry->m_id.isNull())
+            e.setAttribute("id", entry->m_id);
+        if (!entry->m_base.isNull())
+            e.setAttribute("xml:base", entry->m_base);
+        e.setAttribute("name", entry->m_doctype);
+        e.setAttribute("uri", entry->m_url);
+        element().appendChild(e);
+        entry->setElement(e);
+    }
+    return entry;
+}
 
-void OASISCatalogContainer::removeEntry(const ICatalogEntry* entry)
+void OASISCatalogContainer::removeEntry(ICatalogEntry* entry)
 {
     if(!entry)
         return;
@@ -226,7 +253,7 @@ void OASISCatalogContainer::removeEntry(const ICatalogEntry* entry)
                 if (!ent->element().isNull() && !ent->element().parentNode().isNull())
                     ent->element().parentNode().removeChild(ent->element());
                 m_entries.removeAll(ent);
-                delete ent;
+                ent->m_deleted = true;
             }
         }
     }
@@ -234,11 +261,16 @@ void OASISCatalogContainer::removeEntry(const ICatalogEntry* entry)
 
 QList< ICatalogEntry* > OASISCatalogContainer::entries() const {
     QList< ICatalogEntry* > ret;
-    foreach(OASISCatalogEntry *e, m_entries)
-    ret.append(e);
+    foreach(OASISCatalogEntry *e, m_entries) {
+        if(e && !e->m_deleted)
+            ret.append(e);
+    }
     foreach(OASISCatalogGroup *g, m_groups)
-    foreach(ICatalogEntry *e, g->entries())
-    ret.append(e);
+        foreach(ICatalogEntry *entry, g->entries()) {
+            OASISCatalogEntry *e = dynamic_cast<OASISCatalogEntry *>(entry);
+            if(e && !e->m_deleted)
+                ret.append(e);
+        }
     return ret;
 }
 
@@ -298,7 +330,7 @@ QString OASISCatalogContainer::resolve ( const QString& publicId, const QString&
 QString OASISCatalogContainer::resolvePublicId ( const QString& publicId ) const {
     QString id = PublicId::decodeURN ( publicId );
     foreach ( OASISCatalogEntry *e, m_entries ) {
-        if (!e) continue;
+        if (!e || e->m_deleted) continue;
         if ( !e->publicId().isEmpty() && ( e->publicId() == publicId || e->publicId() == id ) ) {
             QString url = e->URL();
             KUrl u(url);
@@ -326,7 +358,7 @@ QString OASISCatalogContainer::resolvePublicId ( const QString& publicId ) const
 QString OASISCatalogContainer::resolveSystemId ( const QString& systemId ) const {
     QString id = PublicId::decodeURN ( systemId );
     foreach ( OASISCatalogEntry *e, m_entries ) {
-        if (!e) continue;
+        if (!e || e->m_deleted) continue;
         if ( !e->systemId().isEmpty() && e->systemId() == id ) {
             QString url = e->URL();
             KUrl u(url);
@@ -349,6 +381,34 @@ QString OASISCatalogContainer::resolveSystemId ( const QString& systemId ) const
     
     return QString::null;
 }
+
+QString OASISCatalogContainer::resolveDoctype(const QString& doctype) const
+{
+    foreach ( OASISCatalogEntry *e, m_entries ) {
+        if (!e || e->m_deleted) continue;
+        if ( !e->doctype().isEmpty() && e->doctype().toLower() == doctype.toLower() ) {
+            QString url = e->URL();
+            KUrl u(url);
+            if (u.isValid() && u.isRelative()) {
+                QString b = e->base();
+                if (!b.isEmpty())
+                    b = base();
+                url = b + url;
+            }
+            return url;
+        }
+    }
+    foreach ( OASISCatalogGroup *g, m_groups ) {
+        if (!g) continue;
+        QString res = g->resolveDoctype(doctype);
+        if (!res.isEmpty())
+            return res; //Already rewritten
+    }
+    //TODO implement delegate
+    
+    return QString::null;
+}
+
 
 QString OASISCatalogContainer::rewriteSystemId ( const QString & systemId ) const {
     if ( systemId.isEmpty() )
@@ -423,7 +483,7 @@ QString OASISCatalogContainer::resolveUri(const QString& uri) const
 {
     QString id = PublicId::decodeURN ( uri );
     foreach ( OASISCatalogEntry *e, m_entries ) {
-        if (!e) continue;
+        if (!e|| e->m_deleted) continue;
         if ( !e->URI().isEmpty() && e->URI() == id ) {
             QString url = e->URL();
             KUrl u(url);
@@ -555,6 +615,10 @@ QString OASISCatalog::resolveUri(const QString& uri) const
     return res;
 }
 
+QString OASISCatalog::resolveDoctype(const QString& doctype) const
+{
+    return OASISCatalogContainer::resolveDoctype ( doctype );
+}
 
 
 

@@ -80,6 +80,8 @@ AddSchemaDialog::Type AddSchemaDialog::type() const
         return SystemId;
     else if (d->idCbx->currentText().toLower().trimmed() == "uri")
         return Uri;
+    else if (d->idCbx->currentText().toLower().trimmed() == "doctype")
+        return Doctype;
     return PublicId;
 }
 
@@ -102,7 +104,7 @@ XmlCatalogDialog::XmlCatalogDialog ( QWidget* parent, Qt::WFlags flags ) : KDial
     QWidget *w = new QWidget();
     d->setupUi(w);
     this->setMainWidget(w);
-    d->fileDialog = new KFileDialog ( KUrl ( "~" ), "*.xml *.XML |XML Documents\n*|All Files", this );
+    d->fileDialog = new KFileDialog ( KUrl ( "~" ), "*.xml *.XML *.cat *.CAT|OASIS and SGML Catalogs\n*|All Files", this );
     connect(this, SIGNAL(okClicked()), this, SLOT(exit()));
     connect(this, SIGNAL(cancelClicked()), this, SLOT(canceled()));
     connect(d->addCatalogBtn, SIGNAL(pressed()), d->fileDialog, SLOT(show()));
@@ -305,6 +307,11 @@ void XmlCatalogDialog::slotAddEntry()
     QString uri = dialog->URI();
     bool success = false;
     
+    if(id.trimmed().isEmpty() || uri.trimmed().isEmpty()) {
+        KMessageBox::error(dialog, i18n("Empty entries not allowed!"));
+        return;
+    }
+
     ICatalog *catalog;
     ICatalogEntry *entry;
     getSelection(catalog, entry);
@@ -322,8 +329,10 @@ void XmlCatalogDialog::slotAddEntry()
         success = catalog->addPublicEntry(id, uri, QHash<QString, QVariant>());
     else if (dialog->type() == AddSchemaDialog::SystemId)
         success = catalog->addSystemEntry(id, uri, QHash<QString, QVariant>());
-    else
+    else if (dialog->type() == AddSchemaDialog::Uri)
         success = catalog->addUriEntry(id, uri, QHash<QString, QVariant>());
+    else
+        success = catalog->addDoctypeEntry(id, uri, QHash<QString, QVariant>());
     
     if (!success)
         KMessageBox::error(dialog, i18n("Unable to add the entry. It is possible that this catalog does not support it."));
@@ -361,6 +370,8 @@ void XmlCatalogDialog::slotOpenDocument()
             file = entry->catalog()->resolveSystemId(entry->systemId());
         else if(!entry->URI().isEmpty() && entry->catalog()) 
             file = entry->catalog()->resolveUri(entry->URI());
+        else if(!entry->doctype().isEmpty() && entry->catalog()) 
+            file = entry->catalog()->resolveDoctype(entry->doctype());
         else 
             file = entry->URL();
     }

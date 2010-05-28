@@ -52,6 +52,9 @@ public:
     /**The method used to resolve will depend on the catalog implementation.*/
     virtual QString resolve ( const QString & publicId, const QString & systemId ) const = 0;
 
+    /**The method used to resolve will depend on the catalog implementation.*/
+    virtual QString resolveDoctype ( const QString & doctype ) const = 0;
+    
     /**Return all the entries in the catalog regardless of the group.
      * @note Not all catalog formats have groups so this must return all the entries.*/
     virtual QList<ICatalogEntry *> entries() const = 0;
@@ -65,8 +68,11 @@ public:
     /** Returns NULL when failed. */
     virtual ICatalogEntry * addUriEntry(const QString &uri, const QString &url, const QHash<QString, QVariant> &parameters) = 0;
     
+    /** Returns NULL when failed. */
+    virtual ICatalogEntry * addDoctypeEntry(const QString &doctype, const QString &url, const QHash<QString, QVariant> &parameters) = 0;
+    
     /** Removes an entry from the catalog. */
-    virtual void removeEntry(const ICatalogEntry * entry) = 0;
+    virtual void removeEntry(ICatalogEntry * entry) = 0;
 
     /**Return all the groups in the catalog*/
     virtual QList<ICatalogGroup *> groups() const {return QList<ICatalogGroup *>();}

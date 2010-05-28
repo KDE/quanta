@@ -42,10 +42,6 @@ public:
                            const KUrl &path = KUrl());
                            
 private:
-    /** Returns the default DTD's SystemID for the doctype or null if not exist.
-     *  The system id must still be resolved by the catalog afterwards.
-     */
-    static QString systemIdForDoctype(const QString &doctype);
     /** Returns the default DTD's SystemID for the mime type or null if not exist
      *  The system id must still be resolved by the catalog afterwards.
      */

@@ -63,7 +63,7 @@ class KDEVSGMLPARSER_EXPORT DtdHelperData : public AbstractDtdHelper, public KSh
 /** A DTD helper for the SGML tokenizer and SGML parser.
  *  When a DOCTYPE is found in a file this helper will
  *  be used to correctly tokenize and parse the file.
- *  It serves as a facade and abstraction for the tokenizer/parser.
+ *  It serves as a facade DTD/DUChain for the tokenizer/parser.
  */
 class KDEVSGMLPARSER_EXPORT DtdHelper : public AbstractDtdHelper {
     public:

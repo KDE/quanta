@@ -29,6 +29,7 @@
 
 const QString ICatalogManager::ParameterFile = "catalog.manager.file";
 const QString ICatalogManager::ParameterReadonly = "catalog.manager.readonly";
+const QString ICatalogManager::ParameterName = "catalog.manager.name";
 
 ICatalogManager * ICatalogManager::instance = new CatalogManager();
 

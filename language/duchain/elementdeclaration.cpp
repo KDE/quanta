@@ -29,6 +29,7 @@ ElementDeclarationData::ElementDeclarationData()
 {
     initializeAppendedLists();
     closeTagRequired = true;
+    elementType = Element;
 }
 
 ElementDeclarationData::ElementDeclarationData(const Xml::ElementDeclarationData& rhs): ClassDeclarationData(rhs)
@@ -38,6 +39,7 @@ ElementDeclarationData::ElementDeclarationData(const Xml::ElementDeclarationData
     closeTagRequired = rhs.closeTagRequired;
     name = rhs.name;
     contentType = rhs.contentType;
+    elementType = rhs.elementType;
 }
 
 ElementDeclarationData::~ElementDeclarationData()
@@ -73,7 +75,7 @@ ElementDeclaration::~ElementDeclaration()
 
 }
 
-QString ElementDeclaration::name()
+QString ElementDeclaration::name() const
 {
     return d_func()->name.str();
 }
@@ -89,7 +91,7 @@ void ElementDeclaration::setCloseTagRequired(bool required)
     d_func_dynamic()->closeTagRequired = required;
 }
 
-bool ElementDeclaration::closeTagRequired()
+bool ElementDeclaration::closeTagRequired() const
 {
     return d_func()->closeTagRequired;
 }
@@ -99,11 +101,30 @@ void ElementDeclaration::setContentType(const QString& ct)
     d_func_dynamic()->contentType = IndexedString(ct);
 }
 
-QString ElementDeclaration::contentType()
+QString ElementDeclaration::contentType() const
 {
     return d_func()->contentType.str();
 }
 
+void ElementDeclaration::setContent(const QString& ct)
+{
+    d_func_dynamic()->content = IndexedString(ct);
+}
+
+QString ElementDeclaration::content() const
+{
+    return d_func()->content.str();
+}
+
+ElementDeclarationData::ElementType ElementDeclaration::elementType() const
+{
+    return d_func()->elementType;
+}
+
+void ElementDeclaration::setElementType(ElementDeclarationData::ElementType type)
+{
+    d_func_dynamic()->elementType = type;
+}
 
 QString ElementDeclaration::toString() const
 {

@@ -32,6 +32,16 @@ KDEVSGMLDUCHAIN_EXPORT DECLARE_LIST_MEMBER_HASH(ElementDeclarationData, m_attrib
 class KDEVSGMLDUCHAIN_EXPORT ElementDeclarationData : public ClassDeclarationData
 {
 public:
+    
+    enum ElementType {
+        Element,
+        Text,
+        Doctype,
+        CDATA,
+        PCDATA,
+        Entity,
+        Processing
+    };
 
     ElementDeclarationData();
 
@@ -41,7 +51,9 @@ public:
 
     IndexedString name;
     IndexedString contentType;
+    IndexedString content;
     bool closeTagRequired;
+    ElementType elementType;
     
     START_APPENDED_LISTS_BASE(ElementDeclarationData, ClassDeclarationData);
     APPENDED_LIST_FIRST(ElementDeclarationData, IndexedString, m_attributes);
@@ -62,12 +74,18 @@ public:
     virtual QString toString() const;
     
     void setName(const QString &n);
-    QString name();
+    QString name() const;
 
     void setContentType(const QString &ct);
-    QString contentType();
+    QString contentType() const;
 
-    bool closeTagRequired();
+    void setContent(const QString &ct);
+    QString content() const;
+    
+    void setElementType(ElementDeclarationData::ElementType type);
+    ElementDeclarationData::ElementType elementType() const;
+
+    bool closeTagRequired() const;
     void setCloseTagRequired(bool required);
 
     virtual const IndexedString* attributes() const;

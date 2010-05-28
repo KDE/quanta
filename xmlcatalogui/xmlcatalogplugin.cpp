@@ -34,16 +34,16 @@ using namespace KDevelop;
 
 
 K_PLUGIN_FACTORY ( KdevPlugFactory, registerPlugin<XmlCatalogPlugin>(); )
-K_EXPORT_PLUGIN ( KdevPlugFactory ( KAboutData ( "kdevxmlcatalogui", "kdevxmlcatalogui", ki18n ( "Xml catalog user interface" ), "0.1", ki18n ( "User interface to manage XML schemata and DTD documents." ), KAboutData::License_GPL ) ) )
+K_EXPORT_PLUGIN ( KdevPlugFactory ( KAboutData ( "kdevxmlcatalogui", "kdevxmlcatalogui", ki18n ( "DTD/Schema Catalog user interface" ), "0.1", ki18n ( "User interface to manage XML schemata and DTD documents." ), KAboutData::License_GPL ) ) )
 
 XmlCatalogPlugin::XmlCatalogPlugin ( QObject* parent, const QVariantList& ) :
         IPlugin ( KdevPlugFactory::componentData(), parent ) {
 
     setXMLFile ("kdevxmlcatalogui.rc");
     m_showDialogAction= actionCollection()->addAction ( "xmlcatalog_settings" );
-    m_showDialogAction->setText ( i18n ( "Configure XML Catalog..." ) );
+    m_showDialogAction->setText ( i18n ( "Configure Catalog..." ) );
     m_showDialogAction->setToolTip ( i18n ( "Manage XML schemata and DTD documents." ) );
-    m_showDialogAction->setWhatsThis ( i18n ( "<b>XML Catalog</b><p> Manage XML schemata and DTD documents.</p>" ) );
+    m_showDialogAction->setWhatsThis ( i18n ( "<b>DTD/Schema Catalog</b><p> Manage XML schemata and DTD documents.</p>" ) );
     m_showDialogAction->setEnabled ( true );
     connect ( m_showDialogAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotShowDialog() ) );
 }

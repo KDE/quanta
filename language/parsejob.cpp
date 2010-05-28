@@ -17,9 +17,17 @@
 
 #include "parsejob.h"
 #include "languagesupport.h"
+#include "parsesession.h"
+#include "sgmlparser.h"
+#include "xsddeclarationbuilder.h"
+#include "declarationbuilder.h"
+#include "includebuilder.h"
+#include "editorintegrator.h"
 
-#include "parser/parsesession.h"
-#include "parser/sgmlparser.h"
+#include <xmlcatalog/icatalogmanager.h>
+#include <xmlcatalog/catalogmanager.h>
+#include <xmlcatalog/cataloghelper.h>
+#include <xmlcatalog/idocumentcachemanager.h>
 
 #include <QFile>
 #include <QReadWriteLock>
@@ -29,22 +37,14 @@
 #include <kdebug.h>
 #include <KMimeType>
 
+#include <interfaces/ilanguage.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/topducontext.h>
-#include <interfaces/ilanguage.h>
 #include <language/duchain/parsingenvironment.h>
 #include <language/duchain/declaration.h>
 #include <language/backgroundparser/urlparselock.h>
-#include <editorintegrator.h>
-#include "duchain/declarationbuilder.h"
 #include <language/duchain/duchainutils.h>
-#include "duchain/includebuilder.h"
-#include <xmlcatalog/icatalogmanager.h>
-#include <xmlcatalog/catalogmanager.h>
-#include <xmlcatalog/cataloghelper.h>
-#include <xmlcatalog/idocumentcachemanager.h>
-#include "duchain/xsddeclarationbuilder.h"
 
 
 namespace Xml
@@ -97,11 +97,12 @@ void ParseJob::run()
     } else {
         session.setContents(contentsFromEditor());
     }
+    
     StartAst *start=0;
     if (!session.parse(&start)) {
         kDebug() << "Failed to parse:" << document().str();
     }
-
+ 
     //Build
     kDebug() << "Building:" << document().str();
     KDevelop::ReferencedTopDUContext top;
@@ -109,6 +110,7 @@ void ParseJob::run()
         KDevelop::DUChainReadLocker lock(KDevelop::DUChain::lock());
         top = KDevelop::DUChain::self()->chainForDocument(document());
     }
+ 
     if (top) {
         kDebug() << "Re-compiling:" << document().str();
         KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());

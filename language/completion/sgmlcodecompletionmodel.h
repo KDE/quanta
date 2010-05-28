@@ -19,7 +19,6 @@
 #define SGMLCODECOMPLETIONMODEL_H
 
 #include "completionexport.h"
-#include "../duchain/elementdeclaration.h"
 
 #include <KTextEditor/CodeCompletionModel>
 #include <KTextEditor/CodeCompletionModelControllerInterface>
@@ -52,17 +51,51 @@ public:
     virtual void executeCompletionItem2(KTextEditor::Document* document, const KTextEditor::Range& word, const QModelIndex& index) const;
 
 protected:
-    typedef QPair <QString, int> CompletionItem;
+    enum CompletionItemType {
+        Other,
+        Element,
+        Attribute,
+        Entity,
+        Enum
+    };
     
-    QList< CompletionItem > findChildElements(KTextEditor::Document* document, const KTextEditor::Range& range) const;
-    QList< CompletionItem > findAttributes(KTextEditor::Document* document, const KTextEditor::Range& range) const;
+    typedef struct CompletionItem {
+        CompletionItem(QString itemName, int itemMatchLevel, CompletionItemType itemType) {
+            type = itemType;
+            matchLevel = itemMatchLevel;
+            name = itemName;
+            info = "";
+        }
+        CompletionItem(QString itemName, QString itemInfo, int itemMatchLevel, CompletionItemType itemType) {
+            type = itemType;
+            matchLevel = itemMatchLevel;
+            name = itemName;
+            info = itemInfo;
+        }
+        QString name;
+        QString info;
+        int matchLevel;
+        CompletionItemType type;
+    } CompletionItem;
+
+    /** The item and its MatchQuality 0-10*/
+    QList< CompletionItem > m_items;
+
+    /** The  depth to indent by*/
+    int m_depth;
+    
+    QList< CompletionItem > findChildElements(KTextEditor::Document* document, const KTextEditor::Range& range, const QString &element = QString()) const;
+    QList< CompletionItem > findAttributes(KTextEditor::Document* document, const KTextEditor::Range& range, const QString &element = QString()) const;
     QList< CompletionItem > findAll(KTextEditor::Document* document, const KTextEditor::Range& range) const;
+    QList< CompletionItem > findAllEntities(KTextEditor::Document* document, const KTextEditor::Range& range) const;
+
+    const QIcon getIcon ( CompletionItemType type ) const;
     
     /** @todo get users indentation profile */
-    QString getIndentstring(int depth) const;
+    QString getIndentstring(KTextEditor::Document* document, int depth) const;
     
     /** @todo get users preferences for HTML ie: lower-case */
-    QString formatString(const QString &str) const;
+    QString formatString(KTextEditor::Document* document, const QString &str, CompletionItemType type) const;
     
     /** Finds the seperator before the cursor.
      */ 
@@ -70,10 +103,6 @@ protected:
     
     KTextEditor::Range growRangeLeft(KTextEditor::Document* document, const KTextEditor::Range& range, const QString &condition) const;
     KTextEditor::Range growRangeRight(KTextEditor::Document* document, const KTextEditor::Range& range, const QString &condition) const;
-
-    /** The item and its MatchQuality 0-10*/
-    QList< CompletionItem > m_items;
-    bool m_attributeCompletion;
 };
 
 }

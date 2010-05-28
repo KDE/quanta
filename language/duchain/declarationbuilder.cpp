@@ -41,17 +41,19 @@ void DeclarationBuilder::closeDeclaration()
 
 ElementDeclaration* DeclarationBuilder::createClassInstanceDeclaration(const QString &identifier,
         const KDevelop::SimpleRange &range,
-        const QString &name,
+        ElementDeclarationData::ElementType type,
         const QString &nameSpacePrefix)
 {
     Q_UNUSED(nameSpacePrefix);
-    KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(identifier.toUtf8())));
+    //SGML ignore case
+    KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(identifier.toLower().toUtf8())));
     KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
     ElementDeclaration* dec = openDefinition<ElementDeclaration>(id, range);
     dec->setKind(KDevelop::Declaration::Instance);
     dec->clearBaseClasses();
     dec->setClassType(KDevelop::ClassDeclarationData::Class);
-    dec->setName(name);
+    dec->setName(identifier);
+    dec->setElementType(type);
     //dec->setNameSpacePrefix(nameSpacePrefix);
     return dec;
 }
@@ -65,12 +67,11 @@ KDevelop::Declaration* DeclarationBuilder::createImportDeclaration(const QString
         // invalid include
         return NULL;
     }
-    KDevelop::Declaration* dec = openDefinition<KDevelop::Declaration>(id, range/*KDevelop::SimpleRange(0, 0, 0, 0)*/);
+    KDevelop::Declaration* dec = openDefinition<KDevelop::Declaration>(id, range);
     dec->setKind(KDevelop::Declaration::Import);
     //injectContext(editor()->smart(), includedCtx);
     //eventuallyAssignInternalContext();
     //closeInjectedContext(editor()->smart());
-    closeDeclaration();
     return dec;
 }
 
@@ -84,26 +85,19 @@ void DeclarationBuilder::visitDtdDoctype(DtdDoctypeAst* node)
             range.end = e->findPosition(node->endToken, EditorIntegrator::BackEdge);
         else
             range.end = e->findPosition(node->copen, EditorIntegrator::FrontEdge);
-        if (node->childrenSequence) {
-            KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(nodeText(node->name))));
-            KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
-            KDevelop::Declaration * dec = openDefinition<KDevelop::Declaration>(id, range);
-            dec->setKind(KDevelop::Declaration::Namespace);
-            DeclarationBuilderBase::visitDtdDoctype(node);
-            closeDeclaration();
-        } else {
+        if(node->publicId || node->systemId || node->name) {
             DeclarationBuilderBase::visitDtdDoctype(node);
             QString publicId = nodeText(node->publicId);
             QString systemId = nodeText(node->systemId);
             QString doctype = nodeText(node->name);
             KUrl url = CatalogHelper::resolve(publicId, systemId, QString(), doctype, KMimeType::Ptr(), this->editor()->currentUrl().toUrl());
             createImportDeclaration(url.pathOrUrl(), range, url);
-            //closeDeclaration();
+            closeDeclaration();
         }
     }
 }
 
-/* <!ELEMENT (element | element) (element | (element, element)) -(exclude | exclude)>
+/* <!ELEMENT (element1 | element2) (element3 | (element4, element5)) -(exclude6 | exclude7)>
  * Declares to classes with a bunch of blah's excluding some blah's
  */
 void DeclarationBuilder::visitDtdElement(DtdElementAst* node)
@@ -124,7 +118,7 @@ void DeclarationBuilder::visitDtdElement(DtdElementAst* node)
         return;
     }
 
-    // -(exclude | exclude) We will ignore these..
+    // -(exclude6 | exclude7) We will ignore these..
     m_dtdElementExclude.clear();
     if (node->excludeSequence) {
         const KDevPG::ListNode<DtdEnumItemAst*> *it = node->excludeSequence->front(), *end = it;
@@ -138,16 +132,16 @@ void DeclarationBuilder::visitDtdElement(DtdElementAst* node)
                     name = QString("#%1").arg(nodeText(it->element->type));
                 }
                 if (!name.isEmpty())
-                    m_dtdElementExclude.insert(name,name);
+                    m_dtdElementExclude.insert(name.toLower(),name.toLower());
             }
             it = it->next;
         }
         while (it != end);
     }
 
-    //for each <!ELEMENT (element | element)
+    //for each (element1 | element2)
     foreach(const QString &name, elements) {
-        KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(name.toLatin1())));
+        KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(name.toLower().toUtf8())));
         {
             KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
             ElementDeclaration* dec = openDefinition<ElementDeclaration>(id, range);
@@ -155,18 +149,18 @@ void DeclarationBuilder::visitDtdElement(DtdElementAst* node)
             dec->clearBaseClasses();
             dec->clearAttributes();
             dec->setClassType(KDevelop::ClassDeclarationData::Class);
+            dec->setElementType(ElementDeclarationData::Element);
+            dec->setName(name);
             if (node->content) {
                 dec->setContentType(nodeText(node->content));
             }
-            //if (e->tokenToString(node->openTag) == "O") {
-            //    dec->setOpenTagRequired(false);
-            //}
+            
             if (e->tokenToString(node->closeTag) == "O") {
                 dec->setCloseTagRequired(false);
             }
-            m_dtdElements.insert(name, dec);
+            m_dtdElements.insert(name.toLower(), dec);
         }
-        //TODO visitDtdElementList: there should be a indication if its choice or sequence for now its just a list.
+        //TODO visitDtdElementList: there should be an indication if its choice or sequence for now its just a list.
         setStdElementId(id);
         DeclarationBuilderBase::visitDtdElement(node);
         closeDeclaration();
@@ -174,6 +168,7 @@ void DeclarationBuilder::visitDtdElement(DtdElementAst* node)
 
 }
 
+// (element3 | (element4, element5))
 void DeclarationBuilder::visitDtdElementList(DtdElementListAst* node)
 {
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
@@ -189,15 +184,15 @@ void DeclarationBuilder::visitDtdElementList(DtdElementListAst* node)
         range.end = e->findPosition(node->type->endToken, EditorIntegrator::BackEdge);
     }
 
-    if (!name.isNull() && !m_dtdElementExclude.contains(name)) {
-        createClassInstanceDeclaration(name, range, name);
+    if (!name.isNull() && !m_dtdElementExclude.contains(name.toLower())) {
+        createClassInstanceDeclaration(name, range, ElementDeclarationData::Element);
         closeDeclaration();
     }
 
-    //Happens outside declaration, recursive (blah | (blah, blah) | blah ...)
     DeclarationBuilderBase::visitDtdElementList(node);
 }
 
+// +(exclude6 | exclude7)
 void DeclarationBuilder::visitDtdElementIncludeItem(DtdElementIncludeItemAst* node)
 {
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
@@ -213,8 +208,8 @@ void DeclarationBuilder::visitDtdElementIncludeItem(DtdElementIncludeItemAst* no
         range.end = e->findPosition(node->type->endToken, EditorIntegrator::BackEdge);
     }
 
-    if (!name.isNull() && !m_dtdElementExclude.contains(name)) {
-        createClassInstanceDeclaration(name, range, name);
+    if (!name.isNull() && !m_dtdElementExclude.contains(name.toLower())) {
+        createClassInstanceDeclaration(name, range, ElementDeclarationData::Element);
         closeDeclaration();
     }
 
@@ -224,9 +219,9 @@ void DeclarationBuilder::visitDtdElementIncludeItem(DtdElementIncludeItemAst* no
 void DeclarationBuilder::visitDtdAttlist(DtdAttlistAst* node)
 {
     QStringList elements;
-    if(node->name)
+    if (node->name)
         elements << nodeText(node->name);
-    if(node->elementsSequence) {
+    if (node->elementsSequence) {
         const KDevPG::ListNode<DtdEnumItemAst*> *it = node->elementsSequence->front(), *end = it;
         do
         {
@@ -243,11 +238,11 @@ void DeclarationBuilder::visitDtdAttlist(DtdAttlistAst* node)
         while (it != end);
     }
     foreach(QString elementName, elements ) {
-        if(!m_dtdElements.contains(elementName)) {
+        if (!m_dtdElements.contains(elementName.toLower())) {
             kDebug() << "Could not find element" << elementName;
             continue; //TODO print warning
         }
-        ElementDeclaration *dec = m_dtdElements.value(elementName);
+        ElementDeclaration *dec = m_dtdElements.value(elementName.toLower());
         KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
         const KDevPG::ListNode<DtdAttAst*> *it = node->attributesSequence->front(), *end = it;
         do
@@ -269,15 +264,36 @@ void DeclarationBuilder::visitDtdAttlist(DtdAttlistAst* node)
 
 void DeclarationBuilder::visitDtdEntity(DtdEntityAst* node)
 {
-    IncludeIdentifier id;
-    if (node->publicId) {
-        id.publicId = KDevelop::IndexedString(nodeText(node->publicId));
-    }
-    if (node->systemId) {
-        id.systemId = KDevelop::IndexedString(nodeText(node->systemId));
-    }
-    if (node->name && (!id.publicId.isEmpty() || !id.systemId.isEmpty())) {
+    EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
+    if(node->name && ( node->publicId || node->systemId)) {
+        //Its an import
+        IncludeIdentifier id;
+        if (node->publicId) {
+            id.publicId = KDevelop::IndexedString(nodeText(node->publicId));
+        }
+        if (node->systemId) {
+            id.systemId = KDevelop::IndexedString(nodeText(node->systemId));
+        }
         m_entities.insert(nodeText(node->name), id);
+    } else if (node->name && !node->persent) {
+        //Its text
+        KDevelop::SimpleRange range;
+        range.start = e->findPosition(node->startToken, EditorIntegrator::FrontEdge);
+        range.end = e->findPosition(node->endToken, EditorIntegrator::BackEdge);
+        QString identifier = nodeText(node->name);
+        KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(identifier.toLower().toUtf8())));
+        {
+            KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
+            ElementDeclaration* dec = openDefinition<ElementDeclaration>(id, range);
+            dec->setKind(KDevelop::Declaration::Type);
+            dec->clearBaseClasses();
+            dec->clearAttributes();
+            dec->setClassType(KDevelop::ClassDeclarationData::Class);
+            dec->setName(identifier);
+            dec->setElementType(ElementDeclarationData::Entity);
+            dec->setContent(nodeText(node->value));
+        }
+        closeDeclaration();
     }
     DeclarationBuilderBase::visitDtdEntity(node);
 }
@@ -303,7 +319,7 @@ void DeclarationBuilder::visitDtdEntityInclude(DtdEntityIncludeAst* node)
                                           this->editor()->currentUrl().toUrl());
         if ( url.isValid() ) {
             createImportDeclaration(url.pathOrUrl(), range, url);
-            //closeDeclaration();
+            closeDeclaration();
         }
     }
 }
@@ -314,7 +330,7 @@ void DeclarationBuilder::visitElementTag(ElementTagAst* node)
     KDevelop::SimpleRange range;
     range.start = e->findPosition(node->startToken, EditorIntegrator::FrontEdge);
     range.end = e->findPosition(node->tclose, EditorIntegrator::BackEdge);
-    createClassInstanceDeclaration(tagName(node), range, nodeText(node->name), nodeText(node->ns));
+    createClassInstanceDeclaration(nodeText(node->name), range, ElementDeclarationData::Element, nodeText(node->ns));
     DeclarationBuilderBase::visitElementTag(node);
     closeDeclaration();
 }
@@ -350,7 +366,7 @@ void DeclarationBuilder::visitAttribute(AttributeAst* node)
                                           this->editor()->currentUrl().toUrl());
         if ( url.isValid() ) {
             createImportDeclaration(url.pathOrUrl(), range, url);
-            //closeDeclaration();
+            closeDeclaration();
         }
     }
 }
@@ -361,7 +377,7 @@ void DeclarationBuilder::visitElementCDATA(ElementCDATAAst* node)
     KDevelop::SimpleRange range;
     range.start = e->findPosition(node->startToken, EditorIntegrator::FrontEdge);
     range.end = e->findPosition(node->endToken, EditorIntegrator::BackEdge);
-    createClassInstanceDeclaration("CDATA", range);
+    createClassInstanceDeclaration("CDATA", range, ElementDeclarationData::CDATA);
     DeclarationBuilderBase::visitElementCDATA(node);
     closeDeclaration();
 }
@@ -373,19 +389,8 @@ void DeclarationBuilder::visitElementPCDATA(ElementPCDATAAst* node)
     KDevelop::SimpleRange range;
     range.start = e->findPosition(node->startToken, EditorIntegrator::FrontEdge);
     range.end = e->findPosition(node->endToken, EditorIntegrator::BackEdge);
-    createClassInstanceDeclaration("PCDATA", range);
+    createClassInstanceDeclaration("PCDATA", range, ElementDeclarationData::PCDATA);
     DeclarationBuilderBase::visitElementPCDATA(node);
-    closeDeclaration();
-}
-
-void DeclarationBuilder::visitElementPHP(ElementPHPAst* node)
-{
-    EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
-    KDevelop::SimpleRange range;
-    range.start = e->findPosition(node->startToken, EditorIntegrator::FrontEdge);
-    range.end = e->findPosition(node->endToken, EditorIntegrator::BackEdge);
-    createClassInstanceDeclaration("PHP", range);
-    DeclarationBuilderBase::visitElementPHP(node);
     closeDeclaration();
 }
 
@@ -396,23 +401,10 @@ void DeclarationBuilder::visitElementProcessing(ElementProcessingAst* node)
     KDevelop::SimpleRange range;
     range.start = e->findPosition(node->startToken, EditorIntegrator::FrontEdge);
     range.end = e->findPosition(node->endToken, EditorIntegrator::BackEdge);
-    createClassInstanceDeclaration("PROCESSING", range);
+    createClassInstanceDeclaration("PROCESSING", range, ElementDeclarationData::Processing);
     DeclarationBuilderBase::visitElementProcessing(node);
     closeDeclaration();
 }
-
-
-void DeclarationBuilder::visitElementSource(ElementSourceAst* node)
-{
-    EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
-    KDevelop::SimpleRange range;
-    range.start = e->findPosition(node->startToken, EditorIntegrator::FrontEdge);
-    range.end = e->findPosition(node->endToken, EditorIntegrator::BackEdge);
-    createClassInstanceDeclaration("SOURCE", range);
-    DeclarationBuilderBase::visitElementSource(node);
-    closeDeclaration();
-}
-
 
 void DeclarationBuilder::visitElementText(ElementTextAst* node)
 {
@@ -420,7 +412,7 @@ void DeclarationBuilder::visitElementText(ElementTextAst* node)
     KDevelop::SimpleRange range;
     range.start = e->findPosition(node->startToken, EditorIntegrator::FrontEdge);
     range.end = e->findPosition(node->endToken, EditorIntegrator::BackEdge);
-    createClassInstanceDeclaration("TEXT", range);
+    createClassInstanceDeclaration("TEXT", range, ElementDeclarationData::Text);
     DeclarationBuilderBase::visitElementText(node);
     closeDeclaration();
 }

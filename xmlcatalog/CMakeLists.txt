@@ -17,6 +17,8 @@ set(kdevxmlcatalog_LIB_SRCS
     publicid.cpp
     oasiscatalog.cpp
     oasiscatalogreaderwriter.cpp
+    sgmlcatalog.cpp
+    sgmlcatalogreaderwriter.cpp
 )
 
 kde4_add_library(kdevxmlcatalog SHARED ${kdevxmlcatalog_LIB_SRCS})
@@ -55,6 +57,8 @@ install(FILES
     catalogs/kpartgui.dtd
     catalogs/HTML.xml
     catalogs/XML.xml
+    catalogs/docbookx.xml
+    catalogs/docbookx.dtd
     DESTINATION ${DATA_INSTALL_DIR}/kdevxmlcatalog/catalogs
 )
 

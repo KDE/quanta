@@ -28,9 +28,11 @@
 #include <KDE/KStandardDirs>
 
 #define debug() kDebug()
+#include "sgmlcatalogreaderwriter.h"
 
 CatalogManager::CatalogManager() {
     m_rw.append(new OASISCatalogReaderWriter);
+    m_rw.append(new SGMLCatalogReaderWriter);
     load();
 }
 
@@ -146,11 +148,32 @@ QString CatalogManager::resolveUri(const QString& uri) const
     return QString::null;
 }
 
-bool CatalogManager::addCatalog ( const QString& file ) {
-    return addCatalog(m_ctlg, file, false);
+QString CatalogManager::resolveDoctype(const QString& doctype) const
+{
+    if (doctype.isEmpty())
+        return QString::null;
+    QString r;
+    for ( int i = 0; i < m_ctlg.size(); i++ ) {
+        if ( m_ctlg[i] )
+            r = m_ctlg[i]->resolveDoctype ( doctype );
+        if ( !r.isEmpty() )
+            return r;
+    }
+    for ( int i = 0; i < m_sysctlg.size(); i++ ) {
+        if ( m_sysctlg[i] )
+            r = m_sysctlg[i]->resolveDoctype ( doctype );
+        if ( !r.isEmpty() )
+            return r;
+    }
+    return QString::null;
 }
 
-bool CatalogManager::addCatalog(QList<ICatalog *> &ctlg, const QString& file, bool readOnly)
+
+bool CatalogManager::addCatalog ( const QString& file, const QString &name ) {
+    return addCatalog(m_ctlg, file, name, false);
+}
+
+bool CatalogManager::addCatalog(QList<ICatalog *> &ctlg, const QString& file, const QString& name, bool readOnly)
 {
     if (file.isEmpty())
         return false;
@@ -178,6 +201,7 @@ bool CatalogManager::addCatalog(QList<ICatalog *> &ctlg, const QString& file, bo
         return false;
     }
     c->setParameter(ICatalogManager::ParameterFile, file);
+    c->setParameter(ICatalogManager::ParameterName, name);
 
     if (readOnly) {
         c->setParameter(ICatalogManager::ParameterReadonly, true);
@@ -247,12 +271,13 @@ bool CatalogManager::loadUserCatalogs() {
         if (e.isNull() || e.nodeName() != "catalog")
             continue;
         QString catalog = e.attribute("file");
+        QString name = e.attribute("name");
         KUrl url(catalog );
         if (url.isRelative()) {
             KUrl catUrl(cf);
             catalog=QString("%1/%2").arg(catUrl.directory(), catalog);
         }
-        if (!addCatalog(m_ctlg, catalog, false)) {
+        if (!addCatalog(m_ctlg, catalog, name, false)) {
             debug() << "Unable load catalog: " << catalog;
             continue;
         }
@@ -285,12 +310,13 @@ bool CatalogManager::loadSystemCatalogs() {
         if (e.isNull() || e.nodeName() != "catalog")
             continue;
         QString catalog = e.attribute("file");
+        QString name = e.attribute("name");
         KUrl url(catalog );
         if (url.isRelative()) {
             KUrl catUrl(cf);
             catalog=QString("%1/%2").arg(catUrl.directory(), catalog);
         }
-        if (!addCatalog(m_sysctlg, catalog, true)) {
+        if (!addCatalog(m_sysctlg, catalog, name, true)) {
             debug() << "Unable load catalog: " << catalog;
             continue;
         }

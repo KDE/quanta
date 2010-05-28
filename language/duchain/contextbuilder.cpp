@@ -91,7 +91,7 @@ void ContextBuilder::visitElementTag(ElementTagAst* node)
     range.start = e->findPosition(node->tclose, EditorIntegrator::BackEdge);
     range.end = findElementChildrenReach(node);//e->findPosition(node->endToken, EditorIntegrator::BackEdge);
     //kDebug() << "Context range" << QString("%1:%2").arg(range.start.line).arg(range.start.column) << QString("%1:%2").arg(range.end.line).arg(range.end.column);
-    KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(tagName(node))));
+    KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(tagName(node).toLower())));
     openContext(node, range,
                 KDevelop::DUContext::Class,
                 id);
@@ -101,6 +101,7 @@ void ContextBuilder::visitElementTag(ElementTagAst* node)
 
 void ContextBuilder::visitAttribute(AttributeAst* node)
 {
+    //TODO must create an abstract type for attributes and identifier must be case insensitive.
     Xml::DefaultVisitor::visitAttribute(node);
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
     KDevelop::SimpleRange range;
@@ -163,20 +164,8 @@ void ContextBuilder::visitDtdDoctype(DtdDoctypeAst* node)
 {
     KDevelop::SimpleRange range;
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
-    if (node->childrenSequence) {
-        /*
-        range.start = e->findPosition(node->copen, EditorIntegrator::BackEdge);
-        range.end = e->findPosition(node->cclose, EditorIntegrator::FrontEdge);
-        KDevelop::QualifiedIdentifier id(KDevelop::Identifier(KDevelop::IndexedString(nodeText(node->name))));
-        openContext(node, range,
-                    KDevelop::DUContext::Other,
-                    id);
-        DefaultVisitor::visitDtdDoctype(node);
-        closeContext();
-        */
-        DefaultVisitor::visitDtdDoctype(node);
-    } else {
-        DefaultVisitor::visitDtdDoctype(node);
+    DefaultVisitor::visitDtdDoctype(node);
+    if(node->publicId || node->systemId || node->name) {
         QString publicId = nodeText(node->publicId);
         QString systemId = nodeText(node->systemId);
         QString doctype = nodeText(node->name);
@@ -223,6 +212,7 @@ void ContextBuilder::visitDtdEntityInclude(DtdEntityIncludeAst* node)
 
 void ContextBuilder::visitDtdElement(DtdElementAst* node)
 {
+    //NOTE this is called for each element in the construct <!ELEMENT (element1, element2...) ...>
     KDevelop::SimpleRange range;
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
     range.start = e->findPosition(node->topen , EditorIntegrator::FrontEdge);
@@ -263,10 +253,10 @@ QString ContextBuilder::tokenText(qint64 begin, qint64 end) const
 QString ContextBuilder::tagName(const ElementTagAst *ast) const
 {
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
-    if (ast->ns && ast->name)
-        return tokenText(e->parseSession()->tokenStream()->token(ast->ns->startToken).begin, e->parseSession()->tokenStream()->token(ast->ns->endToken).end) +
-               ":" +
-               tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
+    //if (ast->ns && ast->name)
+    //    return tokenText(e->parseSession()->tokenStream()->token(ast->ns->startToken).begin, e->parseSession()->tokenStream()->token(ast->ns->endToken).end) +
+    //           ":" +
+    //           tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
     if (ast->name)
         return tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
     return QString();
@@ -276,10 +266,10 @@ QString ContextBuilder::tagName(const ElementTagAst *ast) const
 QString ContextBuilder::tagName(const ElementCloseTagAst *ast) const
 {
     EditorIntegrator *e = static_cast<EditorIntegrator *>(editor());
-    if (ast->ns && ast->name)
-        return tokenText(e->parseSession()->tokenStream()->token(ast->ns->startToken).begin, e->parseSession()->tokenStream()->token(ast->ns->endToken).end) +
-               ":" +
-               tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
+    //if (ast->ns && ast->name)
+    //    return tokenText(e->parseSession()->tokenStream()->token(ast->ns->startToken).begin, e->parseSession()->tokenStream()->token(ast->ns->endToken).end) +
+    //            ":" +
+    //            tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
     if (ast->name)
         return tokenText(e->parseSession()->tokenStream()->token(ast->name->startToken).begin, e->parseSession()->tokenStream()->token(ast->name->endToken).end);
     return QString();

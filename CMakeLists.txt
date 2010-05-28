@@ -35,7 +35,7 @@ add_subdirectory(xmlcatalogui)
 #This is not complete and probably completely the wrong approach.
 #It does compile however and have some / limited functionality.
 # a good candidate to comment out
-add_subdirectory(document)
+#add_subdirectory(document)
 
 add_subdirectory(formatter)
 

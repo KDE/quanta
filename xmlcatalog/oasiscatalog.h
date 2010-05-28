@@ -67,13 +67,17 @@ public:
     static const QString ParameterUrl;
     static const QString ParameterBase;
     static const QString ParameterId;
-
+    
     virtual QString systemId() const {
         return m_systemId;
     }
 
     virtual QString publicId() const {
         return m_publicId;
+    }
+    
+    virtual QString doctype() const {
+        return m_doctype;
     }
 
     virtual ICatalogGroup* group() const;
@@ -98,6 +102,10 @@ public:
 
     virtual void setSystemId( const QString& si ) {
         m_systemId = si;
+    }
+    
+    virtual void setDoctype( const QString& dt ) {
+        m_doctype = dt;
     }
 
     virtual const QString& id() const {
@@ -140,6 +148,7 @@ public:
 protected:
     QString m_publicId;
     QString m_systemId;
+    QString m_doctype;
     QString m_uri;
     QString m_url;
     QString m_id;
@@ -147,6 +156,7 @@ protected:
     OASISCatalogContainer * m_parent;
     explicit OASISCatalogEntry();
     virtual ~OASISCatalogEntry();
+    bool m_deleted;
 };
 
 
@@ -215,6 +225,12 @@ public:
      *  @return Returns a URL to the DTD or Schema or QString::null if unsuccessfull.
      */
     virtual QString resolve ( const QString& publicId, const QString& systemId ) const;
+    
+    /** Not officially supported 
+     *  SGML catalog supports doctype, but its added here as this is the
+     *  prefered format.
+     */
+    virtual QString resolveDoctype(const QString& doctype) const;
 
     /** Return the applicable SYSTEM system identifier.
      * <p>If a SYSTEM entry exists in the Catalog
@@ -245,8 +261,10 @@ public:
     virtual ICatalogEntry* addSystemEntry(const QString& systemId, const QString& url, const QHash< QString, QVariant >& parameters);
 
     virtual ICatalogEntry* addUriEntry(const QString& uri, const QString& url, const QHash< QString, QVariant >& parameters);
+    
+    virtual ICatalogEntry* addDoctypeEntry(const QString& doctype, const QString& url, const QHash< QString, QVariant >& parameters);
 
-    virtual void removeEntry(const ICatalogEntry* entry);
+    virtual void removeEntry(ICatalogEntry* entry);
 
     virtual void setId( const QString& i ) {
         m_id = i;
@@ -335,11 +353,15 @@ public:
         return OASISCatalogContainer::addSystemEntry(systemId, url, parameters);
     }
 
-virtual ICatalogEntry* addUriEntry(const QString& uri, const QString& url, const QHash< QString, QVariant >& parameters) {
+    virtual ICatalogEntry* addUriEntry(const QString& uri, const QString& url, const QHash< QString, QVariant >& parameters) {
         return OASISCatalogContainer::addUriEntry(uri, url, parameters);
     }
+    
+    virtual ICatalogEntry* addDoctypeEntry(const QString& doctype, const QString& url, const QHash< QString, QVariant >& parameters) {
+        return OASISCatalogContainer::addDoctypeEntry(doctype, url, parameters);
+    }
 
-    virtual void removeEntry(const ICatalogEntry* entry) {
+    virtual void removeEntry(ICatalogEntry* entry) {
         OASISCatalogContainer::removeEntry(entry);
     }
 
@@ -362,9 +384,11 @@ public:
     virtual QString resolveUri ( const QString& uri ) const;
     virtual QString resolveSystemId ( const QString& systemId ) const;
     virtual QString resolvePublicId ( const QString& publicId ) const;
+    virtual QString resolveDoctype(const QString& doctype) const;
 protected:
     QString m_file;
     QDomDocument m_doc;
 };
 
 #endif // OASISCATALOG_H
+

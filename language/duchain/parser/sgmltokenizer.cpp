@@ -36,26 +36,7 @@ SgmlTokenizer::~SgmlTokenizer() {
         delete m_dtdTokenizer;
 }
 
-/* NOTE
- * Although it looks messy it has a structure.
- * The structure is: (the * means 0 or more, as usual)
- *
- *  states*             -if stack not empty then top
- *      escapes*        -ie <!, <![, etc: push/pop the stack and return token
- *      identifiers*    -ie doctype, public etc: return token
- *      text            -return token
- *  escapes*            -ie <!, <![, etc: push/pop the stack and return token
- *  identifiers*        -none for now
- *  text                -return token
- *
- * 1) The lexer needs to keep track of things like script, style, cdata, dtd etc. I assumed if it does not
- * funny things could happen in the parser if not handled correctly. Where would the appropriate place be to handle
- * these things? Lexer or parser?
- * 2) To simplify the parser the lexer treats things like (<!)-- (<!)doctype (<!)[CDATA separately. Correct?
- * 3) The lexer keeps a stack of states. Tokens have different meanings depending on the state. When things
- * go wrong the stack can be a problem or a friend. For now if the lexer comes across something funny it
- * clears the stack. Another option is just pop-ing once?
- */
+/* NOTE */
 int SgmlTokenizer::nextTokenKind() {
 #define PUSH_STATE(SS, BB) m_states.push(TokenizerState(SS,BB));
 
@@ -79,12 +60,6 @@ int SgmlTokenizer::nextTokenKind() {
     condLength = condEnd - condStart;\
     readLength = condEnd - cursor;
 
-//NOTE it looks like PG-QT needs the -1
-//Sets:
-//     the tokens begin and end positions
-//     the current token
-//     increases the position in the stream for the next call to nextTokenKind
-//     adds the token to the list of tokens for the current state, we dont store whites
 #define DEFAULT_RETURN(TT, LL)\
     m_curpos+=(LL);\
     m_tokenEnd = m_curpos-1;\
@@ -114,7 +89,7 @@ int SgmlTokenizer::nextTokenKind() {
         return Parser::Token_EOF;
 
     if (m_curpos < 0) {
-        //This happens when the lexer expected tokens that is not in the content.
+        //This happens when the tokenizer expected tokens that is not in the content.
         kDebug() << "Cursor position negative!" << endl;
         m_curpos = m_contentLength-1;
         m_tokenEnd = m_contentLength-1;
@@ -125,13 +100,13 @@ int SgmlTokenizer::nextTokenKind() {
         switch (m_states.top().state) {
         case(Quote): {
             READ_UNTIL_ANY(m_tokenEndString, IgnoreNone);
-            if(cursor == condStart) {
+            if (cursor == condStart) {
                 POP_STATE
                 DEFAULT_RETURN(Parser::Token_QUOTE, 1)
             }
             DEFAULT_RETURN(Parser::Token_TEXT, readLength)
         }
-            //A special case for cdata elements like script style
+        //A special case for cdata elements like script style
         case(Cdata): {
             READ_UNTIL(m_tokenEndString, IgnoreWhites | IgnoreCase)
             POP_STATE
@@ -237,7 +212,7 @@ int SgmlTokenizer::nextTokenKind() {
             m_tokenBegin = m_states.top().begin - m_contentData + m_dtdTokenizer->tokenBegin();
             m_tokenEnd = m_states.top().begin - m_contentData + m_dtdTokenizer->tokenEnd();
             m_curpos = m_tokenEnd+1;
-            if(m_dtdTokenizer->currentState() == 0 || token == Parser::Token_EOF) {
+            if (m_dtdTokenizer->currentState() == 0 || token == Parser::Token_EOF) {
                 QString str(m_states.top().begin, m_contentData + m_curpos - m_states.top().begin + 1);
                 QString name, publicId, systemId;
                 doctype(str, name, publicId, systemId);
@@ -247,7 +222,7 @@ int SgmlTokenizer::nextTokenKind() {
                     << "PublicId:" << publicId
                     << "SystemId:" << systemId;
                 }
-                if(!helper.isNull())
+                if (!helper.isNull())
                     setDtdHelper(helper);
                 POP_STATE
                 return token;
@@ -283,9 +258,11 @@ int SgmlTokenizer::nextTokenKind() {
                 DEFAULT_RETURN(Parser::Token_PCDATA, readLength)
             }
 
-            //TODO what now?
-            kDebug() << "Unknown content type: " << str;
-            DEFAULT_RETURN(Parser::Token_EOF, readLength)
+            //This is an unhandeld condition ie <[IE6[ ]]>
+            cursor += 3;
+            READ_UNTIL_ANY("[", IgnoreNone);
+            m_curpos += 3 + readLength;
+            return nextTokenKind();
         }
 
         if (str.startsWith("<?")) {
@@ -313,7 +290,7 @@ int SgmlTokenizer::nextTokenKind() {
 
         if (str.startsWith("<%")) {
             READ_UNTIL("%>", IgnoreNone);
-            DEFAULT_RETURN(Parser::Token_SRC, 2)
+            DEFAULT_RETURN(Parser::Token_SRC, readLength)
         }
 
         if (str.startsWith("</")) {
@@ -346,6 +323,13 @@ int SgmlTokenizer::nextTokenKind() {
 
     if (cursor->unicode() == '>') {
         DEFAULT_RETURN(Parser::Token_GT, 1)
+    }
+
+    //This is an unhandeld condition ie <[IE6[ ]]>
+    if (cursor->unicode() == ']')  {
+        READ_WHILE_ANY("]>", IgnoreWhites);
+        m_curpos += readLength;
+        return nextTokenKind();
     }
 
     READ_UNTIL_ANY("<", IgnoreNone);

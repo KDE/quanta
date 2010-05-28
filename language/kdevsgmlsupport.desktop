@@ -38,6 +38,6 @@ X-KDevelop-Version=9
 X-KDevelop-Language=Sgml
 X-KDevelop-Args=Sgml
 X-KDevelop-Interfaces=ILanguageSupport
-X-KDevelop-SupportedMimeTypes=text/html,application/xml-dtd,application/xhtml+xml,text/xml,application/xml,application/xslt+xml,application/xsd,application/wsdl+xml,application/x-wsdl
+X-KDevelop-SupportedMimeTypes=text/html,application/xml-dtd,application/docbook+xml,application/xhtml+xml,text/xml,application/xml,application/xslt+xml,application/xsd,application/wsdl+xml,application/x-wsdl
 X-KDE-PluginInfo-Name=KDevSgmlSupport
 X-KDevelop-Mode=NoGUI

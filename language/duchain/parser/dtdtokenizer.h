@@ -25,6 +25,12 @@ namespace Xml {
 
 
 /** DTD language tokenizer.
+ *  DTD defines ENTITIES which may include other documents or may contain text
+ *  which has to be parsed. When a entity is declared it is global and the parser has to keep track of them
+ *  for instance an entity <!ENTITY % optional.close "- O"> may be declared and reused in all included documents.
+ *  The biggest problem is that there is no set rules as to what an entity may or may not contain. For instance 
+ *  the example above may be declared as <!ENTITY % optional.close "O">; its beaning is determined by its usage.
+ *  Another problem with entities is when the DUChain is built context's and declarations ranges vary greatly.
  */
 class KDEVSGMLPARSER_EXPORT DTDTokenizer : public Tokenizer {
 public:
@@ -51,7 +57,7 @@ public:
 private:
     void init(State initialState = None );
     /** A structure pointing to sections in the content.
-     *  This is used to resolve DTD ENTITIES.
+     *  This is used to try and resolve DTD ENTITIES.
      */
     struct TokenizePart;
     QHash<QString, struct TokenizePart> m_entities;

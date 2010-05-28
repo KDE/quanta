@@ -33,7 +33,10 @@ class ParseSession;
 typedef KDevelop::AbstractContextBuilder<AstNode, ElementAst> ContextBuilderBase;
 
 /** Builder for XML SGML and DTD
+ *  Sgml is case insensitive, therefor all Indentifiers is in lower case, but ElementDeclaration has
+ *  a method 'name' and 'prettyName' which is case sensitive.
  *  @see XsdContextBuilder
+ *  @see ElementDeclaration
  */
 class KDEVSGMLDUCHAIN_EXPORT ContextBuilder: public ContextBuilderBase, public AbstractBuilder
 {

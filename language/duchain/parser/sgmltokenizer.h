@@ -26,7 +26,7 @@ namespace Xml {
 /** Markup language tokenizer.
  *  Tokenizes SGML/XML like languages. Because of SGML's dependency on DTD, SGML must
  *  specify a doctype, when a doctype is found, a facade DTDHelper is used to help tokenize SGML.
- *  Until a - or if no doctype is found the source is treated as plain XML.<br/>
+ *  If no doctype is found the source is treated as plain XML.<br/>
  *  Here is an example of the complexity of SGML:<br/>
  *  <pre>
  *  <![CDATA[
@@ -42,7 +42,6 @@ namespace Xml {
  *  This will correct CDATA and empty elements, the parser has to correct optional close elements.
  *  The parser may use the helper found by this tokenizer.
  *  @see IDtdHelper
- *  @todo Implement a DTD parser
  */
 class KDEVSGMLPARSER_EXPORT SgmlTokenizer : public Tokenizer {
 public:

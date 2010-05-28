@@ -15,52 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#ifndef XMLCATALOGDIALOG_H
-#define XMLCATALOGDIALOG_H
 
-#include <QtCore/QAbstractItemModel>
+#ifndef SGMLCATALOGREADER_H
+#define SGMLCATALOGREADER_H
 
-#include <KDE/KDialog>
+#include "icatalogreaderwriter.h"
 
-class ICatalogEntry;
-class ICatalog;
+#include <QtCore/QString>
 
-class XmlCatalogDialog : public KDialog {
-    Q_OBJECT
+class SGMLCatalog;
+class KDEVXMLCATALOG_EXPORT SGMLCatalogReaderWriter : public ICatalogReaderWriter {
 public:
-    XmlCatalogDialog ( QWidget* parent = 0, Qt::WFlags flags = 0 );
-    virtual ~XmlCatalogDialog();
-    virtual void showEvent(QShowEvent* );
-    private slots:
-        void exit();
-        void canceled();
-        void addCatalog(const QString&);
-        void addEntry();
-        void removeItem();
-        void updateItem();
-        void itemSelected(const QModelIndex& index);
-        void update();
-        void slotAddEntry();
-        void slotOpenDocument();
-    private:
-        bool save();
-        void getSelection(ICatalog *&catalog, ICatalogEntry *&entry);
-        class XmlCatalogDialogPrivate;
-        XmlCatalogDialogPrivate *d;
+    SGMLCatalogReaderWriter();
+    virtual ~SGMLCatalogReaderWriter();
+    virtual bool accepts ( const QString& file ) const;
+    virtual bool accepts ( const QDomDocument& doc ) const;
+    virtual bool accepts ( const ICatalog * catalog ) const;
+    
+    virtual ICatalog* readCatalog ( const QString& file ) const;
+
+    virtual bool writeCatalog(const ICatalog* catalog, const QString& file) const;
+protected:
+    virtual ICatalog* readCatalog ( const QString& file, SGMLCatalog *group) const;
 };
 
-class AddSchemaDialog : public KDialog{
-    Q_OBJECT
-    public:
-        enum Type {PublicId, SystemId, Uri, Doctype};
-        AddSchemaDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
-        virtual ~AddSchemaDialog();
-        QString id() const;
-        QString URI() const;
-        Type type() const;
-    private:
-        class AddSchemaDialogPrivate;
-        AddSchemaDialogPrivate *d;
-};
-
-#endif // XMLCATALOGDIALOG_H
+#endif // SGMLCATALOGREADER_H

@@ -236,23 +236,24 @@ namespace KDevelop
 
 
     --NOTE safe but irritating FIRST/FIRST conflict
-    (?[: LA(2).kind == Token_COLON :] (ns=text COLON name=text) | (name=text))
+    (?[: LA(2).kind == Token_COLON :] (ns=text COLON name=text) | (name=text)) maybeWhites
     (
-        maybeWhites EQUAL maybeWhites
+        EQUAL maybeWhites
         (
             value=text
             | 0 [: reportProblem(Warning, "Missing attribute value"); :]
         )
-    ) | 0
+        | 0
+    )
 ->  attribute ;;
 
 
     --NOTE safe but irritating FIRST/FIRST conflict
     --TODO Supported tags marked with *:
-    --  <sgml>                  * root not a problem
+    --  <sgml>                 * root not a problem
     --      <child1>
     --          blah, blah
-    --          <child1.1>
+    --          <child1.1>     *supported using dtdHelper not a problem
     --      <child2>
     --          <child2.1>     *supported using dtdHelper not a problem
     --              <child2.2> Problem as DTD will specify that child2.2 belongs actualy to child2
@@ -263,7 +264,7 @@ namespace KDevelop
         | (name=text)
         | 0 [: reportProblem(Error, "Expected element name"); :]
     ) maybeWhites
-    #attributes=attribute @ whites
+    (#attributes=attribute maybeWhites)*
     (
         tclose=CLOSE [: while(!m_stack.empty() && !m_dtdHelper.hasChild(tagName(m_stack.top()), tagName(*yynode))) m_stack.pop(); :]
         | tclose=GT [: m_stack.push(*yynode); :] (#children=element [: if(m_stack.empty() || m_stack.top() != *yynode) break; :])*
@@ -380,6 +381,13 @@ namespace KDevelop
             | QUOTE (defaultValue=text | 0) QUOTE
             | defaultValue=text
             | dtdUnknownEntity (QUOTE (defaultValue=text | 0) QUOTE | 0)
+            | OPAREN maybeWhites #enum=dtdEnumItem @ dtdChoiceSep maybeWhites CPAREN maybeWhites
+            ( 
+                NUMBER useage=text maybeWhites (QUOTE (defaultValue=text | 0) QUOTE | 0)
+                | QUOTE (defaultValue=text | 0) QUOTE
+                | defaultValue=text
+                | dtdUnknownEntity (QUOTE (defaultValue=text | 0) QUOTE | 0)
+            )
         )
         | dtdUnknownEntity
     ) 
@@ -400,22 +408,14 @@ namespace KDevelop
 
     topen=ENTITY whites
     (
-        PERCENT maybeWhites (name=text | 0 [: reportProblem(Error, "Expected entity name"); :]) maybeWhites
+        (persent=PERCENT maybeWhites | 0 [: (*yynode)->persent=0; :] ) name=text  maybeWhites
         (
-            PUBLIC maybeWhites QUOTE publicId=text QUOTE maybeWhites (QUOTE systemId=text QUOTE| 0)
-            | SYSTEM maybeWhites QUOTE systemId=text QUOTE
+            PUBLIC maybeWhites QUOTE publicId=text QUOTE maybeWhites (SYSTEM maybeWhites | 0) (QUOTE systemId=text QUOTE| 0)
+            | SYSTEM maybeWhites (QUOTE systemId=text QUOTE | 0)
+            | type=text maybeWhites (QUOTE (value=text | 0) QUOTE | 0)
             | QUOTE (value=text | 0) QUOTE
             | dtdUnknownEntity (QUOTE (value=text | 0) QUOTE| 0)
             | 0 [: reportProblem(Error, "Expected one of PUBLIC, SYSTEM or value"); :]
-        )
-        | 
-        ( 
-            name=text maybeWhites 
-            (
-                type=text maybeWhites (QUOTE (value=text | 0) QUOTE | 0)
-                | QUOTE (value=text | 0) QUOTE
-                | 0 [: reportProblem(Error, "Expected type or value"); :]
-            )
         )
         | 0 [: reportProblem(Error, "Expected entity name"); :]
     )
@@ -427,8 +427,8 @@ namespace KDevelop
     topen=NOTATION maybeWhites
     name=text maybeWhites
     (
-        PUBLIC maybeWhites QUOTE publicId=text QUOTE maybeWhites (QUOTE systemId=text QUOTE| 0)
-        | SYSTEM maybeWhites QUOTE systemId=text QUOTE
+        PUBLIC maybeWhites QUOTE publicId=text QUOTE maybeWhites (SYSTEM maybeWhites | 0) (QUOTE systemId=text QUOTE| 0)
+        | SYSTEM maybeWhites (QUOTE systemId=text QUOTE | 0)
         | 0 [: reportProblem(Error, "Expected PUBLIC or SYSTEM"); :]
     )
     maybeWhites
@@ -495,7 +495,7 @@ namespace KDevelop
 
     topen=DOCTYPE maybeWhites
     name=text maybeWhites
-    (PUBLIC maybeWhites QUOTE publicId=maybeText QUOTE maybeWhites (QUOTE systemId=maybeText QUOTE | 0) | 0)
+    (PUBLIC maybeWhites QUOTE publicId=maybeText QUOTE maybeWhites (SYSTEM maybeWhites | 0) (QUOTE systemId=maybeText QUOTE | 0) | 0)
     (SYSTEM maybeWhites QUOTE systemId=maybeText QUOTE | 0)
     maybeWhites
     ( copen=OBRACKET maybeWhites (#children=dtdChild maybeWhites)* maybeWhites cclose=CBRACKET | 0)
@@ -575,10 +575,10 @@ QString Parser::tagName(const ElementTagAst *ast) const
 {
     if(!ast)
         return QString();
-    if(ast->ns && ast->name)
-        return tokenText(tokenStream->token(ast->ns->startToken).begin, tokenStream->token(ast->ns->endToken).end) +
-                ":" +
-                tokenText(tokenStream->token(ast->name->startToken).begin, tokenStream->token(ast->name->endToken).end);
+    //if(ast->ns && ast->name)
+    //    return tokenText(tokenStream->token(ast->ns->startToken).begin, tokenStream->token(ast->ns->endToken).end) +
+    //            ":" +
+    //            tokenText(tokenStream->token(ast->name->startToken).begin, tokenStream->token(ast->name->endToken).end);
     if(ast->name)
         return tokenText(tokenStream->token(ast->name->startToken).begin, tokenStream->token(ast->name->endToken).end);
     return QString();
@@ -588,10 +588,10 @@ QString Parser::tagName(const ElementCloseTagAst *ast) const
 {
     if(!ast)
         return QString();
-    if(ast->ns && ast->name)
-        return tokenText(tokenStream->token(ast->ns->startToken).begin, tokenStream->token(ast->ns->endToken).end) +
-                ":" +
-                tokenText(tokenStream->token(ast->name->startToken).begin, tokenStream->token(ast->name->endToken).end);
+    //if(ast->ns && ast->name)
+    //    return tokenText(tokenStream->token(ast->ns->startToken).begin, tokenStream->token(ast->ns->endToken).end) +
+    //            ":" +
+    //            tokenText(tokenStream->token(ast->name->startToken).begin, tokenStream->token(ast->name->endToken).end);
     if(ast->name)
         return tokenText(tokenStream->token(ast->name->startToken).begin, tokenStream->token(ast->name->endToken).end);
     return QString();

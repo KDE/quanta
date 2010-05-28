@@ -49,7 +49,7 @@ public:
     virtual ICatalogEntry * addUriEntry(const QString &uri, const QString &url, const QHash<QString, QVariant> &parameters) = 0;
 
     /** Removes an entry from the group. */
-    virtual void removeEntry(const ICatalogEntry * entry) = 0;
+    virtual void removeEntry(ICatalogEntry * entry) = 0;
 
 protected:
     explicit ICatalogGroup();

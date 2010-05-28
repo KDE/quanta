@@ -2,7 +2,7 @@
 Type=Service
 Exec=blubb
 Icon=text-xml
-Name=Xml catalog user interface
+Name=DTD/Schema Catalog user interface
 Name[ca]=Interfície de l'usuari de catàleg Xml
 Name[ca@valencia]=Interfície de l'usuari de catàleg Xml
 Name[en_GB]=Xml catalogue user interface

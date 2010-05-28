@@ -26,8 +26,9 @@ class ICatalogGroup;
 class ICatalog;
 
 /** An entry in to the catalog.
- *  ICatalogEntry only contains Public ID, System ID and URI's. Different catalog types may have several other
+ *  ICatalogEntry only contains Public ID, DOCTYPE, System ID and URI's. Different catalog types may have several other
  *  entries, but these are the common ones.
+ *  All entries points to a url where the actual schema or dtd can be found.
  */
 class KDEVXMLCATALOG_EXPORT ICatalogEntry : public virtual Parameterized<QString, QVariant> {
 public:
@@ -40,11 +41,16 @@ public:
 
     /** The DOCTYPE System ID of this entry or schema location. QString::null if none*/
     virtual QString systemId() const = 0;
+    
+    /** The DOCTYPE. QString::null if none*/
+    virtual QString doctype() const = 0;
 
     /** The URI of this entry or namespace. QString::null if none*/
     virtual QString URI() const = 0;
     
-    /** The location where to find this entries file */
+    /** The location where to find this entries file
+     *  This is what the catalog reolves too, ie DOCTYPE -> URL etc.
+     */
     virtual QString URL() const = 0;
     
     /** Return the group this entry belongs too.

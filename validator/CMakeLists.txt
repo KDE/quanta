@@ -19,7 +19,6 @@ target_link_libraries(kdevxmlvalidator
   ${KDEVPLATFORM_INTERFACES_LIBRARIES}
   kdevxmlcatalog
   ${PC_LIBXML2_LIBRARIES}
-#  ${KDE4_THREADWEAVER_LIBRARIES}
 )
 
 install(TARGETS kdevxmlvalidator DESTINATION ${PLUGIN_INSTALL_DIR})

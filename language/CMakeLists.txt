@@ -1,8 +1,9 @@
 
 
-add_subdirectory(parser)
 add_subdirectory(duchain)
 add_subdirectory(completion)
+
+find_package(KDevelop-PG-Qt REQUIRED)
 
 include_directories(
     ${KDEVPLATFORM_INCLUDE_DIR}
@@ -10,16 +11,12 @@ include_directories(
     ${QT4_INCLUDES}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/parser
-)
-
-find_package(KDevelop-PG-Qt REQUIRED)
-
-include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}/parser
+    ${CMAKE_CURRENT_BINARY_DIR}/duchain
+    ${CMAKE_CURRENT_SOURCE_DIR}/duchain
+    ${CMAKE_CURRENT_SOURCE_DIR}/duchain/parser
+    ${CMAKE_CURRENT_BINARY_DIR}/duchain/parser
     ${KDEVPGQT_INCLUDE_DIR}
 )
-
 set(kdevsgmllanguagesupport_PART_SRCS
     languagesupport.cpp
     parsejob.cpp
@@ -32,7 +29,6 @@ target_link_libraries(kdevsgmllanguagesupport
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDE4_KTEXTEDITOR_LIBS}
-    kdevsgmlparser
     kdevsgmlduchain
     kdevsgmlcompletion
     kdevxmlcatalog

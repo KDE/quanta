@@ -41,6 +41,9 @@ public:
     
     /** Added to the catalog - true or false. */
     static const QString ParameterReadonly;
+    
+    /** Added to the catalog - The name of the catalog. */
+    static const QString ParameterName;
 
     /** Returns the ICatalogManager implemented singleton.*/
     static ICatalogManager * self();
@@ -66,13 +69,20 @@ public:
     virtual QString resolveUri ( const QString & uri ) const = 0;
     
     /** Resolves an entry.
+     *  The method used to resolve will depend on the catalog implementation.
+     * This should iterate over all the catalogs loaded and return the first best match.
+     */
+    virtual QString resolveDoctype ( const QString & doctype ) const = 0;
+   
+    
+    /** Resolves an entry.
     *  The method used to resolve will depend on the catalog implementation.
     *  This should iterate over all the catalogs loaded and return the first best match.
     */
     virtual QString resolve ( const QString & publicId, const QString & systemId ) const = 0;
     
     virtual QList<ICatalog *> catalogs() const = 0;
-    virtual bool addCatalog(const QString &file) = 0;
+    virtual bool addCatalog(const QString &file, const QString &name = QString()) = 0;
     virtual bool removeCatalog(const QString &file) = 0;
     virtual QStringList catalogFileList() const = 0;
     

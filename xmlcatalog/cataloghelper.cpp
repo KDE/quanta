@@ -21,21 +21,6 @@
 #include "idocumentcachemanager.h"
 #include "publicid.h"
 
-QString CatalogHelper::systemIdForDoctype(const QString& doctype)
-{
-    if(doctype.trimmed().toLower() == "html")
-        return resolve("-//W3C//DTD HTML 4.0 Transitional//EN").pathOrUrl();
-    if(doctype.trimmed().toLower() == "math")
-        return "http://www.w3.org/Math/DTD/mathml1/mathml.dtd";
-    if(doctype.trimmed().toLower() == "svg" || doctype.trimmed().toLower() == "svg:svg")
-        return "http://www.w3.org/Graphics/SVG/1.1/DTD/svg10.dtd";
-    if(doctype.trimmed().toLower() == "kpartgui")
-        return resolve("-//KDE Project//KPartGUI DTD//EN").pathOrUrl();
-    if(doctype.trimmed().toLower() == "kcfg")
-        return resolve("-//KDE Project//KCFG DTD//EN").pathOrUrl();
-    //TODO more here
-    return QString();
-}
 
 QString CatalogHelper::systemIdForMime(KMimeType::Ptr mime)
 {
@@ -43,6 +28,8 @@ QString CatalogHelper::systemIdForMime(KMimeType::Ptr mime)
         return resolve("-//W3C//DTD HTML 4.0 Transitional//EN").pathOrUrl();
     if(mime->is("image/svg+xml"))
         return "http://www.w3.org/Graphics/SVG/1.1/DTD/svg10.dtd";
+    if(mime->is("application/docbook+xml"))
+        return resolve("-//OASIS//DTD DocBook XML V4.5//EN").pathOrUrl();
     //TODO more here
     return QString();
 }
@@ -62,15 +49,7 @@ KUrl CatalogHelper::resolve(const QString& publicId, const QString& systemId, co
     }
 
     if(resolved.isEmpty() && !doctype.isEmpty()) {
-        //Get a systemid from the helper
-        QString systemId = CatalogHelper::systemIdForDoctype(doctype);
-        if(!systemId.isEmpty()) {
-            //Does the user have a prefered document?
-            resolved = ICatalogManager::self()->resolveSystemId(systemId);
-            //No? Use the systemId.
-            if(resolved.isEmpty())
-                resolved = systemId;
-        }
+        resolved = ICatalogManager::self()->resolveDoctype(doctype);
     }
     
     if(resolved.isEmpty() && !mime.isNull()) {

@@ -15,52 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#ifndef XMLCATALOGDIALOG_H
-#define XMLCATALOGDIALOG_H
+#ifndef SGMLFORMATTER_H_
+#define SGMLFORMATTER_H_
 
-#include <QtCore/QAbstractItemModel>
+#include <QtCore/QString>
+#include <QtCore/QTextStream>
+#include <QtCore/QMap>
+#include <QtCore/QHash>
 
-#include <KDE/KDialog>
+#include "xmlformatter.h"
+#include <QStack>
 
-class ICatalogEntry;
-class ICatalog;
 
-class XmlCatalogDialog : public KDialog {
-    Q_OBJECT
+class SgmlFormatter : public XmlFormatter {
 public:
-    XmlCatalogDialog ( QWidget* parent = 0, Qt::WFlags flags = 0 );
-    virtual ~XmlCatalogDialog();
-    virtual void showEvent(QShowEvent* );
-    private slots:
-        void exit();
-        void canceled();
-        void addCatalog(const QString&);
-        void addEntry();
-        void removeItem();
-        void updateItem();
-        void itemSelected(const QModelIndex& index);
-        void update();
-        void slotAddEntry();
-        void slotOpenDocument();
-    private:
-        bool save();
-        void getSelection(ICatalog *&catalog, ICatalogEntry *&entry);
-        class XmlCatalogDialogPrivate;
-        XmlCatalogDialogPrivate *d;
+    SgmlFormatter();
+    virtual ~SgmlFormatter();
+    /** Adds whites to make the xml more readable
+    */
+    QString formatSource ( const QString& text, const QString& leftContext = QString(), const QString& rightContext = QString() ) const;
+    QString attributeValue(const QString &token, const QString &attribute) const;
+protected:
+    QString tagName(const QString &token) const;
+    QString trimText(const QString &token) const;
 };
 
-class AddSchemaDialog : public KDialog{
-    Q_OBJECT
-    public:
-        enum Type {PublicId, SystemId, Uri, Doctype};
-        AddSchemaDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
-        virtual ~AddSchemaDialog();
-        QString id() const;
-        QString URI() const;
-        Type type() const;
-    private:
-        class AddSchemaDialogPrivate;
-        AddSchemaDialogPrivate *d;
-};
+#endif //SGMLFORMATTER_H_
 
-#endif // XMLCATALOGDIALOG_H

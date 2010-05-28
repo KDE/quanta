@@ -17,24 +17,30 @@
 
 #include "dtdhelper.h"
 
+
 #include <QtCore/QHash>
 #include <QtCore/QString>
+#include <QtCore/QThread>
+
 #include <xmlcatalog/cataloghelper.h>
-#include <language/duchain/topducontext.h>
-#include <language/duchain/duchain.h>
-#include <language/duchain/duchainlock.h>
+#include <xmlcatalog/publicid.h>
+
+#include <threadweaver/ThreadWeaver.h>
+#include <threadweaver/WeaverInterface.h>
+
 #include <interfaces/icore.h>
 #include <interfaces/iruncontroller.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/ilanguage.h>
+#include <language/duchain/topducontext.h>
+#include <language/duchain/duchain.h>
+#include <language/duchain/duchainlock.h>
+#include <language/duchain/declaration.h>
 #include <language/interfaces/ilanguagesupport.h>
 #include <language/backgroundparser/parsejob.h>
-#include <QThread>
-#include <threadweaver/WeaverInterface.h>
 #include <language/backgroundparser/backgroundparser.h>
-#include <threadweaver/ThreadWeaver.h>
-#include <xmlcatalog/publicid.h>
-#include <language/duchain/declaration.h>
+#include <elementdeclaration.h>
+
 
 using namespace Xml;
 using namespace KDevelop;
@@ -51,53 +57,69 @@ public:
     DUChainDTDHelper() : DtdHelperData() {};
     DUChainDTDHelper(IndexedTopDUContext top) : DtdHelperData() {
         topContext = top;
+        DUChainReadLocker lock;
+        kDebug() << top.url().str();
     }
 
-    virtual ~DUChainDTDHelper() {}
+    virtual ~DUChainDTDHelper() {
+        kDebug();
+    }
 
-    virtual bool isNull() const {return !topContext.isValid();}
+    virtual bool isNull() const {
+        return !topContext.isValid();
+    }
 
     virtual bool cdataElement(const QString& elementName) const {
-        if(isNull()) return false;
+        if (isNull()) return false;
         DUChainReadLocker lock;
-        QList<Declaration *> list = topContext.data()->findDeclarations(QualifiedIdentifier(elementName), SimpleCursor::invalid(), AbstractType::Ptr() );
+        QList<Declaration *> list = findDeclarations(elementName);
         foreach(Declaration * dec, list) {
-            if(!dec) continue;
+            if (!dec) continue;
+            ElementDeclaration *elementDec = dynamic_cast<ElementDeclaration *>(dec);
+            if (!elementDec) continue;
+            return elementDec->contentType().toUpper() == "CDATA";
             //TODO return something
         }
         return false;
     }
     virtual bool closeOptional(const QString& elementName) const {
-        if(isNull()) return false;
+        if (isNull()) return false;
         DUChainReadLocker lock;
-        QList<Declaration *> list = topContext.data()->findDeclarations(QualifiedIdentifier(elementName), SimpleCursor::invalid(), AbstractType::Ptr() );
+        QList<Declaration *> list = findDeclarations(elementName);
         foreach(Declaration * dec, list) {
-            if(!dec) continue;
+            if (!dec) continue;
+            ElementDeclaration *elementDec = dynamic_cast<ElementDeclaration *>(dec);
+            if (!elementDec) continue;
+            return !elementDec->closeTagRequired();
             //TODO return something
         }
         return false;
     }
 
     virtual bool emptyElement(const QString& elementName) const {
-        if(isNull()) return false;
+        if (isNull()) return false;
         DUChainReadLocker lock;
-        QList<Declaration *> list = topContext.data()->findDeclarations(QualifiedIdentifier(elementName), SimpleCursor::invalid(), AbstractType::Ptr() );
+        QList<Declaration *> list = findDeclarations(elementName);
         foreach(Declaration * dec, list) {
-            if(!dec) continue;
+            if (!dec) continue;
+            ElementDeclaration *elementDec = dynamic_cast<ElementDeclaration *>(dec);
+            if (!elementDec) continue;
+            return elementDec->contentType().toUpper() == "EMPTY";
             //TODO return something
         }
         return false;
     }
 
     virtual bool hasChild(const QString& elementName, const QString& child) const {
-        if(isNull()) return true;
+        if (isNull()) return true;
         DUChainReadLocker lock;
-        QList<Declaration *> list = topContext.data()->findDeclarations(QualifiedIdentifier(elementName), SimpleCursor::invalid(), AbstractType::Ptr());
+        QList<Declaration *> list = findDeclarations(elementName);
         foreach(Declaration * dec, list) {
-            if(!dec) continue;
-            if(dec->kind() == Declaration::Type && dec->internalContext()) {
-                QList<Declaration *> children = dec->internalContext()->findDeclarations(QualifiedIdentifier(child), SimpleCursor::invalid(), AbstractType::Ptr());
-                if(children.size() > 0)
+            if (!dec) continue;
+            if (dec->kind() == Declaration::Type && dec->internalContext()) {
+                QList<Declaration *> children;
+                children.append(dec->internalContext()->findDeclarations(QualifiedIdentifier(child.toLower()), SimpleCursor::invalid(), AbstractType::Ptr()));
+                if (children.size() > 0)
                     return true;
                 else
                     return false;
@@ -107,6 +129,11 @@ public:
     }
 
 protected:
+    QList<Declaration *> findDeclarations(QString elementName) const {
+        QList<Declaration *> list;
+        list.append(topContext.data()->findDeclarations(QualifiedIdentifier(elementName.toLower()), SimpleCursor::invalid(), AbstractType::Ptr()));
+        return list;
+    }
     IndexedTopDUContext topContext;
 };
 
@@ -116,8 +143,10 @@ public:
     Html4LooseHelper() : DtdHelperData() {
     }
     virtual ~Html4LooseHelper() {}
-    
-    virtual bool isNull() const {return false;}
+
+    virtual bool isNull() const {
+        return false;
+    }
 
     virtual bool cdataElement(const QString& elementName) const {
         static QHash<QString, char> list = ( {
@@ -228,7 +257,9 @@ public:
         //Should never be called because xml have no closeOptional elements.
         return true;
     }
-    virtual bool isNull() const {return false;}
+    virtual bool isNull() const {
+        return false;
+    }
 };
 
 static DtdHelper html4LooseHelper(new Html4LooseHelper);
@@ -241,7 +272,7 @@ DtdHelper DtdHelper::instance(const QString& publicId, const QString& systemId, 
     QString pubId = PublicId::decodeURN(publicId);
 
     if ((!pubId.isNull() && pubId == "-//W3C//DTD HTML 4.01//EN") ||
-        (!pubId.isNull() && pubId == "-//W3C//DTD HTML 4.0//EN") ||
+            (!pubId.isNull() && pubId == "-//W3C//DTD HTML 4.0//EN") ||
             (!systemId.isNull() && systemId == "http://www.w3.org/TR/html4/strict.dtd") ||
             (!systemId.isNull() && systemId == "http://www.w3.org/TR/REC-html40/strict.dtd")) {
         return html4StrictHelper;
@@ -256,49 +287,47 @@ DtdHelper DtdHelper::instance(const QString& publicId, const QString& systemId, 
             (!systemId.isNull() && systemId == "http://www.w3.org/TR/html4/frameset.dtd")) {
         return html4FrameHelper;
     }
-    
-    DtdHelper helper = instanceForName(doctype);
-    if(!helper.isNull())
-        return helper;
-    
-    helper = instanceForMime(mime);
-    if(!helper.isNull())
-        return helper;
 
-    //Create a duchain helper
-    /*
+    //Create a duchain helper if we can
     KUrl url = CatalogHelper::resolve(pubId, systemId, URI, doctype, mime, path);
-    if(url.isValid()) {
+    if (url.isValid()) {
         IndexedTopDUContext itop;
         {
             DUChainReadLocker lock;
             TopDUContext * top = DUChain::self()->chainForDocument(url);
-            if(top)
+            if (top)
                 itop = top->indexed();
         }
-        if(!itop.isValid()) {
+        if (!itop.isValid()) {
             ILanguage *lang = ICore::self()->languageController()->language("Sgml");
-            if(lang && lang->languageSupport()) {
+            if (lang && lang->languageSupport()) {
                 ParseJob * job = lang->languageSupport()->createParseJob(url);
                 ThreadWeaver::Weaver::instance()->enqueue(job);
                 //TODO Dodgy
                 int count = 0;
-                while(job && !job->isFinished() && ++count < 9999) {
+                while (job && !job->isFinished() && ++count < 9999) {
                     usleep(1000);
                 }
                 {
                     DUChainReadLocker lock;
-                    if(job && job->duChain().data())
+                    if (job && job->duChain().data())
                         itop = job->duChain().data()->indexed();
                 }
-                if(job) job->deleteLater();
+                if (job) job->deleteLater();
             }
-        }
-        if(itop.isValid()) {
             return DtdHelper(new DUChainDTDHelper(itop));
         }
     }
-    */
+
+    //Resort to failover
+    
+    DtdHelper helper = instanceForName(doctype);
+    if (!helper.isNull())
+        return helper;
+
+    helper = instanceForMime(mime);
+    if (!helper.isNull())
+        return helper;
 
     return DtdHelper();
 }
@@ -308,7 +337,7 @@ DtdHelper DtdHelper::instanceForMime(KMimeType::Ptr mime)
 {
     if (!mime || !mime->isValid())
         return DtdHelper();
-    
+
     if (mime->is("application/xml")
             || mime->is("text/xml")
             || mime->is("application/xslt+xml")
@@ -321,7 +350,7 @@ DtdHelper DtdHelper::instanceForMime(KMimeType::Ptr mime)
         return xmlHelper;
     }
 
-    if(mime->is("text/html")) {
+    if (mime->is("text/html")) {
         return html4LooseHelper;
     }
 
@@ -330,7 +359,7 @@ DtdHelper DtdHelper::instanceForMime(KMimeType::Ptr mime)
 
 DtdHelper DtdHelper::instanceForName(const QString& name)
 {
-    if(name.trimmed().toLower() == "html") {
+    if (name.trimmed().toLower() == "html") {
         return html4LooseHelper;
     }
 

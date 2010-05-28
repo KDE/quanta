@@ -83,12 +83,6 @@ int DTDTokenizer::nextTokenKind()
     condLength = condEnd - condStart;\
     readLength = condEnd - cursor;
 
-//NOTE it looks like PG-QT needs the -1
-//Sets:
-//     the tokens begin and end positions
-//     the current token
-//     increases the position in the stream for the next call to nextTokenKind
-//     adds the token to the list of tokens for the current state, we dont store whites
 #define DEFAULT_RETURN(TT, LL) \
     m_parts.top().curpos+=(LL);\
     m_tokenEnd = m_parts.top().start - m_contentData + m_parts.top().curpos - 1;\
@@ -188,7 +182,7 @@ int DTDTokenizer::nextTokenKind()
         DEFAULT_RETURN(Parser::Token_PLUS, 1)
     }
     case('O'): {
-        if ((cursor+1)->isSpace()) {
+        if ((cursor+1)->isSpace() || *(cursor+1) == '"' || *(cursor+1) == '\'') {
             DEFAULT_RETURN(Parser::Token_OPT, 1)
         }
         break;
@@ -209,7 +203,7 @@ int DTDTokenizer::nextTokenKind()
         DEFAULT_RETURN(Parser::Token_AMP, 1)
     }
     case('%'): {
-        if ((cursor+1)->isSpace()) {
+        if ((cursor+1)->isSpace() || *(cursor+1) == '"' || *(cursor+1) == '\'') {
             DEFAULT_RETURN(Parser::Token_PERCENT, 1)
         }
 

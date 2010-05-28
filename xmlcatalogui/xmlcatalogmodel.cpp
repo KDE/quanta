@@ -27,7 +27,9 @@
 #include <xmlcatalog/icatalogentry.h>
 #include <xmlcatalog/icataloggroup.h>
 #include <xmlcatalog/icatalogmanager.h>
+
 #include <KDE/KUrl>
+#include <KDE/KDebug>
 
 XmlCatalogModelNode::XmlCatalogModelNode(XmlCatalogModelNode* parent, int row) : m_parent(parent), m_row(row) {}
 
@@ -54,6 +56,9 @@ public:
         name = m_entry->URI();
         if (!name.isNull())
             return name;
+        name = m_entry->doctype();
+        if (!name.isNull())
+            return name;
         return "Entry [Unknown]";
     }
 
@@ -70,6 +75,10 @@ public:
         name = m_entry->URI();
         if (!name.isNull() && m_entry->catalog()) {
             return m_entry->catalog()->resolveUri(name);
+        }
+        name = m_entry->doctype();
+        if (!name.isNull() && m_entry->catalog()) {
+            return m_entry->catalog()->resolveDoctype(name);
         }
         return m_entry->URL();
     }
@@ -108,9 +117,12 @@ public:
         if (m_catalog->parameter(ICatalogManager::ParameterReadonly).toBool())
             mode = i18n("[read-only]");
         KUrl url = m_catalog->parameter(ICatalogManager::ParameterFile).toString();
-        QString fileName = url.fileName();
-        fileName = fileName.mid(0, fileName.lastIndexOf('.'));
-        return QString("%1 %2").arg(fileName, mode);
+        QString name = m_catalog->parameter(ICatalogManager::ParameterName).toString();
+        if(name.isEmpty()) {
+            name = url.fileName();
+            name = name.mid(0, name.lastIndexOf('.'));
+        }
+        return QString("%1 %2").arg(name, mode);
     }
 
     QString info() const {
@@ -201,7 +213,7 @@ const QIcon & XmlCatalogModel::getIcon ( const QString &fileNamePart ) const
     static QHash <QString, QIcon> icons;
     if ( icons.contains ( fileNamePart ) )
         return icons[fileNamePart];
-    QIcon i ( QString ( ":/xml/%1.png" ).arg ( fileNamePart ) );
+    QIcon i ( QString ( ":/xml/catalog/%1.png" ).arg ( fileNamePart ) );
     icons.insert ( fileNamePart, i );
     return icons[fileNamePart];
 }
@@ -224,6 +236,7 @@ QVariant XmlCatalogModel::data(const QModelIndex& index, int role) const
             if (!item->entry()->publicId().isEmpty()) return getIcon("publicId");
             if (!item->entry()->systemId().isEmpty()) return getIcon("systemId");
             if (!item->entry()->URI().isEmpty()) return getIcon("uri");
+            if (!item->entry()->doctype().isEmpty()) return getIcon("doctype");
         }
         if (item->catalog())
             return getIcon("catalog");

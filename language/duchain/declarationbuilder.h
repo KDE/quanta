@@ -23,6 +23,7 @@
 #include "contextbuilder.h"
 
 #include <language/duchain/builders/abstractdeclarationbuilder.h>
+#include "elementdeclaration.h"
 
 namespace KDvelop
 {
@@ -39,6 +40,9 @@ class ElementDeclaration;
 typedef KDevelop::AbstractDeclarationBuilder<AstNode, ElementAst, ContextBuilder> DeclarationBuilderBase;
 
 /** Builder for XML SGML and DTD
+ *  Sgml is case insensitive, therefor all Indentifiers is in lower case, but ElementDeclaration has
+ *  a method 'name' and 'prettyName' which is case sensitive.
+ *  @see ElementDeclaration
  *  @see XsdDeclarationBuilder
  */
 class KDEVSGMLDUCHAIN_EXPORT DeclarationBuilder : public DeclarationBuilderBase
@@ -56,19 +60,19 @@ public:
     virtual void visitDtdAttlist(DtdAttlistAst* node);
     virtual void visitDtdEntity(DtdEntityAst* node);
     virtual void visitDtdEntityInclude(DtdEntityIncludeAst* node);
-    virtual void visitElementPHP(ElementPHPAst* node);
+    //virtual void visitElementPHP(ElementPHPAst* node);
     virtual void visitElementPCDATA(ElementPCDATAAst* node);
     virtual void visitElementCDATA(ElementCDATAAst* node);
     virtual void visitElementText(ElementTextAst* node);
     virtual void visitElementProcessing(ElementProcessingAst* node);
-    virtual void visitElementSource(ElementSourceAst* node);
+    //virtual void visitElementSource(ElementSourceAst* node);
     virtual void closeDeclaration();
 
 protected:
     virtual KDevelop::QualifiedIdentifier identifierForNode( ElementTagAst* node );
     ElementDeclaration* createClassInstanceDeclaration(const QString &identifier,
                                         const KDevelop::SimpleRange &range,
-                                        const QString &name = QString(),
+                                        ElementDeclarationData::ElementType type,
                                         const QString &nameSpacePrefix = QString());
 
     KDevelop::Declaration *createImportDeclaration(const QString &identifier,

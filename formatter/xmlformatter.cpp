@@ -430,6 +430,7 @@ QString XmlFormatter::nextToken ( QTextStream& stream, XmlFormatter::TokenType* 
                         stream >> cur;
                         ret += cur;
                         if ( cur == '[' ) {
+                            //TODO what about conditions ie <![INCLUDE[ ]>
                             ret += readUntill ( stream, "]>" );
                             break;
                         } else if ( cur == '>' ) break;
@@ -441,6 +442,8 @@ QString XmlFormatter::nextToken ( QTextStream& stream, XmlFormatter::TokenType* 
                 }
             } else if ( test == "![C" ) {
                 //Possible CDATA
+                //TODO what about PCDATA
+                //TODO what about conditions ie <![IE6[  ]>
                 test += stream.read ( 5 );
                 if ( test == "![CDATA[" ) {
                     ret += test + readUntill ( stream, "]]>" );
