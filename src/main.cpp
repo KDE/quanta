@@ -212,22 +212,6 @@ int main( int argc, char *argv[] )
       qerr << endl << i18n( "Cannot open unknown session %1. See --sessions switch for available sessions or use -cs to create a new one.", session ) << endl;
       return 1;
     }
-
-    if ( !KDevelop::SessionController::tryLockSession( KDevelop::SessionController::defaultSessionId( session ) ) ) {
-      QTextStream qerr( stderr );
-      qerr << endl << i18n( "Session %1 is already running.", session ) << endl;
-      return 1;
-    }
-  }
-
-  ///Manage sessions: There always needs a KDEV_SESSION to be set, so the duchain can be stored in the session-specific directory
-  session = KDevelop::SessionController::defaultSessionId( session );
-
-  //if session is already running create a new one
-  //if the user explicitely picked a already running session using the -s switch he already
-  //gets got an error
-  if ( !KDevelop::SessionController::tryLockSession( session ) ) {
-    session = QUuid::createUuid();
   }
 
   KDevQuantaExtension::init();
