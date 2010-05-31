@@ -308,7 +308,7 @@ void XmlCatalogDialog::slotAddEntry()
     bool success = false;
     
     if(id.trimmed().isEmpty() || uri.trimmed().isEmpty()) {
-        KMessageBox::error(dialog, i18n("Empty entries not allowed!"));
+        KMessageBox::error(dialog, i18n("Empty entries not allowed."));
         return;
     }
 
