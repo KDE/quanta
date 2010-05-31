@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Quanta Plus BE
+Name[de]=Quanta Plus BE
 Name[es]=Quanta Plus BE
 Name[nds]=Quanta Plus BE
 Name[pt]=Quanta Plus BE
@@ -16,6 +17,7 @@ MimeType=text/html
 DocPath=quanta/index.html
 Comment=Web Development Environment
 Comment[cs]=Webové vývojové prostředí
+Comment[de]=Web-Entwicklungsumgebung
 Comment[es]=Entorno de desarrollo web
 Comment[nds]=Nett-Entwickelnümgeven
 Comment[pt]=Ambiente de Desenvolvimento na Web
