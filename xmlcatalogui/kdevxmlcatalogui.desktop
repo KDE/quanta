@@ -3,6 +3,7 @@ Type=Service
 Exec=blubb
 Icon=text-xml
 Name=DTD/Schema Catalog user interface
+Name[en_GB]=DTD/Schema Catalogue user interface
 Name[es]=Interfaz de usuario de catálogo de esquemas o DTD
 Name[pt]=Interface de utilizador do catálogo de DTD/esquemas
 Name[pt_BR]=Interface do usuário para catálogo de DTD/Esquemas
