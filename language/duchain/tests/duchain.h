@@ -33,6 +33,7 @@ public:
 private slots:
     void testXmlContext();
     void testSgmlContext();
+    void testEmptyDTDAttlist();
 };
 
 }

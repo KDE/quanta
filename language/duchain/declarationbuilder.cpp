@@ -237,28 +237,30 @@ void DeclarationBuilder::visitDtdAttlist(DtdAttlistAst* node)
         }
         while (it != end);
     }
-    foreach(QString elementName, elements ) {
-        if (!m_dtdElements.contains(elementName.toLower())) {
-            kDebug() << "Could not find element" << elementName;
-            continue; //TODO print warning
-        }
-        ElementDeclaration *dec = m_dtdElements.value(elementName.toLower());
-        KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
-        const KDevPG::ListNode<DtdAttAst*> *it = node->attributesSequence->front(), *end = it;
-        do
-        {
-            if (it->element) {
-                QString name;
-                if (it->element->name) {
-                    name = nodeText(it->element->name);
-                }
-                if (!name.isEmpty()) {
-                    dec->addAttributes(KDevelop::IndexedString(name));
-                }
+    if (node->attributesSequence) {
+        foreach(QString elementName, elements ) {
+            if (!m_dtdElements.contains(elementName.toLower())) {
+                kDebug() << "Could not find element" << elementName;
+                continue; //TODO print warning
             }
-            it = it->next;
+            ElementDeclaration *dec = m_dtdElements.value(elementName.toLower());
+            KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
+            const KDevPG::ListNode<DtdAttAst*> *it = node->attributesSequence->front(), *end = it;
+            do
+            {
+                if (it->element) {
+                    QString name;
+                    if (it->element->name) {
+                        name = nodeText(it->element->name);
+                    }
+                    if (!name.isEmpty()) {
+                        dec->addAttributes(KDevelop::IndexedString(name));
+                    }
+                }
+                it = it->next;
+            }
+            while (it != end);
         }
-        while (it != end);
     }
 }
 

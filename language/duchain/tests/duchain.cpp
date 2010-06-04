@@ -72,6 +72,14 @@ void TestDUChain::testSgmlContext()
     QVERIFY(dec->range() == KDevelop::SimpleRange(0, 0, 0, 15));
 }
 
+void TestDUChain::testEmptyDTDAttlist()
+{
+  ///TODO: make this work properly
+  QByteArray method("<!ELEMENT foo EMPTY>\n"
+                    "<!ATTLIST foo\n>");
+  KDevelop::TopDUContext* top = parse(method, DumpAll);
+  DUChainReleaser releaseTop(top);
+}
 
 
 }
