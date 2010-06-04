@@ -42,3 +42,4 @@ X-KDevelop-Interfaces=ILanguageSupport
 X-KDevelop-SupportedMimeTypes=text/html,application/xml-dtd,application/docbook+xml,application/xhtml+xml,text/xml,application/xml,application/xslt+xml,application/xsd,application/wsdl+xml,application/x-wsdl
 X-KDE-PluginInfo-Name=KDevSgmlSupport
 X-KDevelop-Mode=NoGUI
+X-KDevelop-LoadMode=AlwaysOn

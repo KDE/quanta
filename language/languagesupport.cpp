@@ -50,6 +50,8 @@ LanguageSupport::LanguageSupport(QObject* parent, const QVariantList& args) :
         KDevelop::IPlugin(KDevXmlSupportFactory::componentData(), parent),
         KDevelop::ILanguageSupport()
 {
+    KDEV_USE_EXTENSION_INTERFACE(KDevelop::ILanguageSupport)
+
     Q_UNUSED(args);
     m_self = this;
     SgmlCodeCompletionModel* ccModel = new SgmlCodeCompletionModel(this);
