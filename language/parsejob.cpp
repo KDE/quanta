@@ -46,18 +46,19 @@
 #include <language/backgroundparser/urlparselock.h>
 #include <language/duchain/duchainutils.h>
 
+#include "language_debug.h"
 
 namespace Xml
 {
 
 ParseJob::ParseJob(const KUrl& url) : KDevelop::ParseJob(url)
 {
-    kDebug();
+    kDebug(debugArea());
 }
 
 ParseJob::~ParseJob()
 {
-    kDebug();
+    kDebug(debugArea());
 }
 
 void ParseJob::run()
@@ -76,13 +77,13 @@ void ParseJob::run()
             }
         }
         if (!needsUpdate) {
-            kDebug() << "Already up to date" << document().str();
+            kDebug(debugArea()) << "Already up to date" << document().str();
             cleanupSmartRevision();
             return;
         }
     }
 
-    kDebug() << "Parsing:" << document().str();
+    kDebug(debugArea()) << "Parsing:" << document().str();
     //Dont include yourself
     m_includes.insert(document().str(), QString::null);
 
@@ -104,7 +105,7 @@ void ParseJob::run()
     }
  
     //Build
-    kDebug() << "Building:" << document().str();
+    kDebug(debugArea()) << "Building:" << document().str();
     KDevelop::ReferencedTopDUContext top;
     {
         KDevelop::DUChainReadLocker lock(KDevelop::DUChain::lock());
@@ -112,14 +113,14 @@ void ParseJob::run()
     }
  
     if (top) {
-        kDebug() << "Re-compiling:" << document().str();
+        kDebug(debugArea()) << "Re-compiling:" << document().str();
         KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
         top->clearImportedParentContexts();
         if (top->parsingEnvironmentFile())
             top->parsingEnvironmentFile()->clearModificationRevisions();
         top->clearProblems();
     } else {
-        kDebug() << "Compiling:" << document().str();
+        kDebug(debugArea()) << "Compiling:" << document().str();
     }
     
     QList<KDevelop::ProblemPointer> problems;
@@ -184,7 +185,7 @@ void ParseJob::run()
 void ParseJob::visit(KDevelop::Declaration* d)
 {
     if (!d) return;
-    kDebug() << d->qualifiedIdentifier().toString();
+    kDebug(debugArea()) << d->qualifiedIdentifier().toString();
     if (d->internalContext()) {
         foreach(KDevelop::Declaration *d1 , d->internalContext()->localDeclarations()) {
             visit(d1);
