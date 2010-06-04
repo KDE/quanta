@@ -155,7 +155,7 @@ void DeclarationBuilder::visitDtdElement(DtdElementAst* node)
                 dec->setContentType(nodeText(node->content));
             }
             
-            if (e->tokenToString(node->closeTag) == "O") {
+            if (node->closeTag == Parser::Token_OPT) {
                 dec->setCloseTagRequired(false);
             }
             m_dtdElements.insert(name.toLower(), dec);
