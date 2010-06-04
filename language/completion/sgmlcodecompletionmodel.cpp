@@ -530,9 +530,9 @@ void SgmlCodeCompletionModel::executeCompletionItem2(KTextEditor::Document* docu
             text = text.mid(1, text.size() -1);
         Range range = word;
         range = growRangeLeft(document, range, "</");
-        kDebug() << "right1" << line.at(range.end().column());
+        kDebug() << "right1" << (range.end().column() < line.length() ? line.at(range.end().column()) : ' ');
         range = growRangeRight(document, range, ">");
-        kDebug() << "right2" << line.at(range.end().column());
+        kDebug() << "right2" << (range.end().column() < line.length() ? line.at(range.end().column()) : ' ');
         if (trimmedLine.isEmpty()) {
             Range r = range;
             r.start().setColumn(0);
