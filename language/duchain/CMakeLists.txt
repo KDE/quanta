@@ -54,6 +54,7 @@ target_link_libraries(kdevsgmlduchain
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDEVPLATFORM_SHELL_LIBRARIES}
     ${KDEVPLATFORM_PROJECT_LIBRARIES}
+    ${KDEVPLATFORM_TESTS_LIBRARIES}
     kdevxmlcatalog
 )
 
