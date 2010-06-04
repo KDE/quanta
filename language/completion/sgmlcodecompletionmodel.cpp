@@ -292,6 +292,9 @@ KTextEditor::Range SgmlCodeCompletionModel::completionRange(KTextEditor::View* v
     KTextEditor::Cursor start = position;
     KTextEditor::Cursor end = position;
     QString text = view->document()->line(position.line());
+    if ( text.isEmpty() ) {
+      return Range(0, 0, 0, 0);
+    }
     while (start.column() >= 0 && !seps.contains(text.at(start.column()))) {
         start.setColumn(start.column()-1);
         if (seps.contains(text.at(start.column()))) {
