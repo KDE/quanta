@@ -1,6 +1,5 @@
 find_package(LibXml2 REQUIRED)
 
-add_subdirectory( app_templates )
 # TODO PORT
 #add_subdirectory( autocomplete )
 
