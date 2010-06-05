@@ -1,5 +1,4 @@
 
-add_subdirectory( createproject )
 add_subdirectory( structuretree )
 #add_subdirectory( tagdialogs )
 add_subdirectory( templatestree )
