@@ -1,32 +1,32 @@
 <!DOCTYPE kpartgui>
-<kpartplugin name="usertoolbars" library="libusertoolbarsplugin" version="1">
+<kpartplugin name="usertoolbars" library="libusertoolbarsplugin" version="4">
 <MenuBar>
-  <Menu name="toolbars" >
-    <text>Too&amp;lbars</text>
-    <Menu name="toolbars_load" >
-      <text>&amp;Load Toolbars</text>
-      <Action name="toolbars_load_global" />
-      <Action name="toolbars_load_user" />
-      <Action name="toolbars_load_project" />
-    </Menu>
-    <Menu name="toolbars_save" >
-      <text>&amp;Save Toolbars</text>
-      <Action name="toolbars_save_local" />
-      <Action name="toolbars_save_project" />
-    </Menu>
-    <Separator/>
-    <Action name="toolbars_add" />
-    <Action name="toolbars_remove" />
-    <Action name="toolbars_rename" />
-    <Separator/>
-    <Action name="toolbars_send" />
-    <Action name="toolbars_upload" />
-    <Action name="toolbars_download" />
-  </Menu>
   <Menu name="actions">
       <text>&amp;Actions</text>
   </Menu>
   <Menu name="settings">
+    <Menu name="toolbars" group="show_toolbar_merge">
+      <text>User Too&amp;lbars</text>
+      <Menu name="toolbars_load" >
+        <text>&amp;Load Toolbars</text>
+        <Action name="toolbars_load_global" />
+        <Action name="toolbars_load_user" />
+        <Action name="toolbars_load_project" />
+      </Menu>
+      <Menu name="toolbars_save" >
+        <text>&amp;Save Toolbars</text>
+        <Action name="toolbars_save_local" />
+        <Action name="toolbars_save_project" />
+      </Menu>
+      <Separator/>
+      <Action name="toolbars_add" />
+      <Action name="toolbars_remove" />
+      <Action name="toolbars_rename" />
+      <Separator/>
+      <Action name="toolbars_send" />
+      <Action name="toolbars_upload" />
+      <Action name="toolbars_download" />
+    </Menu>
     <Action name="configure_actions" />
   </Menu>
 </MenuBar>
