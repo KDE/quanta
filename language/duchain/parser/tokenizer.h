@@ -67,17 +67,17 @@ public:
      *  (but the first occurrence blah; not the last)
      *  @return The character after condition.
      */
-    const QChar * readUntill(const QChar *start, const QChar *end, const QString& condition , int flag = 0, const QChar** conditionStart = 0);
+    const QChar * readUntill(const QChar *start, const QChar *end, const QString& condition , int flag, const QChar** conditionStart);
 
     /** A pattern similar to the expression [^blah]*
      *  @return The first occurrence of condition.
      */
-    const QChar * readUntillAny(const QChar *start, const QChar *end, const QString& condition, int flag = 0);
+    const QChar * readUntillAny(const QChar *start, const QChar *end, const QString& condition, int flag);
 
     /** A pattern similar to the expression [blah]*
      *  @return The character after condition.
      */
-    const QChar * readWhileAny(const QChar *start, const QChar *end, const QString& condition, int flag = 0, const QChar** conditionStart = 0);
+    const QChar * readWhileAny(const QChar *start, const QChar *end, const QString& condition, int flag, const QChar** conditionStart);
 
     QString removeWhites(QString str) const;
 

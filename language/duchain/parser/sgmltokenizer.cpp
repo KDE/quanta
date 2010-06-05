@@ -243,6 +243,10 @@ int SgmlTokenizer::nextTokenKind() {
             READ_UNTIL("-->", IgnoreNone);
             DEFAULT_RETURN(Parser::Token_COMMENT, readLength)
         }
+        
+        if(str == "<!>") {
+            DEFAULT_RETURN(Parser::Token_COMMENT, 3)
+        }
 
         if (str.startsWith("<![")) {
             READ_WHILE_ANY("<![PCDATApcdata[", IgnoreNone);

@@ -53,6 +53,7 @@ LanguageSupport::LanguageSupport(QObject* parent, const QVariantList& args) :
     KDEV_USE_EXTENSION_INTERFACE(KDevelop::ILanguageSupport)
 
     Q_UNUSED(args);
+    KDEV_USE_EXTENSION_INTERFACE(KDevelop::ILanguageSupport)
     m_self = this;
     SgmlCodeCompletionModel* ccModel = new SgmlCodeCompletionModel(this);
     new KDevelop::CodeCompletion(this, ccModel, name());
