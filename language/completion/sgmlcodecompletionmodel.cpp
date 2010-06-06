@@ -556,7 +556,7 @@ void SgmlCodeCompletionModel::executeCompletionItem2(KTextEditor::Document* docu
     //Attributes
     if (item.type == Attribute) {
         range = growRangeRight(document, range, "=");
-        text = QString("%1=").arg(text);
+        text += '=';
         document->replaceText(range, text);
 
         range.end().setColumn(range.start().column() + text.size());
