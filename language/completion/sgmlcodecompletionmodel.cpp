@@ -35,6 +35,8 @@
 #include "../duchain/parser/editorintegrator.h"
 #include "../duchain/parser/parsesession.h"
 
+#include "../language_debug.h"
+
 using namespace Xml;
 
 using namespace KDevelop;
@@ -69,18 +71,18 @@ public:
     virtual ~CompletionVisitor() {}
 
     virtual void visitAttribute(AttributeAst* node) {
-        kDebug();
+        kDebug(debugArea());
         if (!node || !node->name) return;
         attribute = node;
         DefaultVisitor::visitAttribute(node);
     }
 
     virtual void visitElementTag(ElementTagAst* node) {
-        kDebug();
+        kDebug(debugArea());
         if (!node || !node->name) return;
         attribute = 0;
         element = 0;
-        kDebug() << (int)node->endToken;
+        kDebug(debugArea()) << (int)node->endToken;
         if (editor->parseSession()->tokenStream()->token(node->endToken).kind == Parser::Token_GT
                 || (node->childrenSequence && node->childrenSequence->count() > 0)) {
             contextStack.push(node);
@@ -213,7 +215,7 @@ void SgmlCodeCompletionModel::completionInvoked(KTextEditor::View* view, const K
     session.setMime(KMimeType::mimeType(view->document()->mimeType()));
     StartAst *start=0;
     if (!session.parse(&start)) {
-        kDebug() << "Failed to parse content";
+        kDebug(debugArea()) << "Failed to parse content";
     }
     Xml::EditorIntegrator editor(&session);
     CompletionVisitor visitor(&editor);
@@ -221,19 +223,19 @@ void SgmlCodeCompletionModel::completionInvoked(KTextEditor::View* view, const K
     m_depth = visitor.contextStack.size();
     
     if (visitor.attribute) {
-        kDebug() << "# attribute" << visitor.nodeText(visitor.attribute->name);
+        kDebug(debugArea()) << "# attribute" << visitor.nodeText(visitor.attribute->name);
     } else {
-        kDebug() << "# attribute null";
+        kDebug(debugArea()) << "# attribute null";
     }
     if (visitor.context) {
-        kDebug() << "# context" << visitor.nodeText(visitor.context->name);
+        kDebug(debugArea()) << "# context" << visitor.nodeText(visitor.context->name);
     } else {
-        kDebug() << "# context null";
+        kDebug(debugArea()) << "# context null";
     }
     if (visitor.element) {
-        kDebug() << "# element" << visitor.nodeText(visitor.element->name);
+        kDebug(debugArea()) << "# element" << visitor.nodeText(visitor.element->name);
     } else {
-        kDebug() << "# element null";
+        kDebug(debugArea()) << "# element null";
     }
 
     if (esc.endsWith('!') && tag.isEmpty()) {
@@ -530,9 +532,9 @@ void SgmlCodeCompletionModel::executeCompletionItem2(KTextEditor::Document* docu
             text = text.mid(1, text.size() -1);
         Range range = word;
         range = growRangeLeft(document, range, "</");
-        kDebug() << "right1" << (range.end().column() < line.length() ? line.at(range.end().column()) : ' ');
+        kDebug(debugArea()) << "right1" << (range.end().column() < line.length() ? line.at(range.end().column()) : ' ');
         range = growRangeRight(document, range, ">");
-        kDebug() << "right2" << (range.end().column() < line.length() ? line.at(range.end().column()) : ' ');
+        kDebug(debugArea()) << "right2" << (range.end().column() < line.length() ? line.at(range.end().column()) : ' ');
         if (trimmedLine.isEmpty()) {
             Range r = range;
             r.start().setColumn(0);
@@ -950,10 +952,10 @@ QList< SgmlCodeCompletionModel::CompletionItem > SgmlCodeCompletionModel::findAt
     QList<Declaration *> decs;
     TopDUContext * tc = 0;
     QHash< QString, CompletionItem > items;
-    kDebug();
+    kDebug(debugArea());
     tc = DUChain::self()->chainForDocument(document->url());
     if (!tc) {
-        kDebug() << "No top context";
+        kDebug(debugArea()) << "No top context";
         return items.values();
     }
 
@@ -961,13 +963,13 @@ QList< SgmlCodeCompletionModel::CompletionItem > SgmlCodeCompletionModel::findAt
     if(name.isEmpty()) {
         ctx = tc->findContextAt(SimpleCursor(range.start()));
         if (!ctx) {
-            kDebug() << "No context";
+            kDebug(debugArea()) << "No context";
             return items.values();
         }
 
         dec = ctx->findDeclarationAt(SimpleCursor(range.start()));
         if (!dec) {
-            kDebug() << "No declaration";
+            kDebug(debugArea()) << "No declaration";
             return items.values();
         }
 
