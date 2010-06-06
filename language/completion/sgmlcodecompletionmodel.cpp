@@ -555,12 +555,36 @@ void SgmlCodeCompletionModel::executeCompletionItem2(KTextEditor::Document* docu
 
     //Attributes
     if (item.type == Attribute) {
-        range = growRangeRight(document, range, "=");
-        text += "=\"\"";
+        // overwrite existing attribute to the left
+        Cursor pos = range.start();
+        while ( pos.column() > 1 && !document->character(pos - Cursor(0, 1)).isSpace() ) {
+          pos.setColumn(pos.column() - 1);
+        }
+        range.start() = pos;
+        range = growRangeRight(document, range, "=\"'");
+        QChar endChar;
+        if (range.end().column() > 0) {
+          endChar = document->character(range.end() - Cursor(0, 1));
+        }
+        bool addQuote = endChar != '\'' && endChar != '"';
+        if (addQuote && range.end().column() > 1) {
+          endChar = document->character(range.end() - Cursor(0, 2));
+        }
+        bool addEquals = endChar != '=';
+
+        if (addEquals) {
+          text += '=';
+        }
+        if (addQuote) {
+          text += "\"\"";
+        } else {
+          // keep existing quote
+          text += document->character(range.end() - Cursor(0, 1));
+        }
         document->replaceText(range, text);
 
         // place cursor between quotes
-        range.end().setColumn(range.start().column() + text.size() - 1);
+        range.end().setColumn(range.start().column() + text.size() - (addQuote ? 1 : 0));
         foreach(View * v, document->views()) {
             if (v->isActiveView())
                 v->setCursorPosition(range.end());
