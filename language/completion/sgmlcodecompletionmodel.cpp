@@ -556,14 +556,11 @@ void SgmlCodeCompletionModel::executeCompletionItem2(KTextEditor::Document* docu
     //Attributes
     if (item.type == Attribute) {
         range = growRangeRight(document, range, "=");
-        text += '=';
+        text += "=\"\"";
         document->replaceText(range, text);
 
-        range.end().setColumn(range.start().column() + text.size());
-        QString growSeps = "=\"'";
-        range = growRangeRight(document, range, growSeps);
-        if (growSeps.contains(document->character(range.end())))
-            range.end().setColumn(range.end().column() + 1);
+        // place cursor between quotes
+        range.end().setColumn(range.start().column() + text.size() - 1);
         foreach(View * v, document->views()) {
             if (v->isActiveView())
                 v->setCursorPosition(range.end());
