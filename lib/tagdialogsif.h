@@ -18,10 +18,6 @@
 
 #include <kurl.h>
 
-//kdevelop includes
-#include <interfaces/iextension.h>
-
-
 class QTag;
 
 /**
@@ -48,7 +44,6 @@ public:
 
 };
 
-KDEV_DECLARE_EXTENSION_INTERFACE( TagDialogsIf, "org.kdevelop.TagDialogsIf" )
 Q_DECLARE_INTERFACE( TagDialogsIf, "org.kdevelop.TagDialogsIf" )
 
 #endif

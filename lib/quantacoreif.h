@@ -16,13 +16,10 @@
 #include "helper.h"
 #include "quantaexport.h"
 
-//kdevelop includes
-#include <interfaces/iextension.h>
-
 //kde includes
 
 //qt includes
-// #include <QObject>
+#include <QObject>
 
 class QPoint;
 
@@ -125,7 +122,6 @@ Q_SIGNALS:
   
 };
 
-KDEV_DECLARE_EXTENSION_INTERFACE( QuantaCoreIf, "org.kdevelop.QuantaCoreIf" )
 Q_DECLARE_INTERFACE( QuantaCoreIf, "org.kdevelop.QuantaCoreIf" )
 
 #endif
