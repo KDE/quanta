@@ -1,0 +1,148 @@
+/*****************************************************************************
+ * Copyright (c) 2010 Ruan Strydom <rm3dom@gmail.com>                        *
+ *                                                                           *
+ * This program is free software; you can redistribute it and/or modify      *
+ * it under the terms of the GNU General Public License as published by      *
+ * the Free Software Foundation; either version 3 of the License, or         *
+ * (at your option) any later version.                                       *
+ *                                                                           *
+ * This program is distributed in the hope that it will be useful,           *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of            *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
+ * GNU General Public License for more details.                              *
+ *                                                                           *
+ * You should have received a copy of the GNU General Public License         *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
+ *****************************************************************************/
+
+#include "formatterplugin.h"
+
+#include "formatter.h"
+
+#include <QtCore/QPair>
+#include <QtCore/QList>
+
+#include <KDE/KPluginFactory>
+#include <KDE/KPluginLoader>
+#include <KDE/KLocalizedString>
+#include <KDE/KAboutData>
+#include <KDE/KTextEditor/Document>
+#include <KDE/KDebug>
+#include <KDE/KMessageBox>
+#include <KDE/KActionCollection>
+#include <KDE/KAction>
+#include <KDE/KTextEditor/SmartCursor>
+#include <KDE/KTextEditor/View>
+
+#include <interfaces/icore.h>
+#include <interfaces/iplugin.h>
+#include <interfaces/isourceformatter.h>
+#include <interfaces/idocument.h>
+#include <interfaces/idocumentcontroller.h>
+#include <interfaces/isourceformattercontroller.h>
+
+
+using namespace KDevelop;
+using namespace Php;
+
+K_PLUGIN_FACTORY ( KdevPlugFactory, registerPlugin<Php::FormatterPlugin>(); )
+K_EXPORT_PLUGIN ( KdevPlugFactory ( KAboutData ( "kdevphpformatter", "kdevphpformatter", ki18n ( "PHP Formatter" ), "0.1", ki18n ( "A plugin for formatting PHP files" ), KAboutData::License_GPL ) ) )
+
+
+FormatterPlugin::FormatterPlugin ( QObject *parent, const QVariantList& )
+        : IPlugin ( KdevPlugFactory::componentData(), parent ) {
+    KDEV_USE_EXTENSION_INTERFACE ( ISourceFormatter );
+    m_formatter = new Formatter();
+    
+    SourceFormatterStyle defaultStyle("DEFAULT");
+    defaultStyle.setContent("indent_size=4");
+    defaultStyle.setCaption("DEFAULT");
+    m_style = defaultStyle;
+    m_styles.append(m_style);
+    
+}
+
+FormatterPlugin::~FormatterPlugin() {
+    if(m_formatter)
+        delete m_formatter;
+}
+
+ContextMenuExtension FormatterPlugin::contextMenuExtension ( Context* context ) {
+    Q_UNUSED(context);
+    ContextMenuExtension ext;
+    return ext ;
+}
+
+QString FormatterPlugin::name() {
+    return "phpformatter";
+}
+
+QString FormatterPlugin::caption() {
+    return "PHP Formatter";
+}
+
+QString FormatterPlugin::description() {
+    return i18n ( "PHP Formatter" );
+}
+
+QString FormatterPlugin::highlightModeForMime ( const KMimeType::Ptr &mime ) {
+    return "PHP";
+}
+
+QString FormatterPlugin::formatSource ( const QString& text, const KMimeType::Ptr& mime, const QString& leftContext, const QString& rightContext ) {
+    if(m_formatter) {
+        m_formatter->loadStyle(m_style.content());
+        return m_formatter->formatSource(text, leftContext, rightContext);
+    }
+    return text;
+}
+
+QString FormatterPlugin::formatSourceWithStyle(SourceFormatterStyle style, const QString& text, const KMimeType::Ptr& mime, const QString& leftContext, const QString& rightContext)
+{
+    if(m_formatter) {
+        m_formatter->loadStyle(style.content());
+        return m_formatter->formatSource(text, leftContext, rightContext);
+    }
+    return text;
+}
+
+QList< SourceFormatterStyle > FormatterPlugin::predefinedStyles()
+{
+    return m_styles;
+}
+
+void FormatterPlugin::setStyle(const KDevelop::SourceFormatterStyle& style)
+{
+    m_style = style;
+}
+
+SourceFormatterStyle FormatterPlugin::style() const
+{
+    return m_style;
+}
+
+KDevelop::SettingsWidget* FormatterPlugin::editStyleWidget ( const KMimeType::Ptr &mime ) {
+    Q_UNUSED ( mime );
+    return 0;
+}
+
+QString FormatterPlugin::previewText ( const KMimeType::Ptr & ) {
+    return QString ( "<?php\n") +
+           "$i=true;\n" +
+           "if($i){\n" +
+           "$i=false;\n" +
+           "}\n"+
+           "?>";
+}
+
+ISourceFormatter::IndentationType FormatterPlugin::indentationType() {
+    return ISourceFormatter::IndentWithSpacesAndConvertTabs;
+}
+
+int FormatterPlugin::indentationLength() {
+    return 4;
+}
+
+#include "formatterplugin.moc"
+
+
