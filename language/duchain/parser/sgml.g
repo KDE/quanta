@@ -280,8 +280,15 @@ namespace KDevelop
     ) maybeWhites
     (
         tclose=GT [:
-                    while(!m_stack.empty() && tagName(m_stack.top()) != tagName(*yynode)) m_stack.pop();
-                    if(!m_stack.empty() && tagName(m_stack.top()) == tagName(*yynode))  m_stack.pop();
+                    QString tagNameStr = tagName(*yynode);
+                    if(m_dtdHelper.emptyElement(tagNameStr))
+                        reportProblem(Error, "Empty element: no content/close tag expected");
+                    else {
+                        while(!m_stack.empty() && tagName(m_stack.top()) != tagNameStr) m_stack.pop();
+                        if(m_stack.empty())
+                            reportProblem(Error, "Close tag without start");
+                        if(!m_stack.empty() && tagName(m_stack.top()) == tagNameStr)  m_stack.pop();
+                    }
                   :]
         | 0 [: reportProblem(Error, "Unclosed element"); :]
     )

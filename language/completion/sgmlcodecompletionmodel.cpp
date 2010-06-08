@@ -241,6 +241,7 @@ void SgmlCodeCompletionModel::completionInvoked(KTextEditor::View* view, const K
     if (esc.endsWith('!') && tag.isEmpty()) {
         m_items.append(CompletionItem("DOCTYPE", 10, Other));
         m_items.append(CompletionItem("ELEMENT", 10, Other));
+        m_items.append(CompletionItem("ENTITY", 10, Other));
         m_items.append(CompletionItem("ATTLIST", 10, Other));
         m_items.append(CompletionItem("NOTATION", 10, Other));
         m_items.append(CompletionItem("[CDATA[", 0, Other));
@@ -390,18 +391,40 @@ QString SgmlCodeCompletionModel::getIndentstring(Document* document, int depth) 
     return ret;
 }
 
-/*TODO This should use the ISourceFormatter, 
- */
 QString SgmlCodeCompletionModel::formatString(Document* document, const QString& str, CompletionItemType type) const
 {
-#define CASESENSITIVE 0
-#define LOWERCASE 1
-#define UPPERCASE 1
-
     if (type != Element)
         return str;
-
+    
+    //TODO Need to fix SourceFormatterController, on my system it does not save/use my preferences.
+    /*
     KMimeType::Ptr mime = KMimeType::mimeType(document->mimeType());
+    ISourceFormatter *formatter = ICore::self()->sourceFormatterController()->formatterForMimeType(mime);
+    SourceFormatterStyle style = ICore::self()->sourceFormatterController()->styleForMimeType(mime);
+    if(formatter) {
+        kDebug() << style.name();
+        kDebug() << style.caption();
+        QMap<QString, QVariant> map = formatter->stringToOptionMap(style.content());
+        if(map.contains("CASE")) {
+            if(map.value("CASE") == "LOWER")
+                return str.toLower();
+            if(map.value("CASE") == "UPPER")
+                return str.toUpper();
+        }
+    }
+    return str;
+    */
+    
+    
+    #define CASESENSITIVE 0
+    #define LOWERCASE 1
+    #define UPPERCASE 1
+    
+    if (type != Element)
+    return str;
+    
+    KMimeType::Ptr mime = KMimeType::mimeType(document->mimeType());
+    
     if (mime->is ( "application/xml" ) ||
         mime->is ( "application/xslt+xml" ) ||
         mime->is ( "application/xsd" ) ||

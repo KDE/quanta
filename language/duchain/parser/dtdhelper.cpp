@@ -16,7 +16,7 @@
  *****************************************************************************/
 
 #include "dtdhelper.h"
-
+#include <elementdeclaration.h>
 
 #include <QtCore/QHash>
 #include <QtCore/QString>
@@ -39,7 +39,6 @@
 #include <language/interfaces/ilanguagesupport.h>
 #include <language/backgroundparser/parsejob.h>
 #include <language/backgroundparser/backgroundparser.h>
-#include <elementdeclaration.h>
 
 
 using namespace Xml;
@@ -78,7 +77,6 @@ public:
             ElementDeclaration *elementDec = dynamic_cast<ElementDeclaration *>(dec);
             if (!elementDec) continue;
             return elementDec->contentType().toUpper() == "CDATA";
-            //TODO return something
         }
         return false;
     }
@@ -91,7 +89,6 @@ public:
             ElementDeclaration *elementDec = dynamic_cast<ElementDeclaration *>(dec);
             if (!elementDec) continue;
             return !elementDec->closeTagRequired();
-            //TODO return something
         }
         return false;
     }
@@ -105,7 +102,6 @@ public:
             ElementDeclaration *elementDec = dynamic_cast<ElementDeclaration *>(dec);
             if (!elementDec) continue;
             return elementDec->contentType().toUpper() == "EMPTY";
-            //TODO return something
         }
         return false;
     }
@@ -151,21 +147,21 @@ public:
     virtual bool cdataElement(const QString& elementName) const {
         static QHash<QString, char> list = ( {
             QHash<QString, char> list;
-            list.insert("SCRIPT", 0);
-            list.insert("STYLE", 0);
+            list.insert("script", 0);
+            list.insert("style", 0);
             list;
         });
-        return list.contains(elementName.toUpper());
+        return list.contains(elementName.toLower());
     }
 
     virtual bool closeOptional(const QString& elementName) const {
-        static QHash<QString, char> list = split("BASEFONT | BR | AREA | LINK | IMG | PARAM | HR | P | DT | DD | LI | INPUT | OPTION | THEAD | TBODY | TFOOT | COLGROUP | COL | TR | TH | TD | FRAME | ISINDEX | BASE | META");
-        return list.contains(elementName.toUpper());
+        static QHash<QString, char> list = split("basefont | br | area | link | img | param | hr | p | dt | dd | li | input | option | thead | tbody | tfoot | colgroup | col | tr | th | td | frame | isindex | base | meta");
+        return list.contains(elementName.toLower());
     }
 
     virtual bool emptyElement(const QString& elementName) const {
-        static QHash<QString, char> list =  split("BASEFONT | BR | AREA | LINK | IMG | PARAM | HR | INPUT | COL | FRAME | ISINDEX | BASE | META");
-        return list.contains(elementName.toUpper());
+        static QHash<QString, char> list =  split("basefont | br | area | link | img | param | hr | input | col | frame | isindex | base | meta");
+        return list.contains(elementName.toLower());
     }
 
     //close optional and not empty
@@ -173,28 +169,27 @@ public:
         static QHash<QString, QHash<QString, char> > list = ( {
             QHash<QString, QHash<QString, char> > list;
 
-            QHash<QString, char> inlineElements = split("TT | I | B | U | S | STRIKE | BIG | SMALL | EM | STRONG | DFN | CODE | SAMP | KBD | VAR | CITE | ABBR | ACRONYM | A | IMG | APPLET | OBJECT | FONT | BASEFONT | BR | SCRIPT | MAP | Q | SUB | SUP | SPAN | BDO | IFRAME | INPUT | SELECT | TEXTAREA | LABEL | BUTTON | #PCDATA | CDATA");
+            QHash<QString, char> inlineElements = split("tt | i | b | u | s | strike | big | small | em | strong | dfn | code | samp | kbd | var | cite | abbr | acronym | a | img | applet | object | font | basefont | br | script | map | q | sub | sup | span | bdo | iframe | input | select | textarea | label | button | #pcdata | cdata");
 
-            QHash<QString, char> flowElements = split("P | H1 | H2 | H3 | H4 | H5 | H6 | UL | OL |  DIR | MENU | PRE | DL | DIV | CENTER | NOSCRIPT | NOFRAMES | BLOCKQUOTE | FORM | ISINDEX | HR | TABLE | FIELDSET | ADDRESS | #PCDATA | CDATA");
+            QHash<QString, char> flowElements = split("p | h1 | h2 | h3 | h4 | h5 | h6 | ul | ol |  dir | menu | pre | dl | div | center | noscript | noframes | blockquote | form | isindex | hr | table | fieldset | address | #pcdata | cdata");
             flowElements.unite(inlineElements);
 
-            list.insert("P", inlineElements);
-            list.insert("DT", inlineElements);
-            list.insert("DD", flowElements);
-            list.insert("LI", flowElements);
-            list.insert("OPTION", split(""));
-            list.insert("THEAD", split("TR"));
-            list.insert("TBODY", split("TR"));
-            list.insert("TFOOT", split("TR"));
-            list.insert("COLGROUP", split("COL"));
-            list.insert("TR", split("TH | TD"));
-            list.insert("TH", flowElements);
-            list.insert("TD", flowElements);
-
+            list.insert("p", inlineElements);
+            list.insert("dt", inlineElements);
+            list.insert("dd", flowElements);
+            list.insert("li", flowElements);
+            list.insert("option", split(""));
+            list.insert("thead", split("tr"));
+            list.insert("tbody", split("tr"));
+            list.insert("tfoot", split("tr"));
+            list.insert("colgroup", split("col"));
+            list.insert("tr", split("th | td"));
+            list.insert("th", flowElements);
+            list.insert("td", flowElements);
             list;
         });
-        if (list.contains(elementName.toUpper())) {
-            return list[elementName.toUpper()].contains(child.toUpper());
+        if (list.contains(elementName.toLower())) {
+            return list[elementName.toLower()].contains(child.toLower());
         }
         return true;
     }
@@ -204,7 +199,7 @@ protected:
         QHash<QString, char> ret;
         QStringList list = str.split("|");
         foreach(QString s, list) {
-            ret.insert(s.trimmed().toUpper(), 0);
+            ret.insert(s.trimmed().toLower(), 0);
         }
         return ret;
     }
