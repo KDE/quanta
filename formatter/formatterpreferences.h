@@ -15,27 +15,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#ifndef XMLFORMATTERPROPERTIES_H
-#define XMLFORMATTERPROPERTIES_H
+#ifndef FORMATTERPROPERTIES_H
+#define FORMATTERPROPERTIES_H
 
-#include "ui_xmlformatterwidget.h"
+#include "ui_formatterwidget.h"
 
 #include <interfaces/isourceformatter.h>
 
-class XmlFormatter;
+namespace Xml
+{
+    class Formatter;
 
-class XmlFormatterPreferences : public KDevelop::SettingsWidget, public Ui::XmlFormatWidget {
+
+class FormatterPreferences : public KDevelop::SettingsWidget, public Ui::FormatWidget {
     Q_OBJECT
 public:
-    XmlFormatterPreferences ( QWidget* parent = 0, Qt::WindowFlags f = 0 );
-    virtual ~XmlFormatterPreferences();
+    FormatterPreferences ( QWidget* parent = 0, Qt::WindowFlags f = 0 );
+    virtual ~FormatterPreferences();
     virtual QMap<QString, QVariant> getOptions();
     virtual QString save();
     virtual void load(const KDevelop::SourceFormatterStyle& );
 protected slots:
-    void updateText ( int );
+    void indentChanged (int i);
+    void caseChanged (int i);
+    void updateText ();
 protected:
-    XmlFormatter *m_formatter;
+    Xml::Formatter *m_formatter;
 };
 
-#endif // XMLFORMATTERPROPERTIES_H
+}
+
+#endif // FORMATTERPROPERTIES_H

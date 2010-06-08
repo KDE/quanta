@@ -23,26 +23,19 @@
 #include <QtCore/QMap>
 #include <QtCore/QHash>
 
-#include "xmlformatter.h"
+#include "sgmlformatter.h"
 #include <QStack>
 
-/*
-    NOTE: Does not work will rewrite
-*/
+namespace Xml
+{
 
-class HtmlFormatter : public XmlFormatter {
+class HtmlFormatter : public SgmlFormatter {
 public:
     HtmlFormatter();
     virtual ~HtmlFormatter();
-    /** Adds whites to make the xml more readable
-    */
-    QString formatSource ( const QString& text, const QString& leftContext = QString(), const QString& rightContext = QString() ) const;
-    QString attributeValue(const QString &token, const QString &attribute) const;
-protected:
-    QString tagName(const QString &token) const;
-    QString trimText(const QString &token) const;
-    bool isEmptyElement(const QString &tag) const;
+    virtual QString formatSource(const QString& text, const QString& leftContext = QString(), const QString& rightContext = QString());
 };
+}
 
 #endif //HTMLFORMATTER_H_
 

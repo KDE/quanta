@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#ifndef KDEVXMLFORMATTERPLUGIN_H_
-#define KDEVXMLFORMATTERPLUGIN_H_
+#ifndef KDEVSGMLFORMATTERPLUGIN_H_
+#define KDEVSGMLFORMATTERPLUGIN_H_
 
 #include <QtCore/QObject>
 
@@ -26,17 +26,18 @@
 #include <interfaces/isourceformatter.h>
 #include <interfaces/contextmenuextension.h>
 
-
-class XmlFormatter;
 class XmlFormatterPreferences;
 
-class XmlFormatterPlugin : public KDevelop::IPlugin, public KDevelop::ISourceFormatter {
+namespace Xml {
+    class Formatter;
+
+class FormatterPlugin : public KDevelop::IPlugin, public KDevelop::ISourceFormatter {
     Q_OBJECT
     Q_INTERFACES ( KDevelop::ISourceFormatter )
 
 public:
-    explicit XmlFormatterPlugin ( QObject *parent, const QVariantList & = QVariantList() );
-    ~XmlFormatterPlugin();
+    explicit FormatterPlugin ( QObject *parent, const QVariantList & = QVariantList() );
+    ~FormatterPlugin();
 
     virtual KDevelop::ContextMenuExtension contextMenuExtension ( KDevelop::Context* context );
 
@@ -88,12 +89,14 @@ protected slots:
     void slotDecodeXml();
 
 protected:
-    XmlFormatter *m_formatter;
     KAction *m_compactAction;
     KAction *m_escapeAction;
     KAction *m_unescapeAction;
     KDevelop::SourceFormatterStyle m_style;
     QList<KDevelop::SourceFormatterStyle> m_styles;
+    
+    Formatter * formatterForMime(KMimeType::Ptr mime);
 };
 
-#endif //KDEVXMLFORMATTERPLUGIN_H_
+}
+#endif //KDEVSGMLFORMATTERPLUGIN_H_

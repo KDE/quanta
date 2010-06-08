@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Copyright (c) 2009 Ruan Strydom <rm3dom@gmail.com>                        *
+ * Copyright (c) 2010 Ruan Strydom <rm3dom@gmail.com>                        *
  *                                                                           *
  * This program is free software; you can redistribute it and/or modify      *
  * it under the terms of the GNU General Public License as published by      *
- * the Free Software Foundation; either version 3 of the License, or         *
+ * the Free Software Foundation; either version 2 of the License, or         *
  * (at your option) any later version.                                       *
  *                                                                           *
  * This program is distributed in the hope that it will be useful,           *
@@ -15,25 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#include "htmlformatter.h"
+#ifndef SGMLTOKENIZERTEST_H
+#define SGMLTOKENIZERTEST_H
 
-#include <interfaces/isourceformatter.h>
-#include <KDE/KDebug>
+#include <QObject>
 
-using namespace Xml;
 
-HtmlFormatter::HtmlFormatter() : SgmlFormatter() {
-    m_mime = KMimeType::mimeType("text/html");
-    m_dtdHelper = DtdHelper::instanceForName("html");
-    m_options.insert("CASE", "LOWER");
-    m_options.insert("INDENT", "4");
-}
 
-HtmlFormatter::~HtmlFormatter() {}
-
-QString HtmlFormatter::formatSource(const QString& text, const QString& leftContext, const QString& rightContext)
+namespace Xml
 {
-    kDebug();
-    return Xml::SgmlFormatter::formatSource(text, leftContext, rightContext);
+
+class TestFormatter : public QObject
+{
+    Q_OBJECT
+
+public:
+    TestFormatter();
+
+private Q_SLOTS:
+    
+    void testHtml();
+    void testXml();
+};
 }
 
+#endif //SGMLTOKENIZERTEST_H

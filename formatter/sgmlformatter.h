@@ -18,27 +18,105 @@
 #ifndef SGMLFORMATTER_H_
 #define SGMLFORMATTER_H_
 
-#include <QtCore/QString>
-#include <QtCore/QTextStream>
-#include <QtCore/QMap>
-#include <QtCore/QHash>
+#include <dtdhelper.h>
 
-#include "xmlformatter.h"
-#include <QStack>
+#include "formatter.h"
 
 
-class SgmlFormatter : public XmlFormatter {
+namespace Xml
+{
+
+/** A simple formatter for SGML
+ *  This uses the @see DtdHelper to help with indentation.
+ */
+class SgmlFormatter : public Formatter {
 public:
     SgmlFormatter();
     virtual ~SgmlFormatter();
-    /** Adds whites to make the xml more readable
-    */
-    QString formatSource ( const QString& text, const QString& leftContext = QString(), const QString& rightContext = QString() ) const;
-    QString attributeValue(const QString &token, const QString &attribute) const;
+
+    virtual QString formatSource ( const QString& text, const QString& leftContext = QString(), const QString& rightContext = QString() );
+
+    virtual void setDebugEnabled(bool enabled) {m_debugEnabled = enabled;};
+
+    virtual QString escapeSource ( const QString& text );
+
+    virtual QString unescapeSource ( const QString& text );
+
+    virtual QChar charForEscapeSequence ( const QString & s ) const;
+
+    virtual QString escapeSequenceForChar ( const QChar & c ) const;
+    
+    virtual QString compactSource ( const QString& text );
+
+    virtual void loadStyle ( const QString &content );
+
+    virtual const QMap<QString, QVariant> & options() const {
+        return m_options;
+    }
+
+    virtual QMap<QString, QVariant> & options() {
+        return m_options;
+    }
+
+    virtual QString saveStyle();
+
+    virtual void setMime(KMimeType::Ptr mime) {
+        m_mime = mime;
+    }
+
 protected:
-    QString tagName(const QString &token) const;
-    QString trimText(const QString &token) const;
+    KMimeType::Ptr m_mime;
+    bool m_debugEnabled;
+    QMap<QString, QVariant> m_options;
+    QString m_content;
+    const QChar *m_contentData;
+    qint64 m_contentDataLength;
+    qint64 m_contentDataIndex;
+    qint64 m_lineCount;
+    DtdHelper m_dtdHelper;
+
+    enum TokenType {Error, Processing, ClosedElement, StartElement, EndElement, DTD, Comment, Text, Other, EndOfTokenType};
+    virtual QStringRef nextToken(int *tokenType);
+    virtual QStringRef readCdataElement(const QString &name);
+
+    enum ReadFlag {IgnoreNone, IgnoreWhites, IgnoreCase, EndOfReadFlag};
+    
+    /** A pattern similar to the expression .*blah
+    *  (but the first occurrence blah; not the last)
+    *  @return The character after condition.
+    */
+    const QChar * readUntill(const QChar *start, const QChar *end, const QString& condition , int flag, const QChar** conditionStart);
+    
+    /** A pattern similar to the expression [^blah]*
+    *  @return The first occurrence of condition.
+    */
+    const QChar * readUntillAny(const QChar *start, const QChar *end, const QString& condition, int flag);
+    
+    /** A pattern similar to the expression [blah]*
+    *  @return The character after condition.
+    */
+    const QChar * readWhileAny(const QChar *start, const QChar *end, const QString& condition, int flag, const QChar** conditionStart);
+    
+    QString removeWhites(QString str) const;
+    
+    QString elementName(const QString& token) const;
+
+    void doctype(const QString& token, QString& name, QString& publicId, QString& systemId) const;
+
+    void createNewline(int pos);
+    
+    QString tokenTypeString ( TokenType type ) const;
+public:
+    //Expects the whole tag <blah ...>
+    virtual QStringList formatTag(const QString &element) const;
+    
+    virtual QStringList formatText(const QString &text) const;
+    
+    QString indentString ( int depth, int indent ) const;
+
+    QString leftTrim(const QString &str);
 };
 
+}
 #endif //SGMLFORMATTER_H_
 
