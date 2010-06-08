@@ -31,7 +31,7 @@ class KDEVXMLCATALOG_EXPORT CatalogHelper
 public:    
     /** Resolves a document using the catalog and ensure that it is local,
      *  if it is not local it will make a local copy.
-     *  If the resolved file is relative it will be maed absolute using path.
+     *  If the resolved file is relative it will be made absolute using path.
      *  @return The resolved document or null.
      */
     static KUrl resolve(const QString &publicId = QString(), 

@@ -46,7 +46,7 @@ install(FILES
     parameterized.h
     idocumentcachemanager.h
     publicid.h
-    DESTINATION ${INCLUDE_INSTALL_DIR}/kdevplatform/xmlcatalog
+    DESTINATION ${INCLUDE_INSTALL_DIR}/kdevplatform/kdevxmlcatalog
     COMPONENT Devel
 )
 

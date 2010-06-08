@@ -1,2 +1,2 @@
-1) Needs a OASIS SGML catalog implementation.
-2) delegate and nexCatalog is not currently supported in the OASIS implementation.
+1) A couple of OASIS features is not implemented ie delegate
+2) A couple of SGML features is not implemented ie catalog.
