@@ -3,6 +3,7 @@ Type=Service
 Exec=blubb
 Icon=text-xml
 Name=PHP Formatter
+Name[x-test]=xxPHP Formatterxx
 ServiceTypes=KDevelop/Plugin
 X-KDE-Library=kdevphpformatter
 X-KDevelop-Version=10
