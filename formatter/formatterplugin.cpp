@@ -64,7 +64,7 @@ FormatterPlugin::FormatterPlugin ( QObject *parent, const QVariantList& )
     m_styles.append(m_style);
 
     SourceFormatterStyle defaultHtmlStyle("HTML");
-    defaultHtmlStyle.setContent("INDENT=4,CASE=LOWER");
+    defaultHtmlStyle.setContent("INDENT=4,CASE=LOWER,SOURCES=TRUE");
     defaultHtmlStyle.setCaption("HTML");
     m_styles.append(defaultHtmlStyle);
 

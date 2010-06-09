@@ -29,6 +29,7 @@ FormatterPreferences::FormatterPreferences ( QWidget* parent, Qt::WindowFlags f 
     setupUi ( this );
     connect ( spacingSbx, SIGNAL ( valueChanged ( int ) ), this, SLOT ( indentChanged ( int ) ) );
     connect ( caseCbx, SIGNAL ( currentIndexChanged(int)), this, SLOT ( caseChanged ( int ) ) );
+    connect ( formatSourceCbx, SIGNAL (stateChanged(int)), this, SLOT (formatSourceChanged ( int ) ) );
     m_formatter = new Xml::SgmlFormatter;
 }
 
@@ -83,6 +84,14 @@ void FormatterPreferences::indentChanged ( int i )
     updateText ( );
 }
 
+void FormatterPreferences::formatSourceChanged(int i)
+{
+    if(formatSourceCbx->isChecked())
+        m_formatter->options().insert ( "SOURCES", true );
+    else
+        m_formatter->options().insert ( "SOURCES", false );
+    updateText ( );
+}
 
 void FormatterPreferences::updateText ( ) {
     QString text = QString ( "<?xml version='1.0' encoding='UTF-8'?>\n" ) +

@@ -106,15 +106,17 @@ protected:
     void createNewline(int pos);
     
     QString tokenTypeString ( TokenType type ) const;
-public:
+protected:
     //Expects the whole tag <blah ...>
     virtual QStringList formatTag(const QString &element) const;
     
     virtual QStringList formatText(const QString &text) const;
+
+    virtual QStringList formatInlineSource(const QString &text, const KMimeType::Ptr mime) const;
     
     QString indentString ( int depth, int indent ) const;
 
-    QString leftTrim(const QString &str);
+    QString leftTrim(const QString &str) const;
 };
 
 }

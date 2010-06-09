@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#ifndef KDEVSGMLFORMATTERPLUGIN_H_
-#define KDEVSGMLFORMATTERPLUGIN_H_
+#ifndef FORMATTERPLUGIN_H_
+#define FORMATTERPLUGIN_H_
 
 #include <QtCore/QObject>
 
@@ -25,8 +25,6 @@
 #include <interfaces/iplugin.h>
 #include <interfaces/isourceformatter.h>
 #include <interfaces/contextmenuextension.h>
-
-class XmlFormatterPreferences;
 
 namespace Xml {
     class Formatter;
@@ -99,4 +97,4 @@ protected:
 };
 
 }
-#endif //KDEVSGMLFORMATTERPLUGIN_H_
+#endif //FORMATTERPLUGIN_H_

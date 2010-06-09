@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#ifndef FORMATTERPROPERTIES_H
-#define FORMATTERPROPERTIES_H
+#ifndef FORMATTERPREFERENCES_H
+#define FORMATTERPREFERENCES_H
 
 #include "ui_formatterwidget.h"
 
@@ -38,6 +38,7 @@ public:
 protected slots:
     void indentChanged (int i);
     void caseChanged (int i);
+    void formatSourceChanged (int i);
     void updateText ();
 protected:
     Xml::Formatter *m_formatter;
@@ -45,4 +46,4 @@ protected:
 
 }
 
-#endif // FORMATTERPROPERTIES_H
+#endif // FORMATTERPREFERENCES_H

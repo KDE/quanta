@@ -67,6 +67,20 @@ public:
     virtual QString saveStyle() = 0;
 
     virtual void setMime(KMimeType::Ptr mime) = 0;
+
+    static QMap<QString, QVariant> stringToOptionMap(const QString &str) {
+        QMap<QString, QVariant> map;
+        if ( str.isEmpty() )
+            return map;
+        QStringList pairs = str.split(',', QString::SkipEmptyParts);
+        QStringList::const_iterator it;
+        for (it = pairs.constBegin(); it != pairs.constEnd(); ++it) {
+            QStringList bits = (*it).split('=');
+            if(bits.size() == 2)
+                map[bits[0].trimmed()] = bits[1];
+        }
+        return map;
+    }
 };
 
 }

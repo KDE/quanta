@@ -26,7 +26,8 @@ HtmlFormatter::HtmlFormatter() : SgmlFormatter() {
     m_mime = KMimeType::mimeType("text/html");
     m_dtdHelper = DtdHelper::instanceForName("html");
     m_options.insert("CASE", "LOWER");
-    m_options.insert("INDENT", "4");
+    m_options.insert("INDENT", 4);
+    m_options.insert("SOURCES", true);
 }
 
 HtmlFormatter::~HtmlFormatter() {}

@@ -22,6 +22,8 @@
 #include <KDE/KDebug>
 
 #include <interfaces/isourceformatter.h>
+#include <interfaces/icore.h>
+#include <interfaces/isourceformattercontroller.h>
 
 using namespace Xml;
 
@@ -37,7 +39,7 @@ SgmlFormatter::~SgmlFormatter() {}
 void SgmlFormatter::loadStyle ( const QString& content ) {
     if ( content.isNull() )
         return;
-    m_options = KDevelop::ISourceFormatter::stringToOptionMap ( content );
+    m_options = stringToOptionMap ( content );
 }
 
 QString SgmlFormatter::saveStyle() {
@@ -149,13 +151,27 @@ QStringList SgmlFormatter::formatText(const QString& text) const
     return list;
 }
 
-QString SgmlFormatter::leftTrim(const QString& str)
+QString SgmlFormatter::leftTrim(const QString& str) const
 {
     int i = 0;
     while(i < str.size() && str[i].isSpace() && ++i){}
     return str.mid(i, str.size()- i);
 }
 
+QStringList SgmlFormatter::formatInlineSource(const QString& text, const KMimeType::Ptr mime) const
+{
+    KDevelop::ISourceFormatter *formatter = KDevelop::ICore::self()->sourceFormatterController()->formatterForMimeType(mime);
+    if(!formatter)
+        return text.split('\n');
+    QStringList list = text.split("\n");
+    for(int i = 0; i < list.size(); i++) {
+        list[i] = leftTrim(list[i]);
+    }
+    QString source = formatter->formatSource(list.join("\n"), mime);
+    if(source.length() > 0)
+        return source.split('\n');
+    return text.split('\n');
+}
 
 /*
 Start tag:
@@ -189,6 +205,8 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
     m_contentDataIndex = 0;
     m_lineCount = 0;
 
+    bool sources = m_options["SOURCES"].toBool();
+    
     int indent = m_options["INDENT"].toInt();
     if ( indent < 0 || indent > 99 )
         indent = 4;
@@ -324,9 +342,12 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
             list = formatTag(token);
             if(list.size() > 1) {
                 for ( int i = 0; i < list.size() - 1; i++ ) {
-                    result << indentStr << list[i] << endLine;
+                    if(i == 0)
+                        result << indentStr << list[i] << endLine;
+                    else
+                        result << contentIndentStr << list[i] << endLine;
                 }
-                result << indentStr << list.last();
+                result << contentIndentStr << list.last();
             } else
                 result << indentStr << list.first();
 
@@ -380,9 +401,12 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
             list = formatTag(token);
             if(list.size() > 1) {
                 for ( int i = 0; i < list.size() - 1; i++ ) {
-                    result << indentStr << list[i] << endLine;
+                    if(i == 0)
+                        result << indentStr << list[i] << endLine;
+                    else
+                        result << contentIndentStr << list[i] << endLine;
                 }
-                result << indentStr << list.last();
+                result << contentIndentStr << list.last();
             } else
                 result << indentStr << list.first();
 
@@ -516,8 +540,25 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
                 indentStr = "";
 
             content = "";
-            
-            result << indentStr << token;
+
+            if(sources) {
+                if(token.startsWith("<?php") || (token.startsWith("<?") && m_mime->is("application/x-php"))) {
+                    QStringList sourceList = formatInlineSource(token, KMimeType::mimeType("application/x-php"));
+                    if(sourceList.size() > 1) {
+                        for(int i = 0; i < sourceList.length()-1; i++) {
+                            if(i == 0)
+                                result << indentStr << sourceList[i] << endLine;
+                            else
+                                result << contentIndentStr << sourceList[i] << endLine;
+                        }
+                        result << contentIndentStr << sourceList.last();
+                    } else
+                        result << indentStr << sourceList.first();
+                } else
+                    result << indentStr << token;
+            } else {
+                result << indentStr << token;
+            }
         } break;
         default:
             return text;
