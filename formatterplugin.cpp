@@ -91,7 +91,9 @@ QString FormatterPlugin::highlightModeForMime ( const KMimeType::Ptr &mime ) {
 
 QString FormatterPlugin::formatSource ( const QString& text, const KMimeType::Ptr& mime, const QString& leftContext, const QString& rightContext ) {
     if(m_formatter) {
-        m_formatter->loadStyle(m_style.content());
+        SourceFormatterStyle style = ICore::self()->sourceFormatterController()->styleForMimeType(mime);
+        m_style = style;
+        m_formatter->loadStyle(style.content());
         return m_formatter->formatSource(text, leftContext, rightContext);
     }
     return text;

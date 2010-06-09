@@ -24,7 +24,7 @@
 
 using namespace Php;
 
-Formatter::Formatter() : m_process(0), m_debugEnabled(true)
+Formatter::Formatter() : m_process(0), m_debugEnabled(false)
 {
     QString phpFile = KStandardDirs::locate("data", "kdevphpformatter/phpStylist.php");
     if (!phpFile.isEmpty())
@@ -101,7 +101,9 @@ QString Formatter::formatSource(const QString& text, const QString& leftContext,
     if (m_process->waitForStarted()) {
         if(m_process->write(source) > -1) {
             m_process->closeWriteChannel();
-            if(m_process->waitForFinished() && m_stdout.size() > 0) {
+            if(m_process->waitForFinished() 
+                && m_stdout.size() > 0 
+                && m_returnStatus == 0) {
                 m_process->close();
                 m_process->deleteLater();
                 m_process = 0;

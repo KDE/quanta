@@ -54,15 +54,6 @@ public:
 
     virtual QString formatSourceWithStyle(KDevelop::SourceFormatterStyle , const QString& text, const KMimeType::Ptr& mime, const QString& leftContext = QString(), const QString& rightContext = QString());
 
-    
-    /* \return A map of predefined styles (a key and a caption for each type)
-    */
-    //virtual QMap<QString, QString> predefinedStyles ( const KMimeType::Ptr &mime );
-    /* Load the predefined type of name \arg name, or if the first arg is empty, the style
-    *   defined by the options string \arg content.
-    */
-    //virtual void setStyle ( const QString &name, const QString &content = QString() );
-
     /** \return The widget to edit a style.
     */
     virtual KDevelop::SettingsWidget* editStyleWidget ( const KMimeType::Ptr &mime );
