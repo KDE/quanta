@@ -106,11 +106,13 @@ protected:
     void createNewline(int pos);
     
     QString tokenTypeString ( TokenType type ) const;
-protected:
-    //Expects the whole tag <blah ...>
-    virtual QStringList formatTag(const QString &element) const;
     
-    virtual QStringList formatText(const QString &text) const;
+    virtual QString cdataHook(const QString &element, const QString &cdata, const QString &indent){return cdata;};
+
+    //Expects the whole tag <blah ...>
+    virtual QString formatTag(const QString &element, const QString& newLineIndent, const QString& indent) const;
+    
+    virtual QString formatText(const QString &text, const QString& indent, int *hasNewLine ) const;
 
     virtual QStringList formatInlineSource(const QString &text, const KMimeType::Ptr mime) const;
     

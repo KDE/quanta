@@ -88,9 +88,10 @@ QString SgmlFormatter::indentString ( int depth, int indent ) const {
     body -> uppercase or lower case
     onload -> trimmed and left alligned
 */
-QStringList SgmlFormatter::formatTag(const QString &element) const
+QString SgmlFormatter::formatTag(const QString &element, const QString& newLineIndent, const QString& indent) const
 {
 #define ceq(i, cv) c[i].unicode() == cv
+    QString ret;
     QString tag;
     const QChar *c = element.data();
     const QChar *cend = element.data() + element.length();
@@ -132,43 +133,91 @@ QStringList SgmlFormatter::formatTag(const QString &element) const
         if (i == 0)
             list << l[0];
         else
-            list << sep + l[i].trimmed();
+            list << sep + leftTrim(l[i]);
     }
-    return list;
+    
+    if (list.size() > 1) {
+        for ( int i = 0; i < list.size() - 1; i++ ) {
+            if (i == 0)
+                ret += newLineIndent + list[i] + '\n';
+            else
+                ret += indent + list[i] + '\n';
+        }
+        ret += indent + list.last();
+    } else
+        ret += newLineIndent + list.first();
+    
+    return ret;
 }
 
-QStringList SgmlFormatter::formatText(const QString& text) const
+
+QString SgmlFormatter::formatText(const QString& text, const QString& indent, int* hasNewLine) const
 {
+    QString ret;
     QStringList list;
+    *hasNewLine = 1;
     QStringList l = text.split('\n');
     foreach(const QString &s, l) {
         //End lines
-        if(s.trimmed().isEmpty())
+        if (s.trimmed().isEmpty())
             list << "";
         else
             list << s;
     }
-    return list;
+
+    //Do we have content
+    //<body>blah1\nblah2</body> -> nonEmpty nonEmpty
+    //<body>\nblah1\n</body>    -> empty nonEmpty empty
+    //<body>blah1</body>        -> nonEmpty
+    //<body>\n</body>           -> empty empty
+    //<body></body>             -> empty
+    if ( list.size() > 0) {
+        //End line
+        if (list.first().isEmpty() && list.size() > 1)
+            ret += '\n';
+        else if (list.size() > 1)
+            ret += list.first() + '\n';
+        else
+            ret += list.first();
+        for ( int i = 1; i < list.size() - 1; i++ ) {
+            if (list[i].isEmpty())
+                ret += list[i] + '\n';
+            else
+                ret += indent + leftTrim(list[i]) + '\n';
+        }
+        //Not end line
+        if ( !list.last().isEmpty() && list.size() > 1) {
+            ret += indent + leftTrim(list.last());
+            *hasNewLine = 0;
+        }
+    }
+    //Not end line
+    if (list.size() < 2)
+        *hasNewLine = 0;
+
+    return ret;
 }
+
+
 
 QString SgmlFormatter::leftTrim(const QString& str) const
 {
     int i = 0;
-    while(i < str.size() && str[i].isSpace() && ++i){}
+    while (i < str.size() && str[i].isSpace() && ++i) {}
     return str.mid(i, str.size()- i);
 }
 
 QStringList SgmlFormatter::formatInlineSource(const QString& text, const KMimeType::Ptr mime) const
 {
     KDevelop::ISourceFormatter *formatter = KDevelop::ICore::self()->sourceFormatterController()->formatterForMimeType(mime);
-    if(!formatter)
+    if (!formatter)
         return text.split('\n');
     QStringList list = text.split("\n");
-    for(int i = 0; i < list.size(); i++) {
+    for (int i = 0; i < list.size(); i++) {
         list[i] = leftTrim(list[i]);
     }
     QString source = formatter->formatSource(list.join("\n"), mime);
-    if(source.length() > 0)
+    if (source.length() > 0)
         return source.split('\n');
     return text.split('\n');
 }
@@ -206,7 +255,7 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
     m_lineCount = 0;
 
     bool sources = m_options["SOURCES"].toBool();
-    
+
     int indent = m_options["INDENT"].toInt();
     if ( indent < 0 || indent > 99 )
         indent = 4;
@@ -230,7 +279,7 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
                             && (!m_dtdHelper.hasChild(elements.top(), name)
                                 || m_dtdHelper.emptyElement(elements.top())))
                         elements.pop();
-                if(!m_dtdHelper.emptyElement(name))
+                if (!m_dtdHelper.emptyElement(name))
                     elements << name;
 
                 //CDATA elements
@@ -268,7 +317,7 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
                 QString publicId;
                 doctype(token, name, publicId, systemId);
                 DtdHelper helper = DtdHelper::instance(publicId, systemId, QString(), name, m_mime);
-                if(!helper.isNull())
+                if (!helper.isNull())
                     m_dtdHelper = helper;
             } break;
             case  Error: {
@@ -303,53 +352,16 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
         case  ClosedElement: {
             QString name = elementName(token);
             if (name.isEmpty()) return text;
-            
-            //TODO Duplication
-            QStringList list = formatText(content);
+
+            int hasNewLine = 1;
             QString indentStr = indentString(elements.size(), indent);
             QString contentIndentStr = indentString(elements.size(), indent);
-            //Do we have content
-            //<body>blah1\nblah2</body> -> nonEmpty nonEmpty
-            //<body>\nblah1\n</body>    -> empty nonEmpty empty
-            //<body>blah1</body>        -> nonEmpty
-            //<body>\n</body>           -> empty empty
-            //<body></body>             -> empty
-            if ( list.size() > 0) {
-                //End line
-                if(list.first().isEmpty() && list.size() > 1)
-                    result << endLine;
-                else if(list.size() > 1)
-                    result << list.first() << endLine;
-                else
-                    result << list.first();
-                for ( int i = 1; i < list.size() - 1; i++ ) {
-                    if(list[i].isEmpty())
-                        result << list[i] << endLine;
-                    else
-                        result << contentIndentStr << leftTrim(list[i]) << endLine;
-                }
-                //Not end line
-                if ( !list.last().isEmpty() && list.size() > 1) {
-                    result << contentIndentStr << leftTrim(list.last());
-                    indentStr = "";
-                }
-            } 
-            //Not end line
-            if(list.size() < 2)
+            result << formatText(content, contentIndentStr, &hasNewLine);
+            if (!hasNewLine)
                 indentStr = "";
-
             content = "";
-            list = formatTag(token);
-            if(list.size() > 1) {
-                for ( int i = 0; i < list.size() - 1; i++ ) {
-                    if(i == 0)
-                        result << indentStr << list[i] << endLine;
-                    else
-                        result << contentIndentStr << list[i] << endLine;
-                }
-                result << contentIndentStr << list.last();
-            } else
-                result << indentStr << list.first();
+
+            result << formatTag(token, indentStr, contentIndentStr);
 
             //pop to parent
             if (elements.size() > 0)
@@ -363,52 +375,15 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
             QString name = elementName(token);
             if (name.isEmpty()) return text;
 
-            //TODO Duplication
-            QStringList list = formatText(content);
+            int hasNewLine = 1;
             QString indentStr = indentString(elements.size(), indent);
             QString contentIndentStr = indentString(elements.size(), indent);
-            //Do we have content
-            //<body>blah1\nblah2</body> -> nonEmpty nonEmpty
-            //<body>\nblah1\n</body>    -> empty nonEmpty empty
-            //<body>\nblah1\n</body>    -> nonEmpty
-            //<body>\n</body>           -> empty empty
-            //<body></body>             -> empty
-            if ( list.size() > 0) {
-                //End line
-                if(list.first().isEmpty() && list.size() > 1)
-                    result << endLine;
-                else if(list.size() > 1)
-                    result << list.first() << endLine;
-                else
-                    result << list.first();
-                for ( int i = 1; i < list.size() - 1; i++ ) {
-                    if(list[i].isEmpty())
-                        result << list[i] << endLine;
-                    else
-                        result << contentIndentStr << leftTrim(list[i]) << endLine;
-                }
-                //Not end line
-                if ( !list.last().isEmpty() && list.size() > 1) {
-                    result << contentIndentStr << leftTrim(list.last());
-                    indentStr = "";
-                }
-            }
-            //Not end line
-            if(list.size() < 2)
+            result << formatText(content, contentIndentStr, &hasNewLine);
+            if (!hasNewLine)
                 indentStr = "";
-
             content = "";
-            list = formatTag(token);
-            if(list.size() > 1) {
-                for ( int i = 0; i < list.size() - 1; i++ ) {
-                    if(i == 0)
-                        result << indentStr << list[i] << endLine;
-                    else
-                        result << contentIndentStr << list[i] << endLine;
-                }
-                result << contentIndentStr << list.last();
-            } else
-                result << indentStr << list.first();
+
+            result << formatTag(token, indentStr, contentIndentStr);
 
             //pop to parent
             if (elements.size() > 0)
@@ -416,19 +391,17 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
                         && (!m_dtdHelper.hasChild(elements.top(), name)
                             || m_dtdHelper.emptyElement(elements.top())))
                     elements.pop();
-            if(!m_dtdHelper.emptyElement(name)) {
+            if (!m_dtdHelper.emptyElement(name)) {
                 elements << name;
             }
 
             //CDATA elements
             if (m_dtdHelper.cdataElement(name)) {
                 QStringRef cdata = readCdataElement(name);
-                content += cdata.toString();
+                result << cdataHook(token, cdata.toString(), contentIndentStr);
                 if (m_debugEnabled)
                     kDebug() << "CDATA:" << cdata.toString();
             }
-
-            result << content;
             content = "";
         }
         break;
@@ -443,49 +416,15 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
                 elements.pop();
             }
 
-            //TODO Duplication
-            QStringList list = formatText(content);
+            int hasNewLine = 1;
             QString indentStr = indentString(elements.size(), indent);
             QString contentIndentStr = indentString(elements.size()+1, indent);
-            //Do we have content
-            //<body>blah1\nblah2</body> -> nonEmpty nonEmpty
-            //<body>\nblah1\n</body>    -> empty nonEmpty empty
-            //<body>\nblah1\n</body>    -> nonEmpty
-            //<body>\n</body>           -> empty empty
-            //<body></body>             -> empty
-            if ( list.size() > 0) {
-                //End line
-                if(list.first().isEmpty() && list.size() > 1)
-                    result << endLine;
-                else if(list.size() > 1)
-                    result << list.first() << endLine;
-                else
-                    result << list.first();
-                for ( int i = 1; i < list.size() - 1; i++ ) {
-                    if(list[i].isEmpty())
-                        result << list[i] << endLine;
-                    else
-                        result << contentIndentStr << leftTrim(list[i]) << endLine;
-                }
-                //Not end line
-                if ( !list.last().isEmpty() && list.size() > 1) {
-                    result << contentIndentStr << leftTrim(list.last());
-                    indentStr = "";
-                }
-            }
-            //Not end line
-            if(list.size() < 2)
+            result << formatText(content, contentIndentStr, &hasNewLine);
+            if (!hasNewLine)
                 indentStr = "";
-            
             content = "";
-            list = formatTag(token);
-            if(list.size() > 1) {
-                for ( int i = 0; i < list.size() - 1; i++ ) {
-                    result << indentStr << list[i] << endLine;
-                }
-                result << indentStr << list.last();
-            } else
-                result << indentStr << list.first();
+
+            result << formatTag(token, indentStr, contentIndentStr);
         }
         break;
         case  DTD: {
@@ -494,59 +433,40 @@ QString SgmlFormatter::formatSource ( const QString& text, const QString& leftCo
             QString publicId;
             doctype(token, name, publicId, systemId);
             DtdHelper helper = DtdHelper::instance(publicId, systemId, QString(), name, m_mime);
-            if(!helper.isNull())
+            if (!helper.isNull())
                 m_dtdHelper = helper;
             result << content << token;
             content = "";
         } break;
         case  Comment: {
-            content += token;
+            int hasNewLine = 1;
+            QString indentStr = indentString(elements.size(), indent);
+            QString contentIndentStr = indentString(elements.size(), indent);
+            result << formatText(content, contentIndentStr, &hasNewLine);
+            if (!hasNewLine)
+                indentStr = "";
+            content = "";
+            result << token;
         } break;
         case  Text: {
             content += token;
         } break;
         case  Other: {
-            QStringList list = formatText(content);
+
+            int hasNewLine = 1;
             QString indentStr = indentString(elements.size(), indent);
             QString contentIndentStr = indentString(elements.size(), indent);
-            //Do we have content
-            //<body>blah1\nblah2</body> -> nonEmpty nonEmpty
-            //<body>\nblah1\n</body>    -> empty nonEmpty empty
-            //<body>\nblah1\n</body>    -> nonEmpty
-            //<body>\n</body>           -> empty empty
-            //<body></body>             -> empty
-            if ( list.size() > 0) {
-                //End line
-                if(list.first().isEmpty() && list.size() > 1)
-                    result << endLine;
-                else if(list.size() > 1)
-                    result << list.first() << endLine;
-                else
-                    result << list.first();
-                for ( int i = 1; i < list.size() - 1; i++ ) {
-                    if(list[i].isEmpty())
-                        result << list[i] << endLine;
-                    else
-                        result << contentIndentStr << leftTrim(list[i]) << endLine;
-                }
-                //Not end line
-                if ( !list.last().isEmpty() && list.size() > 1) {
-                    result << contentIndentStr << leftTrim(list.last());
-                    indentStr = "";
-                }
-            }
-            //Not end line
-            if(list.size() < 2)
+            result << formatText(content, contentIndentStr, &hasNewLine);
+            if (!hasNewLine)
                 indentStr = "";
-
             content = "";
 
-            if(sources) {
-                if(token.startsWith("<?php") || (token.startsWith("<?") && m_mime->is("application/x-php"))) {
+            if (sources) {
+                if (token.startsWith("<?php") || (token.startsWith("<?") && m_mime->is("application/x-php"))) {
                     QStringList sourceList = formatInlineSource(token, KMimeType::mimeType("application/x-php"));
-                    if(sourceList.size() > 1) {
-                        for(int i = 0; i < sourceList.length()-1; i++) {
-                            if(i == 0)
+                    if (sourceList.size() > 1) {
+                        for (int i = 0; i < sourceList.length()-1; i++) {
+                            if (i == 0)
                                 result << indentStr << sourceList[i] << endLine;
                             else
                                 result << contentIndentStr << sourceList[i] << endLine;
@@ -638,7 +558,7 @@ QString SgmlFormatter::compactSource ( const QString& text ) {
             QString publicId;
             doctype(token, name, publicId, systemId);
             DtdHelper helper = DtdHelper::instance(publicId, systemId, QString(), name, m_mime);
-            if(!helper.isNull())
+            if (!helper.isNull())
                 m_dtdHelper = helper;
             result << token;
             content = "";
@@ -697,7 +617,7 @@ QStringRef SgmlFormatter::nextToken(int* tokenType)
     const QChar * end;
     const QChar * start;
     qint64 length;
-    
+
     *tokenType = Text;
 
     const QChar *c = &m_contentData[m_contentDataIndex];
