@@ -21,17 +21,20 @@
 
 #include "../formatter.h"
 #include <QFile>
+#include <KDebug>
 
-QTEST_MAIN(Php::TestFormatter)
+QTEST_MAIN(Php::TestPhpFormatter)
 
-Php::TestFormatter::TestFormatter()
+Php::TestPhpFormatter::TestPhpFormatter()
 {
-
 }
 
-void Php::TestFormatter::test()
+void Php::TestPhpFormatter::testFormatter()
 {
-
+    QString test = "<?php \n$i = 0; printf \"$i\";\n?>";
+    Formatter formatter;
+    formatter.setDebugEnabled(true);
+    kDebug() << formatter.formatSource(test);
 }
 
 #include "formattertest.moc"

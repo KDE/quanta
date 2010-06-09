@@ -18,6 +18,7 @@
 #include "formatterplugin.h"
 
 #include "formatter.h"
+#include "formatterpreferences.h"
 
 #include <QtCore/QPair>
 #include <QtCore/QList>
@@ -48,14 +49,13 @@ using namespace Php;
 K_PLUGIN_FACTORY ( KdevPlugFactory, registerPlugin<Php::FormatterPlugin>(); )
 K_EXPORT_PLUGIN ( KdevPlugFactory ( KAboutData ( "kdevphpformatter", "kdevphpformatter", ki18n ( "PHP Formatter" ), "0.1", ki18n ( "A plugin for formatting PHP files" ), KAboutData::License_GPL ) ) )
 
-
 FormatterPlugin::FormatterPlugin ( QObject *parent, const QVariantList& )
         : IPlugin ( KdevPlugFactory::componentData(), parent ) {
     KDEV_USE_EXTENSION_INTERFACE ( ISourceFormatter );
     m_formatter = new Formatter();
     
     SourceFormatterStyle defaultStyle("DEFAULT");
-    defaultStyle.setContent("indent_size=4");
+    defaultStyle.setContent("indent_size=4,keep_redundant_lines=true,else_along_curly=true,space_after_if=true");
     defaultStyle.setCaption("DEFAULT");
     m_style = defaultStyle;
     m_styles.append(m_style);
@@ -123,16 +123,33 @@ SourceFormatterStyle FormatterPlugin::style() const
 
 KDevelop::SettingsWidget* FormatterPlugin::editStyleWidget ( const KMimeType::Ptr &mime ) {
     Q_UNUSED ( mime );
-    return 0;
+    return new FormatterPreferences(0);
 }
 
 QString FormatterPlugin::previewText ( const KMimeType::Ptr & ) {
-    return QString ( "<?php\n") +
-           "$i=true;\n" +
-           "if($i){\n" +
-           "$i=false;\n" +
-           "}\n"+
-           "?>";
+    return  QString ("<?php\n") +
+    "/** Multiple\n" +
+    " *  comment */\n" +
+    "function make3($i){\n" +
+    "$i=$i%4;\n" +
+    "\n" +
+    "if($i==0) {\n" +
+    "}elseif($i<3){\n" +
+    "switch($i){\n" +
+    "case 1:$i+=2; break;\n" +
+    "case 2:$i=$i+1; break;\n" +
+    "default:$i=3; break;\n" +
+    "}\n" +
+    "\n" +
+    "} else { $i=$i&0|3;}\n" +
+    "\n" +
+    "//Single line comment\n" +
+    "return $i;\n" +
+    "}\n" +
+    "\n" +
+    "echo make3(3==3?3:33) . \"\\n\";\n" +
+    "\n" +
+    "?>";
 }
 
 ISourceFormatter::IndentationType FormatterPlugin::indentationType() {
@@ -140,7 +157,9 @@ ISourceFormatter::IndentationType FormatterPlugin::indentationType() {
 }
 
 int FormatterPlugin::indentationLength() {
-    return 4;
+    if(m_formatter)
+        return m_formatter->options().value("indent_size").toInt();
+    return 0;
 }
 
 #include "formatterplugin.moc"

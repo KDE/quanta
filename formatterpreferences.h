@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2010 Ruan Strydom <rm3dom@gmail.com>                        *
+ * Copyright (c) 2009 Ruan Strydom <rm3dom@gmail.com>                        *
  *                                                                           *
  * This program is free software; you can redistribute it and/or modify      *
  * it under the terms of the GNU General Public License as published by      *
@@ -15,59 +15,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#ifndef FORMATTER_H
-#define FORMATTER_H
+#ifndef FORMATTERPREFERENCES_H
+#define FORMATTERPREFERENCES_H
 
-#include <QtCore/QString>
-#include <QtCore/QMap>
-#include <QtCore/QVariant>
-#include <QProcess>
+#include "ui_formatterwidget.h"
 
-class KProcess;
+#include <interfaces/isourceformatter.h>
 
 namespace Php
 {
+    class Formatter;
 
-class Formatter : public QObject
-{
+
+class FormatterPreferences : public KDevelop::SettingsWidget, public Ui::FormatWidget {
     Q_OBJECT
 public:
-    Formatter();
-    virtual QString formatSource ( const QString& text, const QString& leftContext = QString(), const QString& rightContext = QString() );
-
-    virtual void setDebugEnabled(bool enabled) {
-        m_debugEnabled = enabled;
-    }
-
-    static QMap<QString, QVariant> stringToOptionMap(const QString &str);
-
-    virtual void loadStyle ( const QString &content );
-    virtual void loadStyle ( const QMap<QString, QVariant> & options ) {m_options = options;}
-
-    virtual const QMap<QString, QVariant> & options() const {
-        return m_options;
-    }
-
-    virtual QMap<QString, QVariant> & options() {
-        return m_options;
-    }
-
-    virtual QString saveStyle();
-
+    FormatterPreferences ( QWidget* parent = 0, Qt::WindowFlags f = 0 );
+    virtual ~FormatterPreferences();
+    virtual QMap<QString, QVariant> getOptions();
+    virtual QString save();
+    virtual void load(const KDevelop::SourceFormatterStyle& );
+protected slots:
+    void indentChanged (int i);
+    void updateText ();
+    void itemChanged(QListWidgetItem*);
 protected:
     QMap<QString, QVariant> m_options;
-    bool m_debugEnabled;
-    QString m_command;
-    KProcess * m_process;
-    QString m_stdout;
-    QString m_stderr;
-    int m_returnStatus;
-protected slots:
-    void readDataOutput();
-    void readDataError();
-    void processFinished( int, QProcess::ExitStatus );
+    Formatter *m_formatter;
 };
-
 }
 
-#endif // FORMATTER_H
+#endif //FORMATTERPREFERENCES_H

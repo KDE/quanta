@@ -26,6 +26,7 @@ include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${K
 set(kdevphpformatter_PART_SRCS formatter.cpp
   formatterplugin.cpp
   formatter.cpp
+  formatterpreferences.cpp
 )
 
 include_directories(
@@ -36,7 +37,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-#kde4_add_ui_files(kdevphpformatter_PART_SRCS formatterwidget.ui)
+kde4_add_ui_files(kdevphpformatter_PART_SRCS formatterwidget.ui)
 
 kde4_add_plugin(kdevphpformatter ${kdevphpformatter_PART_SRCS})
 
@@ -49,9 +50,9 @@ install(TARGETS kdevphpformatter DESTINATION ${PLUGIN_INSTALL_DIR})
 
 ##next target
 
-set(formattertest_SRCS tests/formattertest.cpp formatter.cpp)
-kde4_add_unit_test(formattertest ${formattertest_SRCS})
-target_link_libraries( formattertest
+set(phpformattertest_SRCS tests/formattertest.cpp formatter.cpp)
+kde4_add_unit_test(phpformattertest ${phpformattertest_SRCS})
+target_link_libraries( phpformattertest
     ${QT_QTTEST_LIBRARY} 
     ${KDE4_KDEUI_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}

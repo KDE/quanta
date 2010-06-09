@@ -20,30 +20,44 @@
 #include <KStandardDirs>
 #include <KProcess>
 #include <KDebug>
+#include <unistd.h>
 
 using namespace Php;
 
-Formatter::Formatter()
+Formatter::Formatter() : m_process(0), m_debugEnabled(true)
 {
-    m_debugEnabled = false;
     QString phpFile = KStandardDirs::locate("data", "kdevphpformatter/phpStylist.php");
     if (!phpFile.isEmpty())
-        m_command = QString("php -f '%1' -").arg(phpFile);
+        m_command = phpFile;
     else
         kDebug() << "Unable to locate kdevphpformatter/phpStylist.php";
-    m_process = new KProcess ( this );
-    connect ( m_process, SIGNAL(readyReadStandardOutput()), this, SLOT (readDataOutput()) );
-    connect ( m_process, SIGNAL(readyReadStandardError()), this, SLOT(readDataError()) );
-    connect ( m_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)) );
-    
+
     m_options.insert("indent_size", "4");
+    m_options.insert("keep_redundant_lines", true);
+    m_options.insert("else_along_curly", true);
+    m_options.insert("space_after_if", true);
 }
 
+QMap< QString, QVariant > Formatter::stringToOptionMap(const QString& str)
+{
+    QMap<QString, QVariant> map;
+    if ( str.isEmpty() )
+        return map;
+    QStringList pairs = str.split(',', QString::SkipEmptyParts);
+    QStringList::const_iterator it;
+    for (it = pairs.constBegin(); it != pairs.constEnd(); ++it) {
+        QStringList bits = (*it).split('=');
+        if(bits.size() == 2)
+            map[bits[0].trimmed()] = bits[1];
+    }
+    return map;
+}
 
 void Formatter::loadStyle ( const QString& content ) {
     if ( content.isNull() )
         return;
-    m_options = KDevelop::ISourceFormatter::stringToOptionMap ( content );
+    kDebug() << content;
+    m_options = stringToOptionMap(content);
 }
 
 QString Formatter::saveStyle() {
@@ -54,49 +68,82 @@ QString Formatter::formatSource(const QString& text, const QString& leftContext,
 {
     m_stdout.clear ();
     m_stderr.clear ();
-    m_process->clearProgram ();
-    
+    m_returnStatus = 0;
+    if(m_process) {
+        m_process->deleteLater();
+        m_process = 0;
+    }
+
     QString options;
     foreach(const QString &key, m_options.keys()) {
         if(key == "indent_size")
             options += QString(" --%1 %2").arg(key, m_options.value(key).toString());
-        else if(m_options.value(key).toBool() == true)
+        else if(m_options.value(key).isValid() && m_options.value(key).toBool() == true)
             options += QString(" --%1").arg(key);
     }
+
+    QByteArray source = text.toUtf8();
     
-    QString source = text;
-    source = source.replace('\\',"\\134");
-    source = source.replace('"',"\\042");
-    source = source.replace('%',"\\045");
-    source = source.replace('\n',"\\012");
-    source = source.replace('\r',"\\015");
-    source = source.replace('\'',"\\047");
-    m_process->setShellCommand ( QString("printf '%1' | %2 - %3").arg(source, m_command, options));
+    m_process = new KProcess ( this );
+    if(!m_process) return text;
+    
+    connect ( m_process, SIGNAL(readyReadStandardOutput()), this, SLOT (readDataOutput()) );
+    connect ( m_process, SIGNAL(readyReadStandardError()), this, SLOT(readDataError()) );
+    connect ( m_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)) );
+
+    QString command = QString("php -f '%1' - %2").arg(m_command, options);
+    if(m_debugEnabled)
+        kDebug() << command;
+
+    m_process->setShellCommand ( command );
     m_process->setOutputChannelMode ( KProcess::SeparateChannels );
-    int exitCode = m_process->execute();
-    return m_stdout;
+    m_process->start();
+    if (m_process->waitForStarted()) {
+        if(m_process->write(source) > -1) {
+            m_process->closeWriteChannel();
+            if(m_process->waitForFinished() && m_stdout.size() > 0) {
+                m_process->close();
+                m_process->deleteLater();
+                m_process = 0;
+                return m_stdout;
+            }
+        }
+    }
+    
+    m_process->waitForFinished();
+    m_process->close();
+    m_process->deleteLater();
+    m_process = 0;
+    
+    return text;
 }
 
 void Formatter::processFinished(int ret, QProcess::ExitStatus stat)
 {
+    if(!m_process) return;
+    m_returnStatus = ret;
     if ( stat == QProcess::CrashExit )
-        kDebug() << "The process crashed";
-    else
-        kDebug() << QString("Exit status: %1").arg(ret);
+        m_returnStatus = 255;
+    if(m_debugEnabled)
+        kDebug() << "Process finished with exit code: " << m_returnStatus;
 }
 
 void Formatter::readDataError()
 {
+    if(!m_process) return;
     //TODO use a codec
     m_stderr += QString(m_process->readAllStandardError());
-    kDebug() << m_stderr;
+    if(m_debugEnabled)
+        kDebug() << m_stderr;
 }
 
 void Formatter::readDataOutput()
 {
+    if(!m_process) return;
     //TODO use a codec
     m_stdout += QString(m_process->readAllStandardOutput());
-    kDebug() << m_stdout;
+    if(m_debugEnabled)
+        kDebug() << m_stdout;
 }
 
 #include "formatter.moc"

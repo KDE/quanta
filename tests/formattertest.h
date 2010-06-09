@@ -15,27 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************/
 
-#ifndef SGMLTOKENIZERTEST_H
-#define SGMLTOKENIZERTEST_H
+#ifndef FORMATTERTEST_H
+#define FORMATTERTEST_H
 
 #include <QObject>
-
-
 
 namespace Php
 {
 
-class TestFormatter : public QObject
+class TestPhpFormatter : public QObject
 {
     Q_OBJECT
-
 public:
-    TestFormatter();
-
+    TestPhpFormatter();
 private Q_SLOTS:
-    
-    void test();
+    void testFormatter();
 };
 }
 
-#endif //SGMLTOKENIZERTEST_H
+#endif //FORMATTERTEST_H
