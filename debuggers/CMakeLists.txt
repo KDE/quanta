@@ -1,5 +1,7 @@
-set(EXECUTESCRIPT_INCLUDE_DIR "../plugins/executescript")
-set(EXECUTEBROWSER_INCLUDE_DIR "../plugins/executebrowser")
+set(EXECUTESCRIPT_INCLUDE_DIR 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../plugins/executescript)
+set(EXECUTEBROWSER_INCLUDE_DIR 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../plugins/executebrowser)
 
 add_subdirectory( xdebug )
 
