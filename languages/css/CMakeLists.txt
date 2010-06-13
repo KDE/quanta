@@ -12,6 +12,7 @@ include_directories(
     ${KDE4_INCLUDES}
     ${QT4_INCLUDES}
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/parser
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
