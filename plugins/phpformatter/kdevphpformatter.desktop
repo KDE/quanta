@@ -1,0 +1,23 @@
+[Desktop Entry]
+Type=Service
+Exec=blubb
+Icon=text-xml
+Name=PHP Formatter
+Name[es]=Formateador PHP
+Name[pt]=Formatação de PHP
+Name[pt_BR]=Formatação de PHP
+Name[sv]=PHP-formatering
+Name[uk]=Форматування PHP
+Name[x-test]=xxPHP Formatterxx
+ServiceTypes=KDevelop/Plugin
+X-KDE-Library=kdevphpformatter
+X-KDevelop-Version=10
+X-KDE-PluginInfo-Name=phpformatter
+X-KDE-PluginInfo-Author=Ruan Strydom
+X-KDE-PluginInfo-License=LGPL
+X-KDevelop-Category=Global
+X-KDevelop-Language=Php
+X-KDevelop-Interfaces=org.kdevelop.ISourceFormatter
+X-KDevelop-SupportedMimeTypes=application/x-php
+X-KDevelop-Mode=NoGUI
+X-KDevelop-LoadMode=AlwaysOn
