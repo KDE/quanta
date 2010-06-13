@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/xml/completion">
+    <file>entity.png</file>
+    <file>attribute.png</file>
+    <file>element.png</file>
+    <file>enumeration.png</file>
+  </qresource>
+</RCC>
