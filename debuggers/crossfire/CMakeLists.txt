@@ -14,7 +14,8 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${EXECUTEBROWSER_INCLUDE_DIR}
-    ${QJSON_INCLUDE_DIR}
+    # we want to have explicit qjson includes since it's headers are too generically named
+    ${QJSON_INCLUDE_DIR}/..
 )
 
 set(kdevcrossfirecore_PART_SRCS
