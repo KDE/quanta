@@ -31,8 +31,8 @@
 #include <KLocale>
 #include <KUrl>
 
-#include <qjson/parser.h>
-#include <qjson/serializer.h>
+#include <parser.h>
+#include <serializer.h>
 
 namespace Crossfire {
 
