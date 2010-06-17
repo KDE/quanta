@@ -27,3 +27,4 @@ X-KDevelop-Interfaces=ILanguageSupport
 X-KDevelop-SupportedMimeTypes=text/css,text/html
 X-KDE-PluginInfo-Name=KDevCssSupport
 X-KDevelop-Mode=NoGUI
+X-KDevelop-LoadMode=AlwaysOn
