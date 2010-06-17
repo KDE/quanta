@@ -1,7 +1,5 @@
 add_subdirectory( sql )
 
-find_package(KDevelop-PG-Qt REQUIRED)
-
 macro_optional_find_package(KDevelop-PG-Qt)
 macro_log_feature( KDEVPGQT_FOUND "KDevelop-PG-Qt" "KDevelop-PG-Qt to generate parser for language plugins"
                                "http://gitorious.org/kdevelop/kdevelop-pg-qt" FALSE ""
