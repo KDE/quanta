@@ -20,6 +20,7 @@
 
 #include "fieldnavigationcontext.h"
 #include "valuenavigationcontext.h"
+#include "colornavigationcontext.h"
 
 namespace Css {
 
@@ -45,5 +46,15 @@ NavigationWidget::NavigationWidget(KDevelop::TopDUContextPointer topContext, con
   setContext( m_startContext );
 }
 
+NavigationWidget::NavigationWidget(KDevelop::TopDUContextPointer topContext, const QColor& c)
+  : AbstractNavigationWidget()
+{
+  m_topContext = topContext;
+  initBrowser(200);
+
+  //The first context is registered so it is kept alive by the shared-pointer mechanism
+  m_startContext = KDevelop::NavigationContextPointer(new ColorNavigationContext(topContext, c));
+  setContext( m_startContext );
+}
 
 }
