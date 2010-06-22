@@ -153,10 +153,11 @@ QList<ContentAssistData::Browser> ContentAssistData::readBrowsers(QXmlStreamRead
 
 ContentAssistData::Element ContentAssistData::element(const QString& name)
 {
-    if (!m_elements.contains(name)) {
+    const QString lower = name.toLower();
+    if (!m_elements.contains(lower)) {
         return Element();
     }
-    return m_elements[name];
+    return m_elements[lower];
 }
 
 ContentAssistData::Field ContentAssistData::field(const QString& name)
