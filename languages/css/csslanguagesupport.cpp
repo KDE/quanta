@@ -212,6 +212,8 @@ QWidget* LanguageSupport::specialLanguageObjectNavigationWidget(const KUrl& url,
             ContentAssistData::Field field = ContentAssistData::self()->field(id.property);
             if (field.values.contains(id.contents)) {
                 return new NavigationWidget(top, field.values[id.contents]);
+            } else if (QColor(id.contents.trimmed()).isValid()) {
+                return new NavigationWidget(top, QColor(id.contents.trimmed()));
             }
         } else if (id.kind == HexcolorAst::KIND) {
             return new NavigationWidget(top, QColor(id.contents.trimmed()));
