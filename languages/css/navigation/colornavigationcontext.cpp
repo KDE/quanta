@@ -20,23 +20,22 @@
 
 using namespace Css;
 
-ColorNavigationContext::ColorNavigationContext(KDevelop::TopDUContextPointer topContext, const QColor& color)
-  : AbstractNavigationContext(topContext),
-    m_color(color)
+ColorNavigationContext::ColorNavigationContext(KDevelop::TopDUContextPointer topContext, const QString& name)
+  : AbstractNavigationContext(topContext), m_name(name)
 {
 
 }
 
 QString ColorNavigationContext::name() const
 {
-    return m_color.name();
+    return m_name;
 }
 
 QString ColorNavigationContext::html(bool /*shorten*/)
 {
-    QString ret("<html><body style='background-color:%1;text-align:center;'>"
-                "<p style='background-color:white;color:black;margin-bottom:40px;'>%1</p>"
+    QString ret("<html><body style='background-color:%1;'>"
+                "<p style='background-color:white;color:black;margin-bottom:40px;' align='center'>%1</p>"
                 "</body></html>");
-    return ret.arg(m_color.name());
+    return ret.arg(m_name);
 }
 

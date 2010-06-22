@@ -29,13 +29,13 @@ class ColorNavigationContext : public KDevelop::AbstractNavigationContext
 {
 public:
     ColorNavigationContext(KDevelop::TopDUContextPointer topContext,
-                                   const QColor &color);
+                           const QString& name);
 
     virtual QString name() const;
     virtual QString html(bool shorten = false);
 
 private:
-    const QColor m_color;
+    const QString m_name;
 };
 
 }

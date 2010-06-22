@@ -29,7 +29,7 @@ class NavigationWidget : public KDevelop::AbstractNavigationWidget
 public:
     NavigationWidget(KDevelop::TopDUContextPointer topContext, const ContentAssistData::Field &field);
     NavigationWidget(KDevelop::TopDUContextPointer topContext, const ContentAssistData::Value &value);
-    NavigationWidget(KDevelop::TopDUContextPointer topContext, const QColor& c);
+    NavigationWidget(KDevelop::TopDUContextPointer topContext, const QString& colorName);
 };
 
 }

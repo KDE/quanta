@@ -213,10 +213,10 @@ QWidget* LanguageSupport::specialLanguageObjectNavigationWidget(const KUrl& url,
             if (field.values.contains(id.contents)) {
                 return new NavigationWidget(top, field.values[id.contents]);
             } else if (QColor(id.contents.trimmed()).isValid()) {
-                return new NavigationWidget(top, QColor(id.contents.trimmed()));
+                return new NavigationWidget(top, id.contents.trimmed());
             }
         } else if (id.kind == HexcolorAst::KIND) {
-            return new NavigationWidget(top, QColor(id.contents.trimmed()));
+            return new NavigationWidget(top, id.contents.trimmed());
         } else {
             Q_ASSERT_X(false, "Css::LanguageSupport::specialLanguageObjectNavigationWidget",
                               qPrintable(QString("unhandled id kind: %1").arg(id.kind)));

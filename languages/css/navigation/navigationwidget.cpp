@@ -46,14 +46,14 @@ NavigationWidget::NavigationWidget(KDevelop::TopDUContextPointer topContext, con
   setContext( m_startContext );
 }
 
-NavigationWidget::NavigationWidget(KDevelop::TopDUContextPointer topContext, const QColor& c)
+NavigationWidget::NavigationWidget(KDevelop::TopDUContextPointer topContext, const QString& colorName)
   : AbstractNavigationWidget()
 {
   m_topContext = topContext;
   initBrowser(200);
 
   //The first context is registered so it is kept alive by the shared-pointer mechanism
-  m_startContext = KDevelop::NavigationContextPointer(new ColorNavigationContext(topContext, c));
+  m_startContext = KDevelop::NavigationContextPointer(new ColorNavigationContext(topContext, colorName));
   setContext( m_startContext );
 }
 
