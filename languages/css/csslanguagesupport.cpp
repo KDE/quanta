@@ -51,6 +51,8 @@ int debugArea() { static int s_area = KDebug::registerArea("kdevcsssupport"); re
 int debugArea() { return 1; }
 #endif
 
+#define debug() kDebug(debugArea())
+
 LanguageSupport::LanguageSupport(QObject* parent, const QVariantList& /*args*/)
     : KDevelop::IPlugin(KDevCssSupportFactory::componentData(), parent),
       KDevelop::ILanguageSupport()
@@ -169,6 +171,11 @@ CursorIdentifier cursorIdentifier(const KUrl& url, const KDevelop::SimpleCursor&
                 ret.contents = editor.tokenToString(n->ident);
                 ret.range = editor.findRange(n->ident);
                 return ret;
+            } else if (n->hexcolor) {
+                CursorIdentifier ret(n->hexcolor->kind);
+                ret.contents = editor.nodeToString(n->hexcolor);
+                ret.range = editor.findRange(n->hexcolor, n->hexcolor);
+                return ret;
             }
         }
     }
@@ -178,7 +185,7 @@ CursorIdentifier cursorIdentifier(const KUrl& url, const KDevelop::SimpleCursor&
 KDevelop::SimpleRange LanguageSupport::specialLanguageObjectRange(const KUrl& url, const KDevelop::SimpleCursor& position)
 {
     CursorIdentifier id = cursorIdentifier(url, position);
-    kDebug() << id.kind << id.contents;
+    debug() << id.kind << id.contents;
     if (id.kind) {
         return id.range;
     }
@@ -188,7 +195,7 @@ KDevelop::SimpleRange LanguageSupport::specialLanguageObjectRange(const KUrl& ur
 QWidget* LanguageSupport::specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position)
 {
     CursorIdentifier id = cursorIdentifier(url, position);
-    kDebug() << id.kind << id.contents;
+    debug() << id.kind << id.contents;
     if (id.kind) {
         KDevelop::TopDUContextPointer top;
         {
@@ -205,9 +212,14 @@ QWidget* LanguageSupport::specialLanguageObjectNavigationWidget(const KUrl& url,
             ContentAssistData::Field field = ContentAssistData::self()->field(id.property);
             if (field.values.contains(id.contents)) {
                 return new NavigationWidget(top, field.values[id.contents]);
+            } else if (QColor(id.contents.trimmed()).isValid()) {
+                return new NavigationWidget(top, id.contents.trimmed());
             }
+        } else if (id.kind == HexcolorAst::KIND) {
+            return new NavigationWidget(top, id.contents.trimmed());
         } else {
-            Q_ASSERT(0);
+            Q_ASSERT_X(false, "Css::LanguageSupport::specialLanguageObjectNavigationWidget",
+                              qPrintable(QString("unhandled id kind: %1").arg(id.kind)));
         }
     }
     return KDevelop::ILanguageSupport::specialLanguageObjectNavigationWidget(url, position);

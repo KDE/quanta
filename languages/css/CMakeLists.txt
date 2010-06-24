@@ -35,6 +35,7 @@ set(kdevcsslanguagesupport_PART_SRCS
     navigation/fieldnavigationcontext.cpp
     navigation/navigationwidget.cpp
     navigation/valuenavigationcontext.cpp
+    navigation/colornavigationcontext.cpp
 )
 
 kde4_add_plugin(kdevcsslanguagesupport ${kdevcsslanguagesupport_PART_SRCS})

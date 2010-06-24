@@ -98,6 +98,9 @@ public:
             contextStack.pop();
         if (!contextStack.empty())
             context = contextStack.top();
+        else
+            context = 0;
+
         element = 0;
         DefaultVisitor::visitElementCloseTag(node);
     }
@@ -312,17 +315,21 @@ KTextEditor::Range SgmlCodeCompletionModel::completionRange(KTextEditor::View* v
     KTextEditor::Cursor start = position;
     KTextEditor::Cursor end = position;
     QString text = view->document()->line(position.line());
-    if ( text.isEmpty() || start.column() >= text.length() ) {
-      return Range(start, end);
-    }
-    while (start.column() > 0 && !seps.contains(text.at(start.column()))) {
-        start.setColumn(start.column()-1);
-        if (seps.contains(text.at(start.column()))) {
-            start.setColumn(start.column()+1);
-            break;
+    if (!text.isEmpty()) {
+        if (start.column() >= text.length() && !seps.contains(text.at(text.length()-1))) {
+            start.setColumn(text.length() - 1);
+        }
+        if (start.column() < text.length()) {
+            while (start.column() > 0 && !seps.contains(text.at(start.column()))) {
+                start.setColumn(start.column()-1);
+                if (seps.contains(text.at(start.column()))) {
+                    start.setColumn(start.column()+1);
+                    break;
+                }
+            }
         }
     }
-    while (end.column() < text.length() && !seps.contains(text.at(end.column()))) {
+    while (end.column() < text.length() - 1 && !seps.contains(text.at(end.column()))) {
         end.setColumn(end.column()+1);
         if (seps.contains(text.at(end.column()))) {
             end.setColumn(end.column());
@@ -626,32 +633,53 @@ void SgmlCodeCompletionModel::executeCompletionItem2(KTextEditor::Document* docu
                 v->setCursorPosition(range.end());
         }
         return;
-    }
-
-    //Entities
-    if (item.type == Entity) {
+    } else if (item.type == Header) {
+        const QString line = document->line(range.start().line());
+        bool haveOpenTag = false;
+        // overwrite existing tag to the left
+        for (int i = range.start().column() - 1; i >= 0; --i) {
+            if (line[i] == '>') {
+                break;
+            } else if(line[i] == '<') {
+                // we have an open tag, overwrite it.
+                range.start().setColumn(i);
+                haveOpenTag = true;
+                break;
+            }
+        }
+        // overwrite existing tag to the right
+        if (haveOpenTag) {
+            for (int i = range.end().column(); i < line.length(); ++i) {
+                if (line[i] == '<') {
+                  break;
+                } else if (line[i] == '>') {
+                  // we have an open tag, overwrite it.
+                  range.end().setColumn(i + 1);
+                  break;
+                }
+            }
+        }
+    } else if (item.type == Entity) {
         range = growRangeRight(document, range, ";");
         range = growRangeLeft(document, range, "&");
         text = QString("&%1;").arg(text);
         document->replaceText(range, text);
         return;
-    }
-
-    //Elements
-    if ((seperator == '<' || seperator == '>') || seperator.isNull()) {
+    } else if (item.type == Element) {
         range = growRangeLeft(document, range, "<");
         if (!text.startsWith('<')) {
           text.prepend('<');
+        }
+        if (!text.endsWith('>')) {
+            text.append('>');
         }
         if (trimmedLine.isEmpty()) {
             range.start().setColumn(0);
             text.prepend(getIndentstring(document, depth));
         }
-        document->replaceText(range, text);
-    } else {
-        text = QString("%1").arg(text);
-        document->replaceText(range, text);
     }
+
+    document->replaceText(range, text);
 
     //After replacement move cursur to end of tag ie: <blah>|
     range.end().setColumn(range.start().column() + text.size());
@@ -1102,14 +1130,14 @@ QList< SgmlCodeCompletionModel::CompletionItem > SgmlCodeCompletionModel::findHe
     }
     
     if(mime->is("text/html")) {
-        items.append(CompletionItem("<!DOCTYPE html>", 0, Other));
+        items.append(CompletionItem("<!DOCTYPE html>", 10, Header));
         items.append(CompletionItem("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">", 0, Header));
         items.append(CompletionItem("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">", 0, Header));
         items.append(CompletionItem("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Frameset//EN\" \"http://www.w3.org/TR/html4/frameset.dtd\">", 0, Header));
     }
     
     if(mime->is("application/docbook+xml")) {
-        items.append(CompletionItem("<!DOCTYPE book>", 10, Other));
+        items.append(CompletionItem("<!DOCTYPE book>", 10, Header));
         items.append(CompletionItem("<!DOCTYPE book PUBLIC \"-//OASIS//DTD DocBook XML V4.5//EN\" \"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd\">", 0, Header));
     }
     

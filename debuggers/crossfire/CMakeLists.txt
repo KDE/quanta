@@ -56,6 +56,8 @@ target_link_libraries(connectiontest
     ${QT_QTTEST_LIBRARY}
     ${KDEVPLATFORM_DEBUGGER_LIBRARIES}
     ${QJSON_LIBRARIES}
+    ${KDEVPLATFORM_OUTPUTVIEW_LIBRARIES}
+    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
 )
 
 ########### next target ###############
@@ -70,8 +72,8 @@ target_link_libraries(sessiontest
     ${QJSON_LIBRARIES}
     ${KDEVPLATFORM_TESTSHELL_LIBRARIES}
     ${KDEVPLATFORM_TESTS_LIBRARIES}
+    ${KDEVPLATFORM_OUTPUTVIEW_LIBRARIES}
 )
-
 
 ########### install files ###############
 install(FILES kdevcrossfire.desktop DESTINATION ${SERVICES_INSTALL_DIR})

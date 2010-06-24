@@ -94,7 +94,7 @@ int main( int argc, char *argv[] )
 
   KAboutData aboutData("quanta", 0, ki18n("Quanta"),
                         QUANTA_VERSION, ki18n(description), KAboutData::License_GPL,
-                        ki18n("(c) 1999-2006, The Quanta+ developers"), ki18n(othertext), "http://www.kdewebdev.org");
+                        ki18n("(c) 1999-2010, The Quanta+ developers"), ki18n(othertext), "http://www.kdewebdev.org");
 
   aboutData.addAuthor(ki18n("Eric Laffoon"),ki18n("Project Lead - public liaison"), "sequitur@kde.org");
   aboutData.addAuthor(ki18n("Andras Mantia"),ki18n("Program Lead - bug squisher"), "amantia@kde.org");

@@ -22,6 +22,8 @@
 #include <qtextdocument.h>
 #include <QSqlQueryModel>
 #include <QSqlError>
+#include <QSqlQuery>
+#include <QTimer>
 
 #include <KDebug>
 #include <KComponentData>
@@ -35,7 +37,6 @@
 #include "connections/connectionsmodel.h"
 #include "ui_results.h"
 
-#include <QXmlFormatter>
 
 namespace Sql {
 
@@ -190,11 +191,20 @@ void ResultTableWidget::runSql(QString sql)
         currentConnectionChanged(m_ui->connection->currentIndex());
     }
     if (m_db.isOpen()) {
-        m_model->setQuery(sql, m_db);
+        QSqlQuery query(sql, m_db);
+        int elapsed;
+        {
+          QTime t;
+          t.start();
+          query.exec();
+          elapsed = t.elapsed();
+        }
+        m_model->setQuery(query);
         if (m_model->lastError().isValid()) {
             m_ui->errorLabel->setText(Qt::escape(m_model->lastError().text()));
             m_ui->stackedWidget->setCurrentWidget(m_ui->errorPage);
         } else {
+            m_ui->durationLabel->setText(i18n("Query finished in %1 ms", QString::number(elapsed)));
             m_ui->stackedWidget->setCurrentWidget(m_ui->resultsPage);
         }
     }
