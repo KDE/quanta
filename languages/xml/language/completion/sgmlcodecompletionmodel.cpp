@@ -282,7 +282,59 @@ void SgmlCodeCompletionModel::completionInvoked(KTextEditor::View* view, const K
     }
     //Complete attributes
     else if(visitor.element && !tag.isEmpty()) {
-        m_items.append(findAttributes(view->document(), range, visitor.elementName()));
+        // get full element to make sure we filter _all_ attributes, including those following current cursor position
+        Q_ASSERT(range.onSingleLine());
+        QString line = view->document()->line(range.end().line());
+        bool looksGood = false;
+        ///TODO: multiline tags
+        for ( int i = range.end().column(); i < line.length(); ++i ) {
+            if (line[i] == '>') {
+                line.resize(i + 1);
+                looksGood = true;
+                break;
+            } else if (line[i] == '<') {
+                // apparently no proper tag
+                break;
+            }
+        }
+        if (looksGood) {
+            for ( int i = range.end().column(); i > 0; --i ) {
+                if (line[i] == '<') {
+                    line = line.mid(i);
+                    break;
+                } else if (line[i] == '>') {
+                    // apparently no proper tag
+                    looksGood = false;
+                    break;
+                }
+            }
+            if (looksGood ) {
+                // ok, found a tag :)
+                Q_ASSERT(line.startsWith('<'));
+                Q_ASSERT(line.endsWith('>'));
+                // remove > to stay in element
+                line.chop(1);
+                session.setContents(line);
+                start = 0;
+                if (session.parse(&start)) {
+                    visitor.visitNode(start);
+                    Q_ASSERT(visitor.element);
+                }
+            }
+        }
+        QList< CompletionItem > items = findAttributes(view->document(), range, visitor.elementName());
+        QStringList existingAttributes;
+        if (visitor.element->attributesSequence) {
+            for ( int i = 0; i < visitor.element->attributesSequence->count(); ++i ) {
+                existingAttributes << editor.parseSession()->symbol(visitor.element->attributesSequence->at(i)->element->name);
+            }
+        }
+        foreach ( const CompletionItem& item, items ) {
+            if (existingAttributes.contains(item.name)) {
+                continue;
+            }
+            m_items << item;
+        }
     }
     //Complete tags
     else if(visitor.context) {
@@ -373,6 +425,12 @@ QVariant SgmlCodeCompletionModel::data(const QModelIndex& index, int role) const
     if (role == Qt::DisplayRole && index.column() == CodeCompletionModel::Postfix)
         return QVariant(m_items.at(index.row()).info);
 
+    if (role == Qt::BackgroundColorRole && m_items.at(index.row()).matchLevel > 0) {
+      QColor c(Qt::green);
+      c.setAlpha(200);
+      return c;
+    }
+
     if (role == MatchQuality)
         return QVariant(m_items.at(index.row()).matchLevel);
 
@@ -386,32 +444,25 @@ QVariant SgmlCodeCompletionModel::data(const QModelIndex& index, int role) const
 }
 
 
-QString SgmlCodeCompletionModel::getIndentstring(Document* document, int depth) const
+QString SgmlCodeCompletionModel::formatSource(Document* document, const QString& code, const Cursor& pos) const
 {
-    int indentLength = 4;
-    ISourceFormatter::IndentationType indentType = ISourceFormatter::IndentWithSpaces;
-    ISourceFormatter * formatter = 0;
     KMimeType::Ptr mime = KMimeType::mimeType(document->mimeType());
-    formatter = ICore::self()->sourceFormatterController()->formatterForMimeType(mime);
+    ISourceFormatter * formatter = ICore::self()->sourceFormatterController()->formatterForMimeType(mime);
     if (formatter) {
-        indentLength = formatter->indentationLength();
-        indentType = formatter->indentationType();
+        QString leftCtx;
+        for ( int i = 0; i <= pos.line(); ++i ) {
+          if ( i < pos.line() ) {
+            leftCtx += document->line(i) + '\n';
+          } else {
+            leftCtx += document->line(i).left(pos.column());
+          }
+        }
+        return formatter->formatSource(code, mime, leftCtx);
     }
-    if (indentType == ISourceFormatter::NoChange)
-        return "";
-
-    QChar c = ' ';
-    if (indentType == ISourceFormatter::IndentWithTabs) {
-        c = '\t';
-    }
-
-    QString ret;
-    for (int i = 0; i < depth * indentLength; i++)
-        ret += c;
-    return ret;
+    return code;
 }
 
-QString SgmlCodeCompletionModel::formatString(Document* document, const QString& str, CompletionItemType type) const
+QString SgmlCodeCompletionModel::formatItem(Document* document, const QString& str, CompletionItemType type) const
 {
     if (type != Element)
         return str;
@@ -559,7 +610,7 @@ QChar SgmlCodeCompletionModel::getSeperator(Document* document, const KTextEdito
 void SgmlCodeCompletionModel::executeCompletionItem2(KTextEditor::Document* document, const KTextEditor::Range& word, const QModelIndex& index) const
 {
     CompletionItem item = m_items.at(index.row());
-    QString text = formatString(document, item.name, item.type);
+    QString text = formatItem(document, item.name, item.type);
     QString line = document->line(word.start().line());
     QString trimmedLine = line.mid(0, word.start().column()).remove('/');
     trimmedLine = trimmedLine.remove('<');
@@ -578,15 +629,12 @@ void SgmlCodeCompletionModel::executeCompletionItem2(KTextEditor::Document* docu
         debug() << "right1" << (range.end().column() < line.length() ? line.at(range.end().column()) : ' ');
         range = growRangeRight(document, range, ">");
         debug() << "right2" << (range.end().column() < line.length() ? line.at(range.end().column()) : ' ');
+        text = QString("</%1>").arg(text);
         if (trimmedLine.isEmpty()) {
-            Range r = range;
-            r.start().setColumn(0);
-            text = QString("%1</%2>").arg(getIndentstring(document, depth-1),text);
-            document->replaceText(r, text);
-        } else {
-            text = QString("</%1>").arg(text);
-            document->replaceText(range, text);
+          range.start().setColumn(0);
         }
+        text = formatSource(document, text, word.start());
+        document->replaceText(range, text);
         foreach(View * v, document->views()) {
             if (v->isActiveView())
                 v->setCursorPosition(range.start());
@@ -671,14 +719,17 @@ void SgmlCodeCompletionModel::executeCompletionItem2(KTextEditor::Document* docu
           text.prepend('<');
         }
         if (!text.endsWith('>')) {
+            if (item.isEmpty) {
+                text.append('/');
+            }
             text.append('>');
         }
         if (trimmedLine.isEmpty()) {
             range.start().setColumn(0);
-            text.prepend(getIndentstring(document, depth));
         }
     }
 
+    text = formatSource(document, text, range.start());
     document->replaceText(range, text);
 
     //After replacement move cursur to end of tag ie: <blah>|
@@ -1006,7 +1057,7 @@ QList< SgmlCodeCompletionModel::CompletionItem > SgmlCodeCompletionModel::findAl
             ElementDeclaration *elementDec = dynamic_cast<ElementDeclaration *>(d);
             if (!elementDec || elementDec->elementType() != ElementDeclarationData::Element) continue;
             QString name = elementDec->name().str();
-            items.insert(name, CompletionItem(name, 0, Element));
+            items.insert(name, CompletionItem(name, 0, Element, !elementDec->internalContext() || elementDec->internalContext()->localDeclarations().isEmpty()));
         }
     }
 
@@ -1060,7 +1111,7 @@ QList< SgmlCodeCompletionModel::CompletionItem > SgmlCodeCompletionModel::findAt
         if (!elementDec) continue;
         for (int i = 0; i < elementDec->attributesSize(); i++) {
             IndexedString str = elementDec->attributes()[i];
-            items.insert(str.str(), CompletionItem(str.str(), 0, Attribute));
+            items.insert(str.str(), CompletionItem(str.str(), 0, Attribute,elementDec->internalContext()->localDeclarations().isEmpty() ));
         }
     }
 
@@ -1107,7 +1158,7 @@ QList< SgmlCodeCompletionModel::CompletionItem > SgmlCodeCompletionModel::findCh
             if (!elementDec) continue;
             QString name = elementDec->name().str();
             if (!name.startsWith("#"))
-                items.insert(name, CompletionItem(name, 10, Element));
+                items.insert(name, CompletionItem(name, 10, Element, !d->internalContext() || elementDec->internalContext()->localDeclarations().isEmpty()));
         }
     }
 

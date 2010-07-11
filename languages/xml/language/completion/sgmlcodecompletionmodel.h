@@ -61,21 +61,24 @@ protected:
     };
     
     typedef struct CompletionItem {
-        CompletionItem(QString itemName, int itemMatchLevel, CompletionItemType itemType) {
+        CompletionItem(QString itemName, int itemMatchLevel, CompletionItemType itemType, bool empty = false) {
             type = itemType;
             matchLevel = itemMatchLevel;
             name = itemName;
             info = "";
+            isEmpty = empty;
         }
-        CompletionItem(QString itemName, QString itemInfo, int itemMatchLevel, CompletionItemType itemType) {
+        CompletionItem(QString itemName, QString itemInfo, int itemMatchLevel, CompletionItemType itemType, bool empty = false) {
             type = itemType;
             matchLevel = itemMatchLevel;
             name = itemName;
             info = itemInfo;
+            isEmpty = empty;
         }
         QString name;
         QString info;
         int matchLevel;
+        bool isEmpty;
         CompletionItemType type;
     } CompletionItem;
 
@@ -93,11 +96,10 @@ protected:
     
     const QIcon getIcon ( CompletionItemType type ) const;
     
-    /** @todo get users indentation profile */
-    QString getIndentstring(KTextEditor::Document* document, int depth) const;
+    QString formatSource(KTextEditor::Document* document, const QString& source, const KTextEditor::Cursor& pos) const;
     
     /** @todo get users preferences for HTML ie: lower-case */
-    QString formatString(KTextEditor::Document* document, const QString &str, CompletionItemType type) const;
+    QString formatItem(KTextEditor::Document* document, const QString &str, CompletionItemType type) const;
     
     /** Finds the seperator before the cursor.
      */ 
