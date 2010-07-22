@@ -17,6 +17,7 @@ Name[pt_BR]=Suporte ao Crossfire
 Name[sv]=Crossfire-stöd
 Name[uk]=Підтримка Crossfire
 Name[x-test]=xxCrossfire Supportxx
+Name[zh_CN]=Crossfire 支持
 GenericName=Debugger Frontend
 GenericName[es]=Interfaz del depurador
 GenericName[fr]=Interface du débogueur
@@ -25,6 +26,7 @@ GenericName[pt_BR]=Interface do depurador
 GenericName[sv]=Avlusargränssnitt
 GenericName[uk]=Клієнтська програма зневадника
 GenericName[x-test]=xxDebugger Frontendxx
+GenericName[zh_CN]=调试器前端
 
 Icon=debugger
 X-KDE-Library=kdevcrossfire
