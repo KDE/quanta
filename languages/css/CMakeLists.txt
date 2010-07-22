@@ -45,6 +45,7 @@ target_link_libraries(kdevcsslanguagesupport
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDE4_KTEXTEDITOR_LIBS}
+    ${KDE4_KDECORE_LIBS}
     kdev4cssparser
 )
 
@@ -65,8 +66,11 @@ target_link_libraries(completionmodeltest
     kdev4cssparser
     ${KDE4_KDEUI_LIBS}
     ${KDE4_KTEXTEDITOR_LIBS}
+    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
+    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${QT_QTGUI_LIBRARY}
     ${QT_QTTEST_LIBRARY}
+    ${KDE4_KDECORE_LIBS}
 )
 
 
@@ -83,7 +87,10 @@ target_link_libraries(duchaintest
     ${KDE4_KDEUI_LIBS}
     ${KDE4_KTEXTEDITOR_LIBS}
     ${QT_QTGUI_LIBRARY}
+    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
+    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${QT_QTTEST_LIBRARY}
+    ${KDE4_KDECORE_LIBS}
 )
 
 
@@ -95,5 +102,8 @@ kde4_add_unit_test(parsejobtest ${parsejobtest_SRCS})
 target_link_libraries(parsejobtest
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_TESTS_LIBRARIES}
+    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
+    ${KDE4_KDECORE_LIBS}
+    ${KDE4_KDEUI_LIBS}
     ${QT_QTTEST_LIBRARY}
 )

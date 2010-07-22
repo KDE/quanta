@@ -61,4 +61,4 @@ target_link_libraries(css-parser ${QT_QTCORE_LIBRARY} ${KDEVPLATFORM_LANGUAGE_LI
 ### next target
 set(parsertest_SRCS test/parsertest.cpp)
 kde4_add_unit_test(parsertest ${parsertest_SRCS})
-target_link_libraries(parsertest kdev4cssparser ${QT_QTTEST_LIBRARY})
+target_link_libraries(parsertest kdev4cssparser ${QT_QTTEST_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDEVPLATFORM_LANGUAGE_LIBRARIES})
