@@ -24,7 +24,7 @@
 
 using namespace Php;
 
-Formatter::Formatter() : m_process(0), m_debugEnabled(false)
+Formatter::Formatter() :  m_debugEnabled(false), m_process(0)
 {
     QString phpFile = KStandardDirs::locate("data", "kdevphpformatter/phpStylist.php");
     if (!phpFile.isEmpty())
