@@ -510,7 +510,8 @@ maybeSpace (SGML_CD @ maybeSpace | 0)
     --don't parse next property as expr (happens if there is no expr and semicolon)
     [: if (LA(2).kind != Token_COLON && !(LA(2).kind == Token_WHITESPACE && LA(3).kind == Token_COLON)) { :]
     expr=expr prio
-    (semicolon=SEMICOLON maybeSpace | 0 )
+    (semicolon=SEMICOLON | 0 )
+    maybeSpace
     [: } :]
 -> declaration ;;
 
