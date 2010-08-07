@@ -23,6 +23,7 @@
 #include "parserexport.h"
 
 #include <QByteArray>
+#include <QString>
 
 #ifndef DONT_INCLUDE_FLEXLEXER
 #include "FlexLexer.h"
@@ -43,10 +44,13 @@ namespace Css
 class KDEVCSSPARSER_EXPORT Tokenizer : public yyFlexLexer
 {
 public:
-    Tokenizer( KDevPG::TokenStream *tokenStream, const QByteArray &contents );
+    explicit Tokenizer( KDevPG::TokenStream *tokenStream, const QByteArray &contents );
+    explicit Tokenizer( KDevPG::TokenStream *tokenStream, const char* contents );
+    explicit Tokenizer( KDevPG::TokenStream *tokenStream, const QString &contents );
     void restart( KDevPG::TokenStream *tokenStream, const QByteArray &contents );
 
     int yylex();
+    int nextTokenKind() { return yylex(); }
     std::size_t tokenBegin() const { return m_tokenBegin; }
     std::size_t tokenEnd()   const { return m_tokenEnd;   }
 

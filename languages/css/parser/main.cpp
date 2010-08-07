@@ -26,175 +26,20 @@
 #include "cssast.h"
 #include "csstokentext.h"
 
-#include <QFile>
-#include <QString>
-#include <QStringList>
-#include <QDebug>
-#include <iostream>
-#include <QTextCodec>
+#include <KAboutData>
+
+#include <language/util/debuglanguageparserhelper.h>
 
 using namespace Css;
 
-void showUsage(char**);
-
-QTextStream qout(stdout);
-QTextStream qerr(stderr);
-QTextStream qin(stdin);
-
-class CssParser {
-public:
-    CssParser(const bool debug, const bool printTokens)
-        : m_debug(debug), m_printTokens(printTokens)
-    {
-        m_session.setDebug(debug);
-    }
-
-    /// parse contents of a file
-    void parseFile( const QString &fileName )
-    {
-        if (!m_session.readFile(fileName, "utf-8")) {
-            qerr << "Can't open file " << fileName << endl;
-            exit(255);
-        } else {
-            qout << "Parsing file " << fileName << endl;
-        }
-        runSession();
-    }
-
-    /// parse code directly
-    void parseCode( const QString &code )
-    {
-        m_session.setContents(code);
-
-        qout << "Parsing input" << endl;
-        runSession();
-    }
-
-private:
-    /**
-     * actually run the parse session
-     */
-    void runSession()
-    {
-        if (m_printTokens) {
-            KDevPG::TokenStream tokenStream;
-            Tokenizer lexer(&tokenStream, m_session.contents().toLatin1().data());
-            int token;
-            while ((token = lexer.yylex())) {
-                Parser::Token &t = tokenStream.next();
-                //t.begin = lexer.tokenBegin();
-                //t.end = lexer.tokenEnd();
-                t.kind = token;
-                printToken(token, lexer);
-            }
-            printToken(token, lexer);
-            if ( tokenStream.size() > 0 ) {
-                qint64 line;
-                qint64 column;
-                tokenStream.endPosition(tokenStream.size() - 1, &line, &column);
-                qDebug() << "last token endPosition: line" << line << "column" << column;
-            } else {
-                qDebug() << "empty token stream";
-            }
-        }
-
-        Css::StartAst* ast = 0;
-        if (!m_session.parse(&ast)) {
-            qerr << "parse error" << endl;
-            exit(255);
-        } else {
-            if (m_debug) {
-                Css::DebugVisitor debugVisitor(m_session.tokenStream(), m_session.contents());
-                debugVisitor.visitStart(ast);
-            }
-            qout << "successfully parsed" << endl;
-        }
-    }
-
-    void printToken(int token, const Tokenizer& lexer) const
-    {
-        int begin = lexer.tokenBegin();
-        int end = lexer.tokenEnd();
-        qout << m_session.contents().mid(begin, end - begin + 1).replace('\n', "\\n")
-        << " "+tokenText(token) << endl;
-    }
-
-    Css::ParseSession m_session;
-    const bool m_debug;
-    const bool m_printTokens;
-};
+typedef KDevelopUtils::DebugLanguageParserHelper<ParseSession, KDevPG::TokenStream, Parser::Token,
+                                            Tokenizer, StartAst, DebugVisitor, tokenText> CssParser;
 
 int main(int argc, char* argv[])
 {
-    qout.setCodec("UTF-8");
-    qin.setCodec("UTF-8");
+    KAboutData aboutData( "css-parser", 0, ki18n( "css-parser" ),
+                          "1", ki18n("KDevelop CSS parser debugging utility"), KAboutData::License_GPL,
+                          ki18n( "(c) 2008 Niko Sams, 2009 Milian Wolff" ), KLocalizedString(), "http://www.kdevelop.org" );
 
-    QStringList files;
-    bool debug = false;
-    bool printTokens = false;
-    QStringList code;
-    for (int i = 1; i < argc; i++) {
-        QString arg(argv[i]);
-        if (arg.startsWith(QString("--"))) {
-            arg = arg.mid(2);
-            if (arg == "help") {
-                showUsage(argv);
-                return 0;
-            } else if (arg == "debug") {
-                debug = true;
-            } else if (arg == "print-tokens") {
-                printTokens = true;
-            } else if (arg == "code") {
-                for (int j = i + 1; j < argc; ++j ) {
-                    code << argv[j];
-                }
-                if ( code.isEmpty() ) {
-                    qerr << "no code given" << endl;
-                    showUsage(argv);
-                    return 1;
-                }
-                break;
-            } else {
-                qerr << "unknown option: " << endl;
-                showUsage(argv);
-                return 1;
-            }
-        } else {
-            files << arg;
-        }
-    }
-
-    CssParser parser(debug, printTokens);
-
-    if ( !code.isEmpty() ) {
-        parser.parseCode( code.join(" ").replace("\\n", "\n") );
-    } else if ( files.isEmpty() ) {
-        files << "-";
-    }
-
-    foreach(const QString &fileName, files) {
-        if ( fileName == "-" ) {
-            if ( isatty(STDIN_FILENO) ) {
-                qerr << "no STDIN given" << endl;
-                return 255;
-            }
-            parser.parseCode( qin.readAll().toUtf8() );
-        } else {
-            parser.parseFile(fileName);
-        }
-
-    }
-    return 0;
-}
-
-void showUsage(char** argv)
-{
-    qout << "Usage: " << argv[0] << " [options] FILE" << endl;
-    qout << "" << endl;
-    qout << "--print-tokens Print all found tokens" << endl;
-    qout << "--debug        Print AST" << endl;
-    qout << "--code ...     All following arguments will be interpreted as CSS code." << endl
-         << "               Hence put this option at the end of the list." << endl;
-    qout << "" << endl;
-    qout << "If FILE is empty or -, read from STDIN." << endl;
+    return KDevelopUtils::initAndRunParser<CssParser>(aboutData, argc, argv);
 }

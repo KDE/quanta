@@ -56,7 +56,8 @@ install(TARGETS kdev4cssparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ### next target
 kde4_add_executable( css-parser main.cpp ${parser_SRCS} ${parser_STAT_SRCS} )
-target_link_libraries(css-parser ${QT_QTCORE_LIBRARY} ${KDEVPLATFORM_LANGUAGE_LIBRARIES})
+target_link_libraries(css-parser
+    ${QT_QTCORE_LIBRARY} ${KDEVPLATFORM_LANGUAGE_LIBRARIES} ${KDEVPLATFORM_TESTS_LIBRARIES})
 
 ### next target
 set(parsertest_SRCS test/parsertest.cpp)
