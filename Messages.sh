@@ -12,7 +12,8 @@ for toolbar in $toolbars; do
 done
 #cat data/config/actions.rc >> extrafiles2
 $EXTRACTRC `find . -name "*.ui"` >> rc.cpp 
-$EXTRACTRC `find . -name "*.rc"` >> rc.cpp 
+$EXTRACTRC `find . -name "*.rc"        \
+            | grep -v /UNPORTED/data/` >> rc.cpp 
 $EXTRACTRC `find . -name "*.kmdr"` >> rc.cpp 
 $EXTRACTRC `find . -name "*.kcfg"` >> rc.cpp
 #cat data/chars | perl -e 'while(<STDIN>) { chomp ; s/\"/\\\"/ ; print "i18n(\"$_\");\n"; }' >> rc.cpp 
