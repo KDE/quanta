@@ -17,6 +17,7 @@ include_directories(
 )
 
 find_package(KDevelop-PG-Qt REQUIRED)
+find_package(Flex REQUIRED)
 
 include_directories(
     ${CMAKE_BINARY_DIR}/parser
