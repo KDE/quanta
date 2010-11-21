@@ -97,7 +97,7 @@ void DebugSession::eventReceived(const QVariantMap &event)
             setState(KDevelop::IDebugSession::PausedState);
             KUrl url(event["data"].toMap()["url"].toString());
             QPair<KUrl, int> u = convertToLocalUrl(qMakePair(url, event["data"].toMap()["line"].toInt()-1));
-            emit showStepInSource(u.first, u.second);
+            emit showStepInSource(u.first, u.second, QString());
         }
     }
 }
