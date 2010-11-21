@@ -31,10 +31,6 @@ QTEST_MAIN(Css::TestParser)
 namespace Css
 {
 
-TestParser::TestParser()
-{
-}
-
 void TestParser::parser_data()
 {
     QTest::addColumn<QString>("contents");
@@ -122,10 +118,10 @@ void TestParser::multiline()
 
     EditorIntegrator editor;
     editor.setParseSession(&session);
-    kDebug() << editor.findPosition(el->startToken, KDevelop::EditorIntegrator::FrontEdge).textCursor();
-    kDebug() << editor.findPosition(el->endToken, KDevelop::EditorIntegrator::BackEdge).textCursor();
-    QCOMPARE(editor.findPosition(el->endToken, KDevelop::EditorIntegrator::BackEdge),
-                KDevelop::SimpleCursor(1, 16));
+    kDebug() << editor.findPosition(el->startToken, EditorIntegrator::FrontEdge);
+    kDebug() << editor.findPosition(el->endToken, EditorIntegrator::BackEdge);
+    QCOMPARE(editor.findPosition(el->endToken, EditorIntegrator::BackEdge),
+                KDevelop::CursorInRevision(1, 16));
 }
 
 void TestParser::htmlStyleElement()

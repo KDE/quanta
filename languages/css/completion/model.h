@@ -24,10 +24,10 @@
 
 namespace Css {
 
-class CodeCompletionModel : public KTextEditor::CodeCompletionModel2, public KTextEditor::CodeCompletionModelControllerInterface
+class CodeCompletionModel : public KTextEditor::CodeCompletionModel2, public KTextEditor::CodeCompletionModelControllerInterface3
 {
     Q_OBJECT
-    Q_INTERFACES(KTextEditor::CodeCompletionModelControllerInterface)
+    Q_INTERFACES(KTextEditor::CodeCompletionModelControllerInterface3)
 
 public:
     CodeCompletionModel(QObject *parent);
@@ -36,7 +36,7 @@ public:
     virtual QVariant data(const QModelIndex & index, int role) const;
 
     virtual KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position);
-    virtual bool shouldAbortCompletion(KTextEditor::View* view, const KTextEditor::SmartRange& range, const QString &currentCompletion);
+    virtual bool shouldAbortCompletion(KTextEditor::View* view, const KTextEditor::Range& range, const QString &currentCompletion);
     virtual bool shouldStartCompletion(KTextEditor::View* view, const QString& insertedText, bool userInsertion, const KTextEditor::Cursor& position);
 
     virtual void executeCompletionItem2(KTextEditor::Document* document, const KTextEditor::Range& word, const QModelIndex& index) const;

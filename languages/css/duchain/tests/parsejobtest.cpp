@@ -76,6 +76,7 @@ public:
 public slots:
     void updateReady(KDevelop::IndexedString url, KDevelop::ReferencedTopDUContext topContext)
     {
+        qDebug() << url.str() << topContext.data();
         Q_ASSERT(url.str() == m_file.fileName());
         m_ready = true;
         m_topContext = topContext;

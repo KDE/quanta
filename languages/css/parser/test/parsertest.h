@@ -22,15 +22,14 @@
 
 #include <QObject>
 
+#include <duchain/tests/duchaintestbase.h>
+
 namespace Css
 {
 
-class TestParser : public QObject
+class TestParser : public DUChainTestBase
 {
     Q_OBJECT
-
-public:
-    TestParser();
 
 private Q_SLOTS:
     void parser_data();

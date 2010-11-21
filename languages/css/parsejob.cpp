@@ -87,44 +87,10 @@ void ParseJob::run()
 
     debug() << "parsing" << document().str();
 
-    bool readFromDisk = !contentsAvailableFromEditor();
-
-    QString contents;
-
-    if (readFromDisk) {
-        QFile file(document().str());
-        //TODO: Read the first lines to determine encoding using Css encoding and use that for the text stream
-
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            /*
-            KDevelop::ProblemPointer p(new KDevelop::Problem());
-            p->setSource(KDevelop::ProblemData::Disk);
-            p->setDescription(i18n("Could not open file '%1'", document().str()));
-            switch (file.error()) {
-            case QFile::ReadError:
-                p->setExplanation(i18n("File could not be read from."));
-                break;
-            case QFile::OpenError:
-                p->setExplanation(i18n("File could not be opened."));
-                break;
-            case QFile::PermissionsError:
-                p->setExplanation(i18n("File permissions prevent opening for read."));
-                break;
-            default:
-                break;
-            }
-            p->setFinalLocation(KDevelop::DocumentRange(document().str(), KTextEditor::Cursor(0, 0), KTextEditor::Cursor(0, 0)));
-            // TODO addProblem(p);
-            */
-            kWarning() << "Could not open file" << document().str();
-            return abortJob();
-        }
-
-        QTextStream s(&file);
-        contents = s.readAll();
-        file.close();
-    } else {
-        contents = contentsFromEditor();
+    KDevelop::ProblemPointer p = readContents();
+    if (p) {
+        //TODO: associate problem with topducontext
+        return abortJob();;
     }
 
     QList<HtmlParser::Part> parts;
@@ -132,13 +98,13 @@ void ParseJob::run()
     if (KMimeType::findByUrl(document().toUrl())->name() == "text/css") {
         HtmlParser::Part part;
         part.kind = HtmlParser::Part::Standalone;
-        part.contents = contents;
+        part.contents = contents().contents;
         part.range.start = KDevelop::SimpleCursor(0, 0);
         //part.range.end = TODO (needed?)
         parts << part;
     } else {
         HtmlParser p;
-        p.setContents(contents);
+        p.setContents(contents().contents);
         parts = p.parse();
         if (parts.isEmpty()) {
             parts << HtmlParser::Part(); //empty part
@@ -149,10 +115,9 @@ void ParseJob::run()
     HtmlAst *fileAst = new HtmlAst;
     fileAst->kind = HtmlAst::KIND;
     foreach (const HtmlParser::Part &part, parts) {
-
         ParseSession *session = new ParseSession;
-        session->setCurrentDocument(document().str());
-        session->setOffset(part.range.start);
+        session->setCurrentDocument(document());
+        session->setOffset(KDevelop::CursorInRevision::castFromSimpleCursor(part.range.start));
         session->setContents(part.contents);
         if (part.kind != HtmlParser::Part::InlineStyle) {
             StyleElementAst *el = new StyleElementAst;
@@ -227,9 +192,6 @@ void ParseJob::run()
     delete fileAst;
     setDuChain(top);
 
-    cleanupSmartRevision();
-
-
     KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
 
     top->setFeatures(minimumFeatures());
@@ -237,14 +199,8 @@ void ParseJob::run()
 
     QFileInfo fileInfo(document().str());
     QDateTime lastModified = fileInfo.lastModified();
-    if (readFromDisk) {
-        file->setModificationRevision(KDevelop::ModificationRevision(lastModified));
-    } else {
-        file->setModificationRevision(KDevelop::ModificationRevision(lastModified, revisionToken()));
-    }
+    file->setModificationRevision(contents().modification);
     KDevelop::DUChain::self()->updateContextEnvironment( top->topContext(), file.data() );
-
-    cleanupSmartRevision();
 }
 
 }

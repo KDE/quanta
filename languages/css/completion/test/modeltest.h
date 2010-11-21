@@ -2,15 +2,16 @@
 #define MODELTEST_H
 
 #include <QObject>
+
+#include <duchain/tests/duchaintestbase.h>
+
 namespace Css
 {
 int debugArea();
 
-class ModelTest : public QObject
+class ModelTest : public DUChainTestBase
 {
     Q_OBJECT
-public:
-    ModelTest();
 
 private slots:
     void testCompletionRange();

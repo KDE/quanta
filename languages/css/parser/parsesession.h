@@ -26,22 +26,19 @@
 #define CSS_PARSESESSION_H
 
 #include <QtCore/QString>
-#include <language/editor/simplecursor.h>
+#include <language/editor/rangeinrevision.h>
 #include "cssparser.h"
 
 namespace KDevPG
 {
 class MemoryPool;
 }
-namespace KDevelop
-{
-class SimpleCursor;
-}
+
 namespace Css
 {
 class StartAst;
 
-typedef QPair<KDevelop::DUContextPointer, KDevelop::SimpleRange> SimpleUse;
+typedef QPair<KDevelop::DUContextPointer, KDevelop::RangeInRevision> SimpleUse;
 
 class KDEVCSSPARSER_EXPORT ParseSession
 {
@@ -50,12 +47,13 @@ public:
     ~ParseSession();
 
     void setContents(const QString& contents);
-    void setCurrentDocument(const QString& filename);
+    void setCurrentDocument( const KDevelop::IndexedString& filename);
     bool readFile(const QString& filename, const char* charset = 0);
     void setDebug(bool);
-    void setOffset(const KDevelop::SimpleCursor &offset);
+    void setOffset(const KDevelop::CursorInRevision &offset);
     KDevPG::TokenStream* tokenStream() const;
     QString contents() const;
+    KDevelop::IndexedString currentDocument() const;
 
     bool parse(Css::StartAst**);
     bool parse(Css::DeclarationListAst**);
@@ -69,7 +67,7 @@ public:
      *
      * \note the line starts from 0.
      */
-    KDevelop::SimpleCursor positionAt(qint64 offset) const;
+    KDevelop::CursorInRevision positionAt(qint64 offset) const;
 
     QList<KDevelop::ProblemPointer> problems();
 
@@ -83,8 +81,8 @@ public:
 private:
     QString m_contents;
     bool m_debug;
-    QString m_currentDocument;
-    KDevelop::SimpleCursor m_offset;
+    KDevelop::IndexedString m_currentDocument;
+    KDevelop::CursorInRevision m_offset;
     KDevPG::MemoryPool* m_pool;
     KDevPG::TokenStream* m_tokenStream;
     QList<KDevelop::ProblemPointer> m_problems;

@@ -60,6 +60,12 @@ target_link_libraries(css-parser
     ${QT_QTCORE_LIBRARY} ${KDEVPLATFORM_LANGUAGE_LIBRARIES} ${KDEVPLATFORM_TESTS_LIBRARIES})
 
 ### next target
-set(parsertest_SRCS test/parsertest.cpp)
+set(parsertest_SRCS test/parsertest.cpp
+  # TODO: extra library!
+  ../duchain/tests/duchaintestbase.cpp
+  ../duchain/builders/contextbuilder.cpp
+  ../duchain/builders/declarationbuilder.cpp)
 kde4_add_unit_test(parsertest ${parsertest_SRCS})
-target_link_libraries(parsertest kdev4cssparser ${QT_QTTEST_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDEVPLATFORM_LANGUAGE_LIBRARIES})
+target_link_libraries(parsertest kdev4cssparser ${QT_QTTEST_LIBRARY} ${KDE4_KDECORE_LIBS}
+  ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
+  ${KDEVPLATFORM_TESTS_LIBRARIES})

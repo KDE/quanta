@@ -45,10 +45,10 @@ void TestDUChain::testContext()
     KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
 
     QCOMPARE(top->childContexts().count(), 1);
-    QVERIFY(top->childContexts().first()->range() == KDevelop::SimpleRange(0, 3, 0, 16));
-    KDevelop::Declaration *dec = top->findDeclarationAt(KDevelop::SimpleCursor(0, 0));
+    QVERIFY(top->childContexts().first()->range() == KDevelop::RangeInRevision(0, 3, 0, 16));
+    KDevelop::Declaration *dec = top->findDeclarationAt(KDevelop::CursorInRevision(0, 0));
     QCOMPARE(dec->qualifiedIdentifier().toString(), QString("a ")); //TODO: this should not include the space
-    QVERIFY(dec->range() == KDevelop::SimpleRange(0, 0, 0, 2)); 
+    QVERIFY(dec->range() == KDevelop::RangeInRevision(0, 0, 0, 2)); 
 }
 
 void TestDUChain::testPseudoClass()
@@ -61,9 +61,9 @@ void TestDUChain::testPseudoClass()
     KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
 
     QCOMPARE(top->childContexts().count(), 1);
-    QVERIFY(top->childContexts().first()->range() == KDevelop::SimpleRange(0, 10, 0, 23));
-    KDevelop::Declaration *dec = top->findDeclarationAt(KDevelop::SimpleCursor(0, 0));
-    QVERIFY(dec->range() == KDevelop::SimpleRange(0, 0, 0, 9));
+    QVERIFY(top->childContexts().first()->range() == KDevelop::RangeInRevision(0, 10, 0, 23));
+    KDevelop::Declaration *dec = top->findDeclarationAt(KDevelop::CursorInRevision(0, 0));
+    QVERIFY(dec->range() == KDevelop::RangeInRevision(0, 0, 0, 9));
     QCOMPARE(dec->qualifiedIdentifier().toString(), QString("a:active ")); //TODO: this should not include the space
 }
 

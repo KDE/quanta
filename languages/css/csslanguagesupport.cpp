@@ -90,7 +90,7 @@ public:
 
     virtual void visitProperty(PropertyAst* node)
     {
-        if (!m_node && m_editor->findRange(node->ident).contains(m_position)) {
+        if (!m_node && m_editor->findRange(node->ident).castToSimpleRange().contains(m_position)) {
             m_node = node;
         }
         if (!m_node) {
@@ -101,7 +101,7 @@ public:
 
     virtual void visitTerm(TermAst* node)
     {
-        if (!m_node && m_editor->findRange(node).contains(m_position)) {
+        if (!m_node && m_editor->findRange(node).castToSimpleRange().contains(m_position)) {
             m_node = node;
         }
         DefaultVisitor::visitTerm(node);
@@ -123,7 +123,7 @@ private:
 struct CursorIdentifier {
     CursorIdentifier(int kind_) : kind(kind_) {}
     int kind;
-    KDevelop::SimpleRange range;
+    KDevelop::RangeInRevision range;
     QString contents;
     QString property; //when ExprKind
 };
@@ -134,12 +134,12 @@ CursorIdentifier cursorIdentifier(const KUrl& url, const KDevelop::SimpleCursor&
     if(!doc || !doc->textDocument() || !doc->textDocument()->activeView())
         return CursorIdentifier(0);
 
-    KDevelop::SimpleRange ctxRange;
+    KDevelop::RangeInRevision ctxRange;
     {
         KDevelop::DUChainReadLocker lock(KDevelop::DUChain::lock());
         KDevelop::TopDUContext* top = KDevelop::DUChain::self()->chainForDocument(url);
         if (!top) return CursorIdentifier(0);
-        KDevelop::DUContext* ctx = top->findContextAt(position);
+        KDevelop::DUContext* ctx = top->findContextAt(KDevelop::CursorInRevision::castFromSimpleCursor(position));
         if (!ctx || ctx->type() != KDevelop::DUContext::Class) {
             return CursorIdentifier(0);
         }
@@ -150,7 +150,7 @@ CursorIdentifier cursorIdentifier(const KUrl& url, const KDevelop::SimpleCursor&
     ParseSession session;
     Css::DeclarationListAst* ast = 0;
     session.setOffset(ctxRange.start);
-    session.setContents(doc->textDocument()->text(ctxRange.textRange()));
+    session.setContents(doc->textDocument()->text(ctxRange.castToSimpleRange().textRange()));
     session.parse(&ast);
     {
         EditorIntegrator editor;
@@ -187,7 +187,7 @@ KDevelop::SimpleRange LanguageSupport::specialLanguageObjectRange(const KUrl& ur
     CursorIdentifier id = cursorIdentifier(url, position);
     debug() << id.kind << id.contents;
     if (id.kind) {
-        return id.range;
+        return id.range.castToSimpleRange();
     }
     return KDevelop::ILanguageSupport::specialLanguageObjectRange(url, position);
 }

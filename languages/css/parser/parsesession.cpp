@@ -51,23 +51,24 @@ QString ParseSession::contents() const
     return m_contents;
 }
 
+KDevelop::IndexedString ParseSession::currentDocument() const
+{
+    return m_currentDocument;
+}
+
 void ParseSession::setContents(const QString& contents)
 {
     m_contents = contents;
 }
 
-void ParseSession::setCurrentDocument(const QString& filename)
+void ParseSession::setCurrentDocument(const KDevelop::IndexedString& filename)
 {
     m_currentDocument = filename;
 }
 
-void ParseSession::setDebug(bool debug)
-{
-    m_debug = debug;
-}
 bool ParseSession::readFile(const QString& filename, const char* codec)
 {
-    m_currentDocument = filename;
+    m_currentDocument = KDevelop::IndexedString(filename);
 
     QFile f(filename);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -81,7 +82,12 @@ bool ParseSession::readFile(const QString& filename, const char* codec)
     return true;
 }
 
-void ParseSession::setOffset(const KDevelop::SimpleCursor& offset)
+void ParseSession::setDebug(bool debug)
+{
+    m_debug = debug;
+}
+
+void ParseSession::setOffset(const KDevelop::CursorInRevision& offset)
 {
     m_offset = offset;
 }
@@ -90,7 +96,6 @@ KDevPG::TokenStream* ParseSession::tokenStream() const
 {
     return m_tokenStream;
 }
-
 
 Parser* ParseSession::createParser()
 {
@@ -138,7 +143,7 @@ bool ParseSession::parse(DeclarationListAst** ast)
     return matched;
 }
 
-KDevelop::SimpleCursor ParseSession::positionAt(qint64 offset) const
+KDevelop::CursorInRevision ParseSession::positionAt(qint64 offset) const
 {
     qint64 line, column;
     m_tokenStream->locationTable()->positionAt(offset, &line, &column);
@@ -146,7 +151,7 @@ KDevelop::SimpleCursor ParseSession::positionAt(qint64 offset) const
         if (line == 0) column += m_offset.column;
         line += m_offset.line;
     }
-    return KDevelop::SimpleCursor(line, column);
+    return KDevelop::CursorInRevision(line, column);
 }
 
 QString ParseSession::symbol(qint64 token) const

@@ -11,10 +11,6 @@ namespace Css {
 
 int debugArea() { return 9043; /* static int s_area = KDebug::registerArea("kdevcsssupport"); return s_area; */ }
 
-ModelTest::ModelTest()
-{
-}
-
 void ModelTest::testCompletionRange()
 {
     KTextEditor::Document* doc = KTextEditor::EditorChooser::editor()->createDocument(0);

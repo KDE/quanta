@@ -23,7 +23,6 @@
 #include <QObject>
 #include <QByteArray>
 #include <QTest>
-#include <language/duchain/dumpchain.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
 
@@ -67,8 +66,6 @@ public slots:
 
 protected:
     KDevelop::TopDUContext* parse(const QByteArray& unit, DumpAreas dump = static_cast<DumpAreas>(DumpAST | DumpDUChain), QString fileName = QString());
-
-    KDevelop::DumpChain dumper;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(DUChainTestBase::DumpAreas)

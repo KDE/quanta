@@ -73,7 +73,7 @@
   }
   QString tokenText(qint64 begin, qint64 end);
   void setDebug(bool debug);
-  void setCurrentDocument(QString url);
+  void setCurrentDocument(const KDevelop::IndexedString& url);
 
 :]
 
@@ -81,7 +81,7 @@
 [:
     QString m_contents;
     bool m_debug;
-    QString m_currentDocument;
+    KDevelop::IndexedString m_currentDocument;
     QList<KDevelop::ProblemPointer> m_problems;
 :]
 
@@ -668,7 +668,8 @@ void Parser::reportProblem( Parser::ProblemType type, const QString& message )
             break;
     }
     p->setDescription(message);
-    p->setFinalLocation(KDevelop::DocumentRange(m_currentDocument, KTextEditor::Range(sLine, sCol, eLine, eCol+1)));
+    p->setFinalLocation(KDevelop::DocumentRange(m_currentDocument,
+                                                KDevelop::SimpleRange(sLine, sCol, eLine, eCol+1)));
     m_problems << KDevelop::ProblemPointer(p);
 }
 
@@ -708,7 +709,7 @@ void Parser::setDebug( bool debug )
     m_debug = debug;
 }
 
-void Parser::setCurrentDocument(QString url)
+void Parser::setCurrentDocument(const KDevelop::IndexedString& url)
 {
     m_currentDocument = url;
 }

@@ -40,7 +40,8 @@
 namespace Css
 {
 
-ContextBuilder::ContextBuilder() : m_reportErrors(true)
+ContextBuilder::ContextBuilder()
+    : m_reportErrors(true), m_editor(0)
 {
 }
 
@@ -49,17 +50,12 @@ ContextBuilder::~ContextBuilder()
 }
 
 KDevelop::ReferencedTopDUContext ContextBuilder::build(const KDevelop::IndexedString& url, AstNode* node,
-        KDevelop::ReferencedTopDUContext updateContext, bool useSmart)
+        KDevelop::ReferencedTopDUContext updateContext)
 {
     if ( KDevelop::ICore::self() ) {
         m_reportErrors = KDevelop::ICore::self()->languageController()->completionSettings()->highlightSemanticProblems();
     }
-    return ContextBuilderBase::build(url, node, updateContext, useSmart);
-}
-
-void ContextBuilder::setEditor(EditorIntegrator* editor)
-{
-    ContextBuilderBase::setEditor(editor, false);
+    return ContextBuilderBase::build(url, node, updateContext);
 }
 
 void ContextBuilder::startVisiting(AstNode* node)
@@ -74,9 +70,8 @@ void ContextBuilder::startVisiting(AstNode* node)
                 editor()->setParseSession(static_cast<InlineStyleAst*>(el)->session);
                 InlineStyleAst* n = static_cast<InlineStyleAst*>(el);
 
-                KDevelop::SimpleRange range;
-                range = editor()->findRange(n->declarationList);
-                kDebug() << range.textRange();
+                KDevelop::RangeInRevision range = editor()->findRange(n->declarationList);
+                kDebug() << range;
                 openContext(n, range,
                             KDevelop::DUContext::Class,
                             KDevelop::QualifiedIdentifier("TODO"));
@@ -93,13 +88,14 @@ void ContextBuilder::startVisiting(AstNode* node)
     }
 }
 
-KDevelop::TopDUContext* ContextBuilder::newTopContext(const KDevelop::SimpleRange& range, KDevelop::ParsingEnvironmentFile* file)
+KDevelop::TopDUContext* ContextBuilder::newTopContext(const KDevelop::RangeInRevision& range,
+                                                      KDevelop::ParsingEnvironmentFile* file)
 {
     if (!file) {
-        file = new KDevelop::ParsingEnvironmentFile(editor()->currentUrl());
+        file = new KDevelop::ParsingEnvironmentFile(document());
         file->setLanguage(KDevelop::IndexedString("Css"));
     }
-    return new KDevelop::TopDUContext(editor()->currentUrl(), range, file);
+    return new KDevelop::TopDUContext(document(), range, file);
 }
 
 void ContextBuilder::setContextOnNode(AstNode* node, KDevelop::DUContext* ctx)
@@ -113,19 +109,20 @@ KDevelop::DUContext* ContextBuilder::contextFromNode(AstNode* node)
     return 0;
 }
 
+void ContextBuilder::setEditor( EditorIntegrator* editor )
+{
+    m_editor = editor;
+}
+
 EditorIntegrator* ContextBuilder::editor() const
 {
-    return static_cast<EditorIntegrator*>(ContextBuilderBase::editor());
+    Q_ASSERT(m_editor);
+    return m_editor;
 }
 
-KTextEditor::Range ContextBuilder::editorFindRange(AstNode* fromRange, AstNode* toRange)
+KDevelop::CursorInRevision ContextBuilder::startPos(AstNode* node)
 {
-    return editor()->findRange(fromRange, toRange).textRange();
-}
-
-KDevelop::SimpleCursor ContextBuilder::startPos(AstNode* node)
-{
-    return editor()->findPosition(node->startToken, KDevelop::EditorIntegrator::FrontEdge);
+    return editor()->findPosition(node->startToken, EditorIntegrator::FrontEdge);
 }
 KDevelop::QualifiedIdentifier ContextBuilder::identifierForNode(SpecifierAst* id)
 {
@@ -137,11 +134,16 @@ KDevelop::QualifiedIdentifier ContextBuilder::identifierForNode(SpecifierAst* id
     return KDevelop::QualifiedIdentifier();
 }
 
+KDevelop::RangeInRevision ContextBuilder::editorFindRange( AstNode* fromRange, AstNode* toRange )
+{
+    return m_editor->findRange(fromRange, toRange);
+}
+
 void ContextBuilder::visitRuleset(RulesetAst* node)
 {
     kDebug(1) << node << node->declarations;
     Q_ASSERT(node->declarations);
-    KDevelop::SimpleRange range;
+    KDevelop::RangeInRevision range;
     if (node->lbrace != -1) {
         range.start = editor()->findPosition(node->lbrace, EditorIntegrator::BackEdge);
     } else {

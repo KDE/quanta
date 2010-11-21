@@ -42,21 +42,22 @@ public:
     ContextBuilder();
     virtual ~ContextBuilder();
 
-    void setEditor(EditorIntegrator* editor);
     virtual KDevelop::ReferencedTopDUContext build(const KDevelop::IndexedString& url, AstNode* node,
-            KDevelop::ReferencedTopDUContext updateContext
-            = KDevelop::ReferencedTopDUContext(), bool useSmart = true);
+            KDevelop::ReferencedTopDUContext updateContext = KDevelop::ReferencedTopDUContext());
+
+    void setEditor(EditorIntegrator* editor);
 protected:
     EditorIntegrator* editor() const;
 
-    virtual KDevelop::TopDUContext* newTopContext(const KDevelop::SimpleRange& range, KDevelop::ParsingEnvironmentFile* file = 0);
+    virtual KDevelop::TopDUContext* newTopContext(const KDevelop::RangeInRevision& range,
+                                                  KDevelop::ParsingEnvironmentFile* file = 0);
 
     virtual void startVisiting(AstNode* node);
     virtual void setContextOnNode(AstNode* node, KDevelop::DUContext* ctx);
     virtual KDevelop::DUContext* contextFromNode(AstNode* node);
-    virtual KTextEditor::Range editorFindRange(AstNode* fromRange, AstNode* toRange);
+    virtual KDevelop::RangeInRevision editorFindRange(AstNode* fromRange, AstNode* toRange);
     /// Find Cursor for start of a node, useful to limit findLocalDeclarations() searches.
-    KDevelop::SimpleCursor startPos(AstNode* node);
+    KDevelop::CursorInRevision startPos(AstNode* node);
 
     virtual KDevelop::QualifiedIdentifier identifierForNode(SpecifierAst* id);
 
@@ -64,6 +65,9 @@ protected:
 
     /// Whether semantic problems should get reported
     bool m_reportErrors;
+
+private:
+    EditorIntegrator* m_editor;
 };
 
 }

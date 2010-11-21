@@ -21,10 +21,14 @@
 
 #include <QtTest/QtTest>
 
+#include <language/duchain/dumpchain.h>
 #include <language/duchain/parsingenvironment.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/indexedstring.h>
+#include <language/codegen/coderepresentation.h>
+#include <tests/autotestshell.h>
+#include <tests/testcore.h>
 #include <kstandarddirs.h>
 #include <kcomponentdata.h>
 
@@ -43,7 +47,12 @@ DUChainTestBase::DUChainTestBase()
 
 void DUChainTestBase::initTestCase()
 {
+    KDevelop::AutoTestShell::init();
+    KDevelop::TestCore* core = new KDevelop::TestCore();
+    core->initialize(KDevelop::Core::NoUi);
+
     KDevelop::DUChain::self()->disablePersistentStorage();
+    KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
 KDevelop::TopDUContext* DUChainTestBase::parse(const QByteArray& unit, DumpAreas dump, QString url)
@@ -76,8 +85,8 @@ KDevelop::TopDUContext* DUChainTestBase::parse(const QByteArray& unit, DumpAreas
     if (dump & DumpDUChain) {
         kDebug() << "===== DUChain:";
 
-        KDevelop::DUChainWriteLocker lock(KDevelop::DUChain::lock());
-        dumper.dump(top);
+        KDevelop::DUChainReadLocker lock;
+        KDevelop::dumpDUContext(top);
     }
 
     if (dump)
