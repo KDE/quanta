@@ -1,6 +1,6 @@
 project(quanta)
 
-find_package(KDE4 REQUIRED)
+find_package(KDE4 4.5 REQUIRED)
 include (KDE4Defaults)
 include (MacroLibrary)
 
@@ -14,7 +14,7 @@ set(CMAKE_MODULE_PATH ${quanta_SOURCE_DIR}/cmake/ ${CMAKE_MODULE_PATH} )
 set(QUANTA_DATA_INSTALL_DIR ${DATA_INSTALL_DIR}/quanta CACHE STRING "The Quanta data dir")
 add_definitions ( -DKDE_DEFAULT_DEBUG_AREA=24000 )
 
-find_package(KDevPlatform 0.9.97 REQUIRED)
+find_package(KDevPlatform 1.1.60 REQUIRED)
 include_directories(${KDEVPLATFORM_INCLUDE_DIR})
 
 #add_subdirectory(lib)

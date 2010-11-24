@@ -4,8 +4,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${css_SOURCE_DIR}/cmake)
 
 enable_testing()
 
-find_package(KDE4 REQUIRED)
-find_package(KDevPlatform REQUIRED)
+find_package(KDE4 4.5 REQUIRED)
+find_package(KDevPlatform 1.1.60 REQUIRED)
 
 include_directories(
     ${KDEVPLATFORM_INCLUDE_DIR}
