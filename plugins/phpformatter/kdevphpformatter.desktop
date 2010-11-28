@@ -3,6 +3,7 @@ Type=Service
 Exec=blubb
 Icon=text-xml
 Name=PHP Formatter
+Name[da]=PHP-formateringsværktøj
 Name[es]=Formateador PHP
 Name[fr]=Outil de formatage PHP
 Name[it]=Formattatore PHP

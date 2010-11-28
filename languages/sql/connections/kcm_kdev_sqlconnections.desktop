@@ -11,6 +11,7 @@ X-KDE-ParentComponents=kdevplatformproject
 X-KDE-CfgDlgHierarchy=GENERAL
 
 Name=DB Connections
+Name[da]=DB-forbindelser
 Name[es]=Conexiones de bases de datos
 Name[fr]=Connexions aux bases de données
 Name[it]=Connessione DB
@@ -21,6 +22,7 @@ Name[uk]=З’єднання з базою даних
 Name[x-test]=xxDB Connectionsxx
 Name[zh_CN]=数据库连接
 Comment=Configure Database Connections
+Comment[da]=Indstil databaseforbindelser
 Comment[es]=Configurar las conexiones de bases de datos
 Comment[fr]=Configurer les connexions aux bases de données
 Comment[it]=Configura le connessione del database
