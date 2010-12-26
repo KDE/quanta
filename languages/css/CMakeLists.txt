@@ -47,6 +47,7 @@ target_link_libraries(kdevcsslanguagesupport
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDE4_KTEXTEDITOR_LIBS}
     ${KDE4_KDECORE_LIBS}
+    ${KDE4_THREADWEAVER_LIBRARIES}
     kdev4cssparser
 )
 
