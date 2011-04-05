@@ -62,6 +62,6 @@ X-KDevelop-Args=
 X-KDevelop-Category=Global
 X-KDE-Library=libkdevstructuretree
 X-KDE-PluginInfo-Name=KDevStructureTree
-X-KDevelop-Version=10
+X-KDevelop-Version=12
 X-KDevelop-IRequired=org.kdevelop.QuantaCoreIf
 X-KDevelop-Mode=GUI
