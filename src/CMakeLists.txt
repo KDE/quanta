@@ -44,7 +44,6 @@ endif (Q_WS_MAC)
 ########### install files ###############
 
 install( PROGRAMS  quanta.desktop  DESTINATION ${XDG_APPS_INSTALL_DIR})
-install( FILES  profile.config  DESTINATION ${DATA_INSTALL_DIR}/kdevplatform/profiles/quanta)
 install( FILES  quantarc quantaui.rc  DESTINATION ${DATA_INSTALL_DIR}/quanta)
 install( FILES  kdevplatformquanta.desktop  DESTINATION ${SERVICETYPES_INSTALL_DIR})
 
