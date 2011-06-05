@@ -24,13 +24,16 @@
 --
 
 [:
-
-#include <QtCore/QString>
-#include <kdebug.h>
-#include <language/interfaces/iproblem.h>
-#include "parser/editorintegrator.h"
-
+namespace Css
+{
+    class ParseSession;
+}
 :]
+
+%parser_declaration_header "QtCore/QString"
+%parser_bits_header "kdebug.h"
+%parser_declaration_header "language/interfaces/iproblem.h"
+
 
 
 ------------------------------------------------------------

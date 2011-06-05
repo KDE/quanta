@@ -24,6 +24,8 @@
  *****************************************************************************/
 #include "parsesession.h"
 
+#include "parser/cssast.h"
+
 #include "kdev-pg-memory-pool.h"
 #include "kdev-pg-token-stream.h"
 

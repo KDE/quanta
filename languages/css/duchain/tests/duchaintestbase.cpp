@@ -33,6 +33,7 @@
 #include <kcomponentdata.h>
 
 #include "../../parser/parsesession.h"
+#include "../../parser/editorintegrator.h"
 #include "cssdebugvisitor.h"
 #include "../builders/declarationbuilder.h"
 

@@ -34,6 +34,7 @@
 #include "parsejob.h"
 #include "navigation/navigationwidget.h"
 #include "parser/parsesession.h"
+#include "parser/editorintegrator.h"
 #include <cssdebugvisitor.h>
 
 K_PLUGIN_FACTORY(KDevCssSupportFactory, registerPlugin<Css::LanguageSupport>();)
