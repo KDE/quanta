@@ -45,6 +45,8 @@ K_EXPORT_PLUGIN(KDevCrossfireDebuggerFactory(KAboutData("kdevcrossfire", "kdevcr
 CrossfirePlugin::CrossfirePlugin( QObject *parent, const QVariantList & ) :
     KDevelop::IPlugin( KDevCrossfireDebuggerFactory::componentData(), parent )
 {
+    core()->debugController()->initializeUi();
+
     kDebug();
     {
         IExecuteBrowserPlugin* iface = KDevelop::ICore::self()->pluginController()->pluginForExtension("org.kdevelop.IExecuteBrowserPlugin")->extension<IExecuteBrowserPlugin>();
