@@ -29,6 +29,7 @@ Name[x-test]=xxCrossfire Supportxx
 Name[zh_CN]=Crossfire 支持
 GenericName=Debugger Frontend
 GenericName[da]=Fejlsøgningsbrugerflade
+GenericName[de]=Oberfläche für Debugger
 GenericName[en_GB]=Debugger Frontend
 GenericName[es]=Interfaz del depurador
 GenericName[et]=Siluri kasutajaliides
