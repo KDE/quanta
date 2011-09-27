@@ -623,7 +623,7 @@ void Parser::tokenize(const QString& contents)
         {
             kind = Parser::Token_EOF;
         }
-        Parser::Token &t = tokenStream->next();
+        Parser::Token &t = tokenStream->push();
         t.begin = tokenizer.tokenBegin();
         t.end = tokenizer.tokenEnd();
         t.kind = kind;
@@ -688,7 +688,7 @@ void Parser::expectedSymbol(int /*expectedSymbol*/, const QString& name)
     qint64 line;
     qint64 col;
     qint64 index = tokenStream->index()-1;
-    Token &token = tokenStream->token(index);
+    Token &token = tokenStream->at(index);
     kDebug() << "token starts at:" << token.begin;
     kDebug() << "index is:" << index;
     tokenStream->startPosition(index, &line, &col);

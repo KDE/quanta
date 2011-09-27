@@ -38,7 +38,7 @@ void EditorIntegrator::setParseSession(ParseSession* session)
 
 KDevelop::CursorInRevision EditorIntegrator::findPosition(qint64 token, Edge edge) const
 {
-    const KDevPG::TokenStream::Token& t = m_session->tokenStream()->token(token);
+    const KDevPG::TokenStream::Token& t = m_session->tokenStream()->at(token);
     return findPosition(t, edge);
 }
 
