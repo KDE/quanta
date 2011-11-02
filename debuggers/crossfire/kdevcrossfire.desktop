@@ -28,6 +28,7 @@ Name[uk]=Підтримка Crossfire
 Name[x-test]=xxCrossfire Supportxx
 Name[zh_CN]=Crossfire 支持
 GenericName=Debugger Frontend
+GenericName[cs]=Rozhraní pro ladicí nástroj
 GenericName[da]=Fejlsøgningsbrugerflade
 GenericName[de]=Oberfläche für Debugger
 GenericName[en_GB]=Debugger Frontend
