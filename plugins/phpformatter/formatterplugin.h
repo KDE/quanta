@@ -50,9 +50,9 @@ public:
 
     /** Formats using the current style.
     */
-    virtual QString formatSource ( const QString &text, const KMimeType::Ptr &mime, const QString& leftContext, const QString& rightContext );
+    virtual QString formatSource(const QString& text, const KUrl& url, const KMimeType::Ptr& mime, const QString& leftContext, const QString& rightContext);
 
-    virtual QString formatSourceWithStyle(KDevelop::SourceFormatterStyle , const QString& text, const KMimeType::Ptr& mime, const QString& leftContext = QString(), const QString& rightContext = QString());
+    virtual QString formatSourceWithStyle(KDevelop::SourceFormatterStyle, const QString& text, const KUrl& url, const KMimeType::Ptr& mime, const QString& leftContext, const QString& rightContext);
 
     /** \return The widget to edit a style.
     */

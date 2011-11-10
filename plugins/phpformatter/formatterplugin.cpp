@@ -89,7 +89,8 @@ QString FormatterPlugin::highlightModeForMime ( const KMimeType::Ptr &mime ) {
     return "PHP";
 }
 
-QString FormatterPlugin::formatSource ( const QString& text, const KMimeType::Ptr& mime, const QString& leftContext, const QString& rightContext ) {
+QString FormatterPlugin::formatSource(const QString& text, const KUrl& url, const KMimeType::Ptr& mime, const QString& leftContext = QString(), const QString& rightContext = QString())
+{
     if(m_formatter) {
         SourceFormatterStyle style = ICore::self()->sourceFormatterController()->styleForMimeType(mime);
         m_style = style;
@@ -99,7 +100,7 @@ QString FormatterPlugin::formatSource ( const QString& text, const KMimeType::Pt
     return text;
 }
 
-QString FormatterPlugin::formatSourceWithStyle(SourceFormatterStyle style, const QString& text, const KMimeType::Ptr& mime, const QString& leftContext, const QString& rightContext)
+QString FormatterPlugin::formatSourceWithStyle(SourceFormatterStyle style, const QString& text, const KUrl& url, const KMimeType::Ptr& mime, const QString& leftContext = QString(), const QString& rightContext = QString())
 {
     if(m_formatter) {
         m_formatter->loadStyle(style.content());
