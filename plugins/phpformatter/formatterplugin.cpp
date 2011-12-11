@@ -155,15 +155,20 @@ QString FormatterPlugin::previewText ( const KMimeType::Ptr & ) {
     "?>";
 }
 
-ISourceFormatter::IndentationType FormatterPlugin::indentationType() {
-    return ISourceFormatter::IndentWithSpacesAndConvertTabs;
+/** \return The indentation of the style applicable for the given url.
+ */
+ISourceFormatter::Indentation FormatterPlugin::indentation(const KUrl& url)
+{
+  static Formatter *formatter = new Php::Formatter();
+  formatter->loadStyle(m_style.content());
+
+  ISourceFormatter::Indentation indent;
+  indent.indentationTabWidth = formatter->options() ["indent_size"].toInt();
+  indent.indentWidth = formatter->options() ["indent_size"].toInt();
+
+  return indent;
 }
 
-int FormatterPlugin::indentationLength() {
-    if(m_formatter)
-        return m_formatter->options().value("indent_size").toInt();
-    return 0;
-}
 
 #include "formatterplugin.moc"
 
