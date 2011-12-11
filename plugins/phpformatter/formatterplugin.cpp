@@ -152,6 +152,22 @@ QString FormatterPlugin::previewText ( const KMimeType::Ptr & ) {
     "\n" +
     "echo make3(3==3?3:33) . \"\\n\";\n" +
     "\n" +
+    "for($i=0;$i<10;$i++) {echo $i;} \n" +
+    "\n" +
+    "while(feof($f)==false) {echo fgets($f);} \n" +
+    "\n" +
+    "class Test { \n" +
+    "protected $member; \n" +
+    "private $member2 = 1; \n" +
+    "public function make2(array $args1, array $args2=array(), $args3=null) { \n" +
+    "foreach($args1 as $key=>$val){ \n" +
+    "echo $args2[$key.$val] . ' ' . $args3. \"\\n\"; \n" +
+    "$args1[$key]= array(0=>$val, 1=>'done',); \n" +
+    "} \n" +
+    "} \n" +
+    "public function otherFunc() {print __CLASS__;} \n" +
+    "} \n" +
+    "\n" +
     "?>";
 }
 
