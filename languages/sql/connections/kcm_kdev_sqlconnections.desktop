@@ -12,6 +12,7 @@ X-KDE-CfgDlgHierarchy=GENERAL
 
 Name=DB Connections
 Name[da]=DB-forbindelser
+Name[de]=DB-Verbindungen
 Name[en_GB]=DB Connections
 Name[es]=Conexiones de bases de datos
 Name[et]=Andmebaasiühendused
@@ -26,6 +27,7 @@ Name[x-test]=xxDB Connectionsxx
 Name[zh_CN]=数据库连接
 Comment=Configure Database Connections
 Comment[da]=Indstil databaseforbindelser
+Comment[de]=Datenbank-Verbindungen einrichten
 Comment[en_GB]=Configure Database Connections
 Comment[es]=Configurar las conexiones de bases de datos
 Comment[et]=Andmebaasiühenduste seadistamine
