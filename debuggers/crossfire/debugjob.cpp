@@ -56,7 +56,7 @@ DebugJob::DebugJob(DebugSession* session, KDevelop::ILaunchConfiguration* cfg, Q
     }
     setStandardToolView(KDevelop::IOutputView::RunView);
     setBehaviours(KDevelop::IOutputView::AllowUserClose | KDevelop::IOutputView::AutoScroll);
-    setModel( new KDevelop::OutputModel(), KDevelop::IOutputView::TakeOwnership );
+    setModel( new KDevelop::OutputModel() );
 
     connect(m_session, SIGNAL(finished()), SLOT(sessionFinished()));
     connect(m_session, SIGNAL(outputLine(QString)), model(), SLOT(appendLine(QString)));
