@@ -1,7 +1,0 @@
-At the moment this uses libxml.
-
-1) Needs to use QtXml (?) when schema validation becomes available in qt.
-2) Breaks on certain encodings,
-   one way would be to convert it to UTF8 or 16 before validating
-3) It is dependent on the mime type names retrieved from the file names rather than the content.
-4) It does not print all warnings/errors which makes it almost useless.

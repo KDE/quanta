@@ -1,7 +1,0 @@
-<?xml version='1.0'?>
-<catalogs>
-  <catalog file="HTML.xml" name="HTML"/>
-  <catalog file="XML.xml" name="XML"/>
-  <catalog file="KDE.xml" name="KDE"/>
-  <catalog file="docbookx.xml"  name="docbookx"/>
-</catalogs>

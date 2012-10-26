@@ -1,9 +1,0 @@
-<!DOCTYPE kpartgui>
-<kpartplugin name="kdevxmlcatalogui" version="7">
-<MenuBar>
- <Menu name="settings">
-  <Action name="xmlcatalog_settings"
-      group="settings_operations"/>
- </Menu>
-</MenuBar>
-</kpartplugin>
