@@ -19,13 +19,9 @@ include_directories(${KDEVPLATFORM_INCLUDE_DIR})
 
 #add_subdirectory(lib)
 #add_subdirectory(quantacore)
-#add_subdirectory(plugins)
 #add_subdirectory(scripts)
 
 add_subdirectory(src)
 add_subdirectory(data)
-add_subdirectory(plugins)
-add_subdirectory(debuggers)
-add_subdirectory(languages)
 
 macro_display_feature_log()
