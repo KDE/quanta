@@ -132,7 +132,7 @@ int main( int argc, char *argv[] )
 
       qout << si.uuid.toString() << '\t' << si.description;
 
-      if ( !KDevelop::SessionController::tryLockSession( si.uuid.toString() ) )
+      if ( !KDevelop::SessionController::tryLockSession( si.uuid.toString() ).lock )
         qout << "     " << i18n( "[running]" );
 
       qout << endl;
