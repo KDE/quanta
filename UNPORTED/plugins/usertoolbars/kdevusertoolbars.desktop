@@ -2,6 +2,7 @@
 Type=Service
 Exec=blubb
 Name=KDevUserToolbars
+Name[bs]=KDevUserToolbars
 Name[da]=KDevUserToolbars
 Name[de]=KDevUserToolbars
 Name[en_GB]=KDevUserToolbars

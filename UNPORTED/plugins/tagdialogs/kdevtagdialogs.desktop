@@ -2,6 +2,7 @@
 Type=Service
 Exec=blubb
 Name=KDevTagDialogs
+Name[bs]=KDevTagDialogs
 Name[da]=KDevTagDialogs
 Name[de]=KDevTagDialogs
 Name[en_GB]=KDevTagDialogues

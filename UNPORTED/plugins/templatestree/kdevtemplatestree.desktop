@@ -2,6 +2,7 @@
 Type=Service
 Exec=blubb
 Name=KDevTemplatesTree
+Name[bs]=KDevTemplatesTree
 Name[da]=KDevTemplatesTree
 Name[de]=KDevTemplatesTree
 Name[en_GB]=KDevTemplatesTree

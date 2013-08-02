@@ -2,6 +2,7 @@
 Type=Service
 Exec=blubb
 Name=KDevHTMLPreview
+Name[bs]=KDevHTMLPreview
 Name[da]=KDevHTMLPreview
 Name[de]=KDevHTMLPreview
 Name[en_GB]=KDevHTMLPreview

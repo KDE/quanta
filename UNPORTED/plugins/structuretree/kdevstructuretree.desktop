@@ -2,6 +2,7 @@
 Type=Service
 Exec=blubb
 Name=KDevStructureTree
+Name[bs]=KDevStructureTree
 Name[da]=KDevStructureTree
 Name[de]=KDevStructureTree
 Name[en_GB]=KDevStructureTree

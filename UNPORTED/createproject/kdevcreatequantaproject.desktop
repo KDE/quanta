@@ -2,6 +2,7 @@
 Type=Service
 Exec=blubb
 Name=KDevCreateQuantaProject
+Name[bs]=KDevCreateQuantaProject
 Name[da]=KDevCreateQuantaProject
 Name[de]=KDevCreateQuantaProject
 Name[en_GB]=KDevCreateQuantaProject

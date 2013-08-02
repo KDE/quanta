@@ -2,6 +2,7 @@
 Type=Service
 Exec=blubb
 Name=KDevQuantaProject
+Name[bs]=KDevQuantaProject
 Name[da]=KDevQuantaProject
 Name[de]=KDevQuantaProject
 Name[en_GB]=KDevQuantaProject
