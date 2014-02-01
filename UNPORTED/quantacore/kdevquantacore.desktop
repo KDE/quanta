@@ -2,6 +2,7 @@
 Type=Service
 Exec=blubb
 Comment=Quanta Core
+Comment[bs]=Quanta Jezgro
 Comment[da]=Quanta Core
 Comment[de]=Quanta-Kern
 Comment[en_GB]=Quanta Core
@@ -43,6 +44,7 @@ Name[uk]=KDevQuantaCore
 Name[x-test]=xxKDevQuantaCorexx
 Name[zh_CN]=KDevQuantaCore
 GenericName=Quanta Core
+GenericName[bs]=Quanta Jezgro
 GenericName[da]=Quanta Core
 GenericName[de]=Quanta-Kern
 GenericName[en_GB]=Quanta Core

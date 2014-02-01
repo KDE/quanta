@@ -11,6 +11,7 @@ X-KDE-ParentComponents=kdevplatform
 X-KDE-CfgDlgHierarchy=USERINTERFACE
 
 Name=User Toolbars setting
+Name[bs]=Korisnicke Alatne trake podešavanja
 Name[da]=Indstil brugerværktøjslinjer
 Name[de]=Einstellungen für Benutzerwerkzeugleisten
 Name[en_GB]=User Toolbars setting
@@ -31,6 +32,7 @@ Name[uk]=Налаштування панелей користувача
 Name[x-test]=xxUser Toolbars settingxx
 Name[zh_CN]=用户工具栏设置
 Comment=Configure User Toolbars
+Comment[bs]=Konfigurisati Korisnicke Alatne trake
 Comment[da]=Indstil brugerværktøjslinjer
 Comment[de]=Benutzerwerkzeugleisten einrichten
 Comment[en_GB]=Configure User Toolbars
