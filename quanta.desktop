@@ -31,6 +31,7 @@ Type=Application
 MimeType=text/html
 DocPath=quanta/index.html
 GenericName=Web Development Environment
+GenericName[ast]=Entornu de desendolcu web
 GenericName[bs]=Web razvojno okruženje
 GenericName[ca]=Entorn de desenvolupament web
 GenericName[ca@valencia]=Entorn de desenvolupament web
