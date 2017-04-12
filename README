@@ -212,8 +212,7 @@ it, if the report is bad or incomplete. Some rules:
     amantia@kde.org address. As this is my private address, please use the
     KDE bug reporting system if you can.
     b) Specify the Quanta version in your report. "quanta --version" will tell
-    it to you, or you can find it from Help->About Quanta. In case of
-    compilation errors, look at the quanta.lsm file.
+    it to you, or you can find it from Help->About Quanta.
     c) Specify the KDE and QT version. "quanta --version" is your friend here.
     d) Specify the used package (if it is a pre-built binary package).
     e) Tell me the compiler version. (g++ --version)
